@@ -7,6 +7,7 @@ import Suppliers from "../views/Suppliers.vue";
 import Transactions from "../views/Transactions.vue";
 import Veterinaries from "../views/Veterinaries.vue";
 import FarmerDetails from '../views/FarmerDetails.vue'
+import FoodRequests from '../views/FoodRequests.vue'
 
 const routes = [
 	{
@@ -17,6 +18,11 @@ const routes = [
 				path: "",
 				name: "Dashboard",
 				component: Dashboard,
+			},
+			{
+				path: "foodrequests",
+				name: "Food Requests",
+				component: FoodRequests,
 			},
 			{
 				path: "farmers",

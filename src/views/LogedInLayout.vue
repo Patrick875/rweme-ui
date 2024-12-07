@@ -12,6 +12,12 @@
                     </template>
                     <router-link to="/"><span>Dashboard</span></router-link>
                 </a-menu-item>
+                <a-menu-item key="Food Requests">
+                    <template #icon>
+                        <v-icon name="gi-stabbed-note" />
+                    </template>
+                    <router-link to="/foodrequests"><span>Food Requests</span></router-link>
+                </a-menu-item>
                 <a-menu-item key="Farmers">
                     <template #icon>
                         <v-icon name="gi-farm-tractor" />
@@ -68,7 +74,10 @@ const updateSelectedKey = () => {
     // Map paths or patterns to menu keys
     if (path.startsWith('/farmers')) {
         selectedKey.value = "Farmers";
-    } else if (path.startsWith('/veterinaries')) {
+    }else if(path.startsWith('/fooodrequests')){
+        selectedKey.value = "Food Requests";
+    } 
+    else if (path.startsWith('/veterinaries')) {
         selectedKey.value = "Veterinaries";
     } else if (path.startsWith('/suppliers')) {
         selectedKey.value = "Suppliers";

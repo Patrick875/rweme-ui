@@ -6,6 +6,7 @@ import router from "./routes";
 import { OhVueIcon,addIcons } from "oh-vue-icons";
 import {
     BiArrowLeft,
+	GiStabbedNote,
 	IoAddCircleOutline,BiPatchCheck,
 	BiEye,
 	MdDashboardOutlined,
@@ -21,7 +22,7 @@ import {
 	HiSolidUserCircle,
 } from "oh-vue-icons/icons";
 
-addIcons(BiArrowLeft,IoAddCircleOutline,BiPatchCheck,BiEye,CoCheckAlt,MdDashboardOutlined,IoCloseOutline, GiFarmTractor, FaUserMd, FaUserTie,LaEditSolid, SiCashapp, RiDeleteBin7Line, RiSettings5Line,HiSolidUserCircle);
+addIcons(BiArrowLeft, GiStabbedNote, IoAddCircleOutline,BiPatchCheck,BiEye,CoCheckAlt,MdDashboardOutlined,IoCloseOutline, GiFarmTractor, FaUserMd, FaUserTie,LaEditSolid, SiCashapp, RiDeleteBin7Line, RiSettings5Line,HiSolidUserCircle);
 
 const pinia= createPinia()
 
