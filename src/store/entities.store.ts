@@ -7,6 +7,7 @@ import { useRouter } from "vue-router";
 
 const defaultState = {
 	farmers: [] as any,
+	foodrequests: [] as any,
 	farmer: null as any,
 	veternaries: [] as any,
 	specializations: [] as any,
@@ -23,6 +24,7 @@ const defaultState = {
 	successMessage: "",
 	failure: false,
 	failureMessage: "",
+	loading: false,
 };
 
 export const useEntitiesStore = defineStore({
@@ -45,7 +47,6 @@ export const useEntitiesStore = defineStore({
 		},
 		async getFarmer(farmerId: string) {
 			this.resetStatuses();
-
 			try {
 				const response = await instance.get(`/farmers/${farmerId}`);
 				console.log("the response", response);
@@ -201,6 +202,47 @@ export const useEntitiesStore = defineStore({
 				notify("error", "Error loging in !!!", err.response.data.message);
 			}
 		},
+		async submitFoodRequest(data: any) {
+			this.loading = true;
+			try {
+				const response = await instance.post("/foodrequests", data);
+				if (response) {
+					notify("success", "Success", "Request submited !!!");
+				}
+				this.loading = false;
+			} catch (error) {
+				this.loading = false;
+				notify("error", "Failure", "Error submitting request");
+				console.log("err", error);
+			}
+		},
+		async getFoodRequests() {
+			this.resetStatuses();
+			try {
+				const response = await instance.get("/foodrequests");
+				this.foodrequests = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getRequestsByFarmer(farmerId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/foodrequests/farmer/${farmerId}`);
+				this.foodrequests = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getRequestsBySupplier(supplierId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/foodrequests/supplier/${supplierId}`);
+				this.foodrequests = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
 		async deleteItem(deleteUrl: string, entity: entities) {
 			this.resetStatuses();
 
@@ -223,7 +265,7 @@ export const useEntitiesStore = defineStore({
 		resetStatuses() {
 			this.success = false;
 			this.failure = false;
-			(this.successMessage = ""), (this.failureMessage = "");
+			this.loading = false;
 		},
 	},
 });

@@ -43,9 +43,15 @@
     <div class='farmstatuses'>
         <div class="farm-status-header">
             <p class="actions-label">Food Requests</p>
-            <a-button class='add-record' @click="() => isToggleAddStatusModal = true">
-                <v-icon name="io-add-circle-outline"></v-icon>
-                Request Food</a-button>
+            <div class='actions-btns'>
+                <a-button class='add-record' @click="() => isToggleFoodRequestModal = true">
+                    <v-icon name="io-add-circle-outline"></v-icon>
+                    Request food</a-button>
+                <a-button class='add-record' @click="() => isToggleAddStatusModal = true">
+                    <v-icon name="io-add-circle-outline"></v-icon>
+                    Record farm status</a-button>
+            </div>
+
         </div>
         <div>
             <Table :title="'Farm records'" :length="String(farmRecords.length)" :data="farmRecords"
@@ -53,13 +59,15 @@
         </div>
         <AddFarmStatusModel :isToggleAddStatusModal="isToggleAddStatusModal" :cancelButton="closeModal"
             :farmerId="farmerId" :chickenTypeId="'843ec677-9195-496e-a7d5-f2baf70efd90'" />
-
+        <FoodRequestModal :cancelButton="() => isToggleFoodRequestModal = false"
+            :isToggleFoodRequestModal="isToggleFoodRequestModal" :farmerId="farmerId" />
     </div>
 </template>
 <script setup lang='ts'>
 import { onMounted, watch, ref, computed } from 'vue'
 import { useRoute } from 'vue-router';
 import { useEntitiesStore } from '../store/entities.store';
+import FoodRequestModal from '../components/FoodRequestModal.vue';
 import Table from '../components/Table.vue';
 const entitiesStore = useEntitiesStore()
 const farmer = computed(() => entitiesStore.farmer)
@@ -67,13 +75,17 @@ const farmRecords = computed(() => entitiesStore.farmer ? entitiesStore.farmer.F
     chickenType: el.TypeOfChicken?.name.toUpperCase(),
     numberOfChicken: el.numberOfChicken,
     chickenHealthCondition: el.chickenHealthCondition,
+    amountOfFeedOnDailyBasisPerChicken: el.amountOfFeedOnDailyBasisPerChicken,
     hasInsurance: el.hasInsurance ? 'YES' : 'NO',
     recordedBy: el.collectedBy ? el.collectedBy.fullName : 'N/A',
     recordedOn: new Date(el.recordedOn).toLocaleDateString('fr-FR')
 })) : [])
+
+
 const route = useRoute()
 const farmerId = route.params.farmerId as string;
 const isToggleAddStatusModal = ref<boolean>(false)
+const isToggleFoodRequestModal = ref<boolean>(false)
 const closeModal = () => {
     isToggleAddStatusModal.value = false
 }
@@ -97,6 +109,11 @@ const columns = [
         title: 'Has Insurance',
         dataIndex: 'hasInsurance',
         key: 'hasInsurance'
+    },
+    {
+        title: 'Amount of feed/chicken/day',
+        dataIndex: 'amountOfFeedOnDailyBasisPerChicken',
+        key: 'amountOfFeedOnDailyBasisPerChicken'
     },
     {
         title: 'Recorded By',
@@ -146,6 +163,13 @@ onMounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.actions-btns {
+    display: flex;
+    gap: 1em;
+    align-items: center;
+
 }
 
 .actions {

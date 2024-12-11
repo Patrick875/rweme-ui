@@ -16,7 +16,7 @@
                     <template #icon>
                         <v-icon name="gi-stabbed-note" />
                     </template>
-                    <router-link to="/foodrequests"><span>Food Requests</span></router-link>
+                    <router-link to="/foodrequests"><span>Feed Requests</span></router-link>
                 </a-menu-item>
                 <a-menu-item key="Farmers">
                     <template #icon>
@@ -74,9 +74,9 @@ const updateSelectedKey = () => {
     // Map paths or patterns to menu keys
     if (path.startsWith('/farmers')) {
         selectedKey.value = "Farmers";
-    }else if(path.startsWith('/fooodrequests')){
+    } else if (path.startsWith('/fooodrequests')) {
         selectedKey.value = "Food Requests";
-    } 
+    }
     else if (path.startsWith('/veterinaries')) {
         selectedKey.value = "Veterinaries";
     } else if (path.startsWith('/suppliers')) {

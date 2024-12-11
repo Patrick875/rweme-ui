@@ -50,9 +50,7 @@
 
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'name'">
-          <a>
-            {{ record.name }}
-          </a>
+          {{ record.name }}
         </template>
         <template v-else-if="column.key === 'typeOfChicken' && column.title === 'Category'">
           {{ record.typeOfChicken?.toUpperCase() || 'N/A' }}

@@ -15,7 +15,7 @@ const router = useRouter()
 const entitiesStore = useEntitiesStore()
 const farmers = computed(() => entitiesStore.farmers.map((item) => ({
     ...item,
-    isFarmer:true,
+    isFarmer: true,
     location: item.Village.name,
     key: item.id
 })))
@@ -40,7 +40,6 @@ const columns = [
         dataIndex: 'numberOfChicken',
         key: 'numberOfChicken'
     },
-
     {
         title: 'Veternary In Charge',
         dataIndex: 'veternaryInCharge',
