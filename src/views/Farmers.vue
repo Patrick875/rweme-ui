@@ -1,7 +1,8 @@
 <template>
     <div>
-        <Table :data="farmers" :title="'Farmers'" :length="String(farmers.length)"
-            :handlePrimaryButtonClicks="handleCreateFarmer" :btn-name="'Add  new farmer'" :columns="columns" />
+        <Table :data="farmers" :title="'Farmers'" :length="String(farmers.length)" :loading="loading"
+            :handlePrimaryButtonClicks="handleCreateFarmer" :btn-name="'Add  new farmer'" :columns="columns"
+            :handleDeleteItem="deleteFarmer" />
     </div>
 </template>
 
@@ -11,6 +12,7 @@ import Table from '../components/Table.vue'
 import { useEntitiesStore } from '../store/entities.store';
 import { useRouter } from 'vue-router';
 
+const loading = ref<boolean>(false);
 const router = useRouter()
 const entitiesStore = useEntitiesStore()
 const farmers = computed(() => entitiesStore.farmers.map((item) => ({
@@ -54,6 +56,20 @@ const columns = [
 
 const handleCreateFarmer = () => {
     router.push('farmers/newfarmer')
+}
+const deleteFarmer = async (farmerId: string) => {
+    loading.value = true
+    try {
+        await entitiesStore.deleteItem(`/farmers/${farmerId}`);
+        entitiesStore.getFarmers();
+
+    } catch (error) {
+        console.log('err', error);
+
+    } finally {
+        loading.value = false
+
+    }
 }
 
 

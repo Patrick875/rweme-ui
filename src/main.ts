@@ -9,12 +9,14 @@ import {
 	GiStabbedNote,
 	IoAddCircleOutline,BiPatchCheck,
 	BiEye,
+	BiEyeSlash,
 	MdDashboardOutlined,
 	IoCloseOutline,
 	RiDeleteBin7Line,
 	CoCheckAlt,
 	GiFarmTractor,
 	FaUserMd,
+	FaEdit,
 	FaUserTie,
 	LaEditSolid,
 	SiCashapp,
@@ -22,7 +24,7 @@ import {
 	HiSolidUserCircle,
 } from "oh-vue-icons/icons";
 
-addIcons(BiArrowLeft, GiStabbedNote, IoAddCircleOutline,BiPatchCheck,BiEye,CoCheckAlt,MdDashboardOutlined,IoCloseOutline, GiFarmTractor, FaUserMd, FaUserTie,LaEditSolid, SiCashapp, RiDeleteBin7Line, RiSettings5Line,HiSolidUserCircle);
+addIcons(BiArrowLeft, BiEyeSlash,GiStabbedNote, FaEdit, IoAddCircleOutline,BiPatchCheck,BiEye,CoCheckAlt,MdDashboardOutlined,IoCloseOutline, GiFarmTractor, FaUserMd, FaUserTie,LaEditSolid, SiCashapp, RiDeleteBin7Line, RiSettings5Line,HiSolidUserCircle);
 
 const pinia= createPinia()
 

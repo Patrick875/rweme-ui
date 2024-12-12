@@ -1,7 +1,7 @@
 <template>
     <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="Types Of Feed">
-            <Table :data="typesOfFood" :length="typesOfFood.length.toString()" :columns="columns"
+            <Table :data="typesOfFood" :title="'Types of feed'" :length="typesOfFood.length.toString()" :columns="columns"
                 :handlePrimaryButtonClicks="() => isCreateItem = true" :btn-name="'Create type of feed'" />
             <Modal :isOpen="isCreateItem" @modal-close="() => isCreateItem = false" mainHeader="CREATE FEED"
                 subHeader="Please provide the following details" :width="'550px'">
@@ -29,7 +29,7 @@
             </Modal>
         </a-tab-pane>
         <a-tab-pane key="2" tab="Veternary Specializations">
-            <Table :data="specializations" :length="specializations.length.toString()" :columns="columns"
+            <Table :data="specializations" :title="'Vet-Specializations'" :length="specializations.length.toString()" :columns="columns"
                 :handlePrimaryButtonClicks="() => isCreateItem = true" :btn-name="'Create '" />
             <Modal :isOpen="isCreateItem" @modal-close="() => isCreateItem = false" mainHeader="CREATE SPECIALIZATION"
                 subHeader="Please provide the following details to create a veternary specialization" :width="'550px'">
@@ -57,7 +57,7 @@
             </Modal>
         </a-tab-pane>
         <a-tab-pane key="3" tab="Types Of Chicken">
-            <Table :data="typesOfChicken" :length="typesOfChicken.length.toString()" :columns="columns"
+            <Table :data="typesOfChicken" :title="'Types of chicken'" :length="typesOfChicken.length.toString()" :columns="columns"
                 :handlePrimaryButtonClicks="() => isCreateItem = true" :btn-name="'Create type'" />
 
             <Modal :isOpen="isCreateItem" @modal-close="() => isCreateItem = false" mainHeader="CREATE SPECIALIZATION"

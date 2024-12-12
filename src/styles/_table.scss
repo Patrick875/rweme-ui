@@ -15,9 +15,9 @@
         -ms-border-radius: 25px;
         -o-border-radius: 25px;
     }
-    .table-header{
-        background-color:white;
-        margin-bottom:0.75em;
+    .table-header {
+        background-color: white;
+        margin-bottom: 0.75em;
     }
 
     .title-table {
@@ -125,11 +125,11 @@
     }
 
     .active-style {
-        // background-color: #e8f5e9;
+        background-color: #e8f5e9;
         color: #4caf50;
         text-align: center;
         font-family: "light";
-        width: 50%;
+        // width: 100%;
         font-size: 12px;
 
         @media (max-width: 800px) {
@@ -156,7 +156,7 @@
     .deactivate-style {
         border-radius: 15px;
         // background-color: #ffcdd2;
-        color: #d32f2f;
+        // color: #d32f2f;
         font-family: "light";
         text-align: center;
         width: 80%;
@@ -174,6 +174,7 @@
 
     .view-icon-style,
     .deactivate-icon-style,
+    .active-icon-style,
     .inactive-icon-style,
     .getActionActivateClass,
     .edit-icon-style {
@@ -183,17 +184,6 @@
         margin-right: 10px;
         cursor: pointer;
     }
-
-    .edit-icon-style {
-        color: rgba(151, 71, 255, 0.9);
-        // background-color: rgba(151, 71, 255, 0.1);
-    }
-
-    .deactivate-icon-style {
-        color: #424242;
-        // background-color: #eeeeee;
-    }
-
     .getActionActivateClass {
         background-color: #e8f5e9;
         color: #4caf50;
@@ -218,17 +208,6 @@
     .dropdown-style {
         padding: 50%;
     }
-
-    .inactive-icon-style {
-        color: #d32f2f;
-        // background-color: #ffebee;
-    }
-
-    .view-icon-style {
-        color: #058ece;
-        // background-color: #e6f3fa;
-    }
-
     .table-container .ant-pagination {
         margin-top: 15px;
         margin-right: 10px;
@@ -258,9 +237,7 @@
 
     .edit-icon-style,
     .testing {
-        color: #9747ffe6;
-        // background-color: #9747ff1a;
-        font-weight: 500;
+        font-weight: 300;
     }
     .testing {
         @media (max-width: 800px) {
@@ -270,16 +247,6 @@
             border-radius: 4px;
         }
     }
-
-    .deactivate-icon-style,
-    .rejected {
-        font-weight: 500;
-        color: #d80027;
-        // background-color: #f3dee2;
-    }
-
-   
-
     .send-icon-style,
     .pending {
         color: #424242;

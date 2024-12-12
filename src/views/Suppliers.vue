@@ -1,6 +1,7 @@
 <template>
     <div>
         <Table :data="suppliers" :title="'Suppliers'" :length="String(suppliers.length)"
+            :handleDeleteItem="deleteSupplier" :loading="loading" :handleUpdateItemStatus="updateSupplierStatus"
             :handlePrimaryButtonClicks="handleCreateToggleVeternary" :btn-name="'Create Supplier'" :columns="columns" />
         <Modal :isOpen="isToggleCreateVeternary" @modal-close="closeCreateVeternaryModal" mainHeader="CREATE SUPPLIER"
             subHeader="Please provide the following details to create a supplier" :width="'550px'">
@@ -17,6 +18,7 @@ import Table from '../components/Table.vue'
 import Modal from "../components/Modal.vue"
 import { useEntitiesStore } from '../store/entities.store';
 
+const loading = ref<boolean>(false);
 const entitiesStore = useEntitiesStore()
 
 const isToggleCreateVeternary = ref<boolean>(false)
@@ -27,6 +29,7 @@ const closeCreateVeternaryModal = () => {
     isToggleCreateVeternary.value = false
 }
 const suppliers = computed(() => entitiesStore.suppliers.map((item) => ({
+    ...item,
     fullName: item.User.fullName,
     telephone: item.User.telephone,
     email: item.User.email,
@@ -35,6 +38,31 @@ const suppliers = computed(() => entitiesStore.suppliers.map((item) => ({
     location: item.User.Village.name,
     key: item.id
 })))
+
+const deleteSupplier = async (supplierId: string) => {
+    loading.value = true
+    try {
+        await entitiesStore.deleteItem(`/suppliers/${supplierId}`);
+        entitiesStore.getSuppliers();
+    } catch (error) {
+        console.log('err', error);
+    } finally {
+        loading.value = false
+
+    }
+}
+const updateSupplierStatus = async (data: any) => {
+    loading.value = true
+    try {
+        await entitiesStore.updateStatus(`/suppliers/status-update`, { ...data, supplierId: data.itemId });
+        entitiesStore.getSuppliers();
+    } catch (error) {
+        console.log('err', error);
+    } finally {
+        loading.value = false
+    }
+}
+
 const columns = [
     {
         title: 'Name',

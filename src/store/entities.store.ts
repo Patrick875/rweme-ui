@@ -1,8 +1,8 @@
+import { entities } from "./../utils/enums";
 import { NotificationPlacement } from "ant-design-vue";
 import { defineStore } from "pinia";
 import instance from "../api";
 import { notify } from "../utils/notify";
-import { entities } from "../utils/enums";
 import { useRouter } from "vue-router";
 
 const defaultState = {
@@ -60,7 +60,7 @@ export const useEntitiesStore = defineStore({
 			this.resetStatuses();
 
 			try {
-				const response = await instance.get("/veternaries");
+				const response = await instance.get("/veterinaries");
 				this.veternaries = response.data.data;
 			} catch (err) {
 				console.log("err", err);
@@ -110,7 +110,7 @@ export const useEntitiesStore = defineStore({
 			this.resetStatuses();
 
 			try {
-				const response = await instance.post("/veternaries", data);
+				const response = await instance.post("/veterinaries", data);
 				this.getVeternaries();
 				notify("success", "Success !!!", response.data.message);
 			} catch (err: any) {
@@ -243,23 +243,23 @@ export const useEntitiesStore = defineStore({
 				console.log("err", error);
 			}
 		},
-		async deleteItem(deleteUrl: string, entity: entities) {
+		async deleteItem(deleteUrl: string) {
 			this.resetStatuses();
 
 			try {
-				const response = await instance.delete(deleteUrl);
-				if (response) {
-					notify("success", "Deleted", response.data.message);
-					if (entity == entities.farmers) {
-						this.getFarmers();
-					} else if (entity === entities.veternaries) {
-						this.getVeternaries();
-					} else if (entity === entities.suppliers) {
-						this.getSuppliers;
-					}
-				}
+				await instance.delete(deleteUrl);
 			} catch (error) {
 				console.log("err", error);
+			}
+		},
+		async updateStatus(updateUrl: string, data: any) {
+			this.resetStatuses();
+			try {
+				const response = await instance.patch(updateUrl, data);
+				notify("success", "Status updated", response.data.message);
+			} catch (error) {
+				console.log("err", error);
+				notify("error", "Failed", error.response.data.message);
 			}
 		},
 		resetStatuses() {
