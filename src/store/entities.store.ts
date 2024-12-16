@@ -10,8 +10,10 @@ const defaultState = {
 	foodrequests: [] as any,
 	farmer: null as any,
 	veternaries: [] as any,
+	veternary: null as any,
 	specializations: [] as any,
 	suppliers: [] as any,
+	supplier: null as any,
 	selectedFarmerId: "",
 	typeofchicken: [] as any,
 	typeoffeeds: [] as any,
@@ -33,11 +35,11 @@ export const useEntitiesStore = defineStore({
 		...defaultState,
 	}),
 	actions: {
-		async getFarmers() {
+		async getFarmers(q: string = "") {
 			this.resetStatuses();
 			const router = useRouter();
 			try {
-				const response = await instance.get("/farmers");
+				const response = await instance.get(`/farmers?q=${q}`);
 				this.farmers = response.data.data;
 			} catch (err: any) {
 				if (err.response.status === 401 || err.response.status === 403) {
@@ -56,24 +58,50 @@ export const useEntitiesStore = defineStore({
 				notify("error", "error fetching farmer", err.response.data.message);
 			}
 		},
-		async getVeternaries() {
+		async getVeternaries(q: string = "") {
 			this.resetStatuses();
 
 			try {
-				const response = await instance.get("/veterinaries");
+				const response = await instance.get(`/veterinaries?q=${q}`);
 				this.veternaries = response.data.data;
 			} catch (err) {
 				console.log("err", err);
 			}
 		},
-		async getSuppliers() {
+		async getVeternary(id: string) {
+			this.resetStatuses();
+			try {
+				this.loading = true;
+				const response = await instance.get(`/veterinaries/${id}`);
+				this.veternary = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+				notify("error", "Error", "Error fetching veternary");
+			} finally {
+				this.loading = false;
+			}
+		},
+		async getSuppliers(q: string = "") {
 			this.resetStatuses();
 
 			try {
-				const response = await instance.get("/suppliers");
+				const response = await instance.get(`/suppliers?q=${q}`);
 				this.suppliers = response.data.data;
 			} catch (err) {
 				console.log("err", err);
+			}
+		},
+		async getSupplier(id: string) {
+			this.resetStatuses();
+			try {
+				this.loading = true;
+				const response = await instance.get(`/suppliers/${id}`);
+				this.supplier = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+				notify("error", "Error", "Error fetching veternary");
+			} finally {
+				this.loading = false;
 			}
 		},
 		async getTypesOfChicken() {
@@ -255,11 +283,26 @@ export const useEntitiesStore = defineStore({
 		async updateStatus(updateUrl: string, data: any) {
 			this.resetStatuses();
 			try {
+				this.loading = true;
 				const response = await instance.patch(updateUrl, data);
 				notify("success", "Status updated", response.data.message);
 			} catch (error) {
 				console.log("err", error);
 				notify("error", "Failed", error.response.data.message);
+			} finally {
+				this.loading = false;
+			}
+		},
+		async updateEntity(updateUrl: string, data) {
+			this.resetStatuses();
+			try {
+				this.loading = true;
+				const response = await instance.patch(updateUrl, data);
+				notify("success", "Success !!!", response.data.message);
+			} catch (error) {
+				notify("error", "Error", "error updating item");
+			} finally {
+				this.loading = false;
 			}
 		},
 		resetStatuses() {

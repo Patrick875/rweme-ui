@@ -8,7 +8,7 @@
           </div>
         </a-col>
         <a-col v-if="!isReportsTable" :span="8">
-          <a-input v-model:value="userName" :placeholder="props.placeholder">
+          <a-input v-model:value="search" :placeholder="props.placeholder">
             <template #prefix>
               <SearchOutlined />
             </template>
@@ -17,9 +17,7 @@
         <p v-if="isReportsTable" class="margin-text" style="text-align: center;font-weight:bold">{{ title }} </p>
         <a-col v-if="!isReportsTable" :span="12">
           <div class="filter-section">
-            <a-button class="btn-export" v-if="
-              isShowFilter
-            " @click="() => props.handleSecondaryButtonClicks()">Filter List</a-button>
+            <a-button class="btn-export" v-if="isShowFilter">Filter List</a-button>
 
             <a-button class="btn-export" @click="() => props.resetFilter()">Reset</a-button>
 
@@ -47,7 +45,6 @@
     </div>
 
     <a-table :columns="props.columns" :data-source="props.data">
-
       <template #bodyCell="{ column, record }">
         <template v-if="column.key === 'name'">
           {{ record.name }}
@@ -58,6 +55,13 @@
         <template v-else-if="column.key === 'specializations'">
           <span>
             <a-tag v-for="tag in record.specializations" :key="tag" color="geekblue">
+              {{ tag.name.toUpperCase() }}
+            </a-tag>
+          </span>
+        </template>
+        <template v-else-if="column.key === 'typeoffeeds'">
+          <span>
+            <a-tag v-for="tag in record.typeoffeeds" :key="tag" color="geekblue">
               {{ tag.name.toUpperCase() }}
             </a-tag>
           </span>
@@ -73,7 +77,7 @@
         <template v-else-if="column.key === 'action'">
           <div class="actions-column">
             <v-icon v-if="record.isFarmer" @click="onView(record)" class='view-icon-style' name="bi-eye" />
-            <div class="action-icon" data-caption='Edit'>
+            <div @click="props.handleUpdateAction(record.id)" class="action-icon" data-caption='Edit'>
               <v-icon v-if="record.status == accountStatus.active" class='edit-icon-style ' name="fa-edit" />
             </div>
             <div class='action-icon' data-caption='Activate'>
@@ -124,8 +128,8 @@
 <script lang="ts" setup>
 import { PropType, ref, watch } from 'vue';
 import { accountStatus } from '../utils/enums';
+import Modal from './Modal.vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useEntitiesStore } from '../store/entities.store';
 interface Column {
   title: string
   dataIndex: string
@@ -137,7 +141,6 @@ interface updateData {
   userId: string | null
 }
 
-const entitiesStore = useEntitiesStore()
 const router = useRouter();
 const route = useRoute()
 const currentEntity = route.fullPath.substring(1, route.fullPath.length - 1)
@@ -155,6 +158,8 @@ const updateInfo = ref<updateData>({
 const newStatus = ref<string>('Deactivate');
 const isToggleDeleteModal = ref<boolean>(false);
 const isToggleStatusUpdateModal = ref<boolean>(false);
+const isToggleUpdateModal = ref<boolean>(false);
+
 const closeModal = () => {
   isToggleDeleteModal.value = false
 
@@ -184,7 +189,11 @@ watch([isToggleDeleteModal], ([newVal]) => {
   }
 })
 
-const userName = ref<string>('')
+const search = ref<string>('')
+
+watch(search, (newSearch) => {
+  props.handleTableSearch(newSearch)
+})
 
 const props = defineProps({
   columns: {
@@ -215,7 +224,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: "Search for a user", // Default placeholder text
+    default: "Search for a user",
   },
   buttonComponent: {
     type: Object as PropType<any>,
@@ -226,11 +235,23 @@ const props = defineProps({
     type: Function,
     default: () => { },
   },
+  handleUpdateAction: {
+    type: Function,
+    default: () => { },
+  },
+  handleTableSearch: {
+    type: Function,
+    default: () => { }
+  },
   exportPDF: {
     type: Function,
     default: () => { },
   },
   handleUpdateItemStatus: {
+    type: Function,
+    default: () => { },
+  },
+  handleUpdateVet: {
     type: Function,
     default: () => { },
   },

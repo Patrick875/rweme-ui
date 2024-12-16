@@ -2,12 +2,21 @@
     <div>
         <Table :data="veternaries" :title="'Veternaries'" :length="String(veternaries.length)"
             :handlePrimaryButtonClicks="handleCreateToggleVeternary" :loading="loading"
+            :handle-table-search="handleSearch" :handleUpdateAction="handleUpdateVet"
             :handleDeleteItem="deleteVeternary" :handle-update-item-status="updateVetStatus"
             :btn-name="'Create veternary'" :columns="columns" />
         <Modal :isOpen="isToggleCreateVeternary" @modal-close="closeCreateVeternaryModal" mainHeader="CREATE VETERNARY"
             subHeader="Please provide the following details to create a veternary" :width="'550px'">
             <template #content>
                 <create-veternary :cancelButton="closeCreateVeternaryModal"></create-veternary>
+            </template>
+        </Modal>
+
+        <Modal :isOpen="isToggleUpdateModal && vet" @modal-close="() => isToggleUpdateModal = false"
+            :mainHeader="'UPDATE VETERNARY'" :subHeader="'Provide the following details to update the veternary'"
+            :width="'550px'">
+            <template #content>
+                <update-veternary :vet="vet" :cancelButton="() => isToggleUpdateModal = false"></update-veternary>
             </template>
         </Modal>
     </div>
@@ -22,11 +31,17 @@ import { useEntitiesStore } from '../store/entities.store';
 const entitiesStore = useEntitiesStore()
 const loading = ref<boolean>(false)
 const isToggleCreateVeternary = ref<boolean>(false)
+const isToggleUpdateModal = ref<boolean>(false)
+const vet = computed(() => entitiesStore.veternary)
+const handleUpdateVet = async (vetId: string) => {
+    await entitiesStore.getVeternary(vetId);
+    isToggleUpdateModal.value = true
+}
 const handleCreateToggleVeternary = () => {
     isToggleCreateVeternary.value = !isToggleCreateVeternary.value
 }
 const closeCreateVeternaryModal = () => {
-    isToggleCreateVeternary.value = false
+    isToggleUpdateModal.value = false
 }
 const veternaries = computed(() => entitiesStore.veternaries.map((item) => ({
     ...item,
@@ -39,7 +54,9 @@ const veternaries = computed(() => entitiesStore.veternaries.map((item) => ({
     location: item.User.Village.name,
 
 })))
-
+const handleSearch = (q: string) => {
+    entitiesStore.getVeternaries(q)
+}
 
 const deleteVeternary = async (veterinaryId: string) => {
     loading.value = true

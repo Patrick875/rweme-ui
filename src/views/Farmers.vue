@@ -1,13 +1,13 @@
 <template>
     <div>
         <Table :data="farmers" :title="'Farmers'" :length="String(farmers.length)" :loading="loading"
-            :handlePrimaryButtonClicks="handleCreateFarmer" :btn-name="'Add  new farmer'" :columns="columns"
-            :handleDeleteItem="deleteFarmer" />
+            :handleTableSearch="handleSearch" :handlePrimaryButtonClicks="handleCreateFarmer"
+            :btn-name="'Add  new farmer'" :columns="columns" :handleDeleteItem="deleteFarmer" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import Table from '../components/Table.vue'
 import { useEntitiesStore } from '../store/entities.store';
 import { useRouter } from 'vue-router';
@@ -71,7 +71,9 @@ const deleteFarmer = async (farmerId: string) => {
 
     }
 }
-
+const handleSearch = (q: string) => {
+    entitiesStore.getFarmers(q);
+}
 
 entitiesStore.getFarmers();
 
