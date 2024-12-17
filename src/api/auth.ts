@@ -1,6 +1,8 @@
 import instance from ".";
 import { notify } from "../utils/notify";
 import { useAuthStore } from "../store/auth.store";
+import { entities, userRoles } from "../utils/enums";
+import { useRouter } from "vue-router";
 interface LoginI {
 	login: string;
 	password: string;
@@ -11,6 +13,7 @@ interface emailComfirmI {
 }
 
 export const login = async (login: LoginI) => {
+	const router = useRouter();
 	const { setUser } = useAuthStore();
 	return await instance
 		.post("/auth/login", login)

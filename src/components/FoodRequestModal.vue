@@ -138,6 +138,13 @@ const foodRequest = ref<FoodRequest>({
 const submitRequest = async () => {
     const submitData = { foodRequestDetails: [{ ...foodRequest.value, subtotal: totalToBePaid.value }], farmerId: foodRequest.value.farmerId, supplierId: foodRequest.value.supplierId, totalAmount: totalToBePaid.value };
     await entitiesStore.submitFoodRequest(submitData)
+    foodRequest.value = {
+        farmerId: null,
+        supplierId: null,
+        quantityOfFeed: null,
+        priceOfFeed: null,
+        typeOfFeed: null
+    }
 }
 
 </script>

@@ -90,7 +90,7 @@
                 v-if="record.status == accountStatus.active" class='deactivate-icon-style action-icon'
                 name="bi-eye-slash" />
             </div>
-            <div class='action-icon' data-caption='Delete'>
+            <div v-if='props.userCanDelete' class='action-icon' data-caption='Delete'>
               <v-icon @click="() => triggerDelete(record.id)" v-if="record.status !== accountStatus.deleted"
                 class='deactivate-icon-style action-icon' name="ri-delete-bin-7-line" />
             </div>
@@ -222,6 +222,10 @@ const props = defineProps({
     default: true,
     required: false,
   },
+  userCanDelete: {
+    type: Boolean,
+    default: true
+  },
   placeholder: {
     type: String,
     default: "Search for a user",
@@ -302,6 +306,8 @@ const props = defineProps({
     default: 1
   }
 })
+
+console.log('user-can-delete', props.userCanDelete);
 
 
 </script>

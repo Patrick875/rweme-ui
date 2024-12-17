@@ -104,31 +104,30 @@ export const useEntitiesStore = defineStore({
 				this.loading = false;
 			}
 		},
-		async getTypesOfChicken() {
+		async getTypesOfChicken(q: string = "") {
 			this.resetStatuses();
 
 			try {
-				const response = await instance.get("/typeofchicken");
+				const response = await instance.get(`/typeofchicken?q=${q}`);
 				this.typeofchicken = response.data.data;
 			} catch (err) {
 				console.log("err", err);
 			}
 		},
-		async getTypesOfFeed() {
+		async getTypesOfFeed(q: string = "") {
 			this.resetStatuses();
 
 			try {
-				const response = await instance.get("/typeoffeeds");
+				const response = await instance.get(`/typeoffeeds?q=${q}`);
 				this.typeoffeeds = response.data.data;
 			} catch (err) {
 				console.log("err", err);
 			}
 		},
-		async getSpecializations() {
+		async getSpecializations(q: string = "") {
 			this.resetStatuses();
-
 			try {
-				const response = await instance.get("/specializations");
+				const response = await instance.get(`/specializations?q=${q}`);
 				this.specializations = response.data.data;
 			} catch (err) {
 				console.log("err", err);
@@ -237,6 +236,7 @@ export const useEntitiesStore = defineStore({
 				if (response) {
 					notify("success", "Success", "Request submited !!!");
 				}
+				this.getFoodRequests();
 				this.loading = false;
 			} catch (error) {
 				this.loading = false;
@@ -244,10 +244,10 @@ export const useEntitiesStore = defineStore({
 				console.log("err", error);
 			}
 		},
-		async getFoodRequests() {
+		async getFoodRequests(q: string = "") {
 			this.resetStatuses();
 			try {
-				const response = await instance.get("/foodrequests");
+				const response = await instance.get(`/foodrequests?q=${q}`);
 				this.foodrequests = response.data.data;
 			} catch (error) {
 				console.log("err", error);
@@ -262,10 +262,10 @@ export const useEntitiesStore = defineStore({
 				console.log("err", error);
 			}
 		},
-		async getRequestsBySupplier(supplierId: string) {
+		async getRequestsBySupplier(supplierId: string, q: string = "") {
 			this.resetStatuses();
 			try {
-				const response = await instance.get(`/foodrequests/supplier/${supplierId}`);
+				const response = await instance.get(`/foodrequests/supplier/${supplierId}?q=${q}`);
 				this.foodrequests = response.data.data;
 			} catch (error) {
 				console.log("err", error);
@@ -276,6 +276,7 @@ export const useEntitiesStore = defineStore({
 
 			try {
 				await instance.delete(deleteUrl);
+				notify;
 			} catch (error) {
 				console.log("err", error);
 			}

@@ -5,10 +5,11 @@
             :handle-table-search="handleSearch" :handleUpdateAction="handleUpdateVet"
             :handleDeleteItem="deleteVeternary" :handle-update-item-status="updateVetStatus"
             :btn-name="'Create veternary'" :columns="columns" />
-        <Modal :isOpen="isToggleCreateVeternary" @modal-close="closeCreateVeternaryModal" mainHeader="CREATE VETERNARY"
-            subHeader="Please provide the following details to create a veternary" :width="'550px'">
+        <Modal :isOpen="isToggleCreateVeternary" @modal-close="() => isToggleCreateVeternary = false"
+            mainHeader="CREATE VETERNARY" subHeader="Please provide the following details to create a veternary"
+            :width="'550px'">
             <template #content>
-                <create-veternary :cancelButton="closeCreateVeternaryModal"></create-veternary>
+                <create-veternary :cancelButton="() => isToggleCreateVeternary = false"></create-veternary>
             </template>
         </Modal>
 
@@ -28,6 +29,7 @@ import Table from '../components/Table.vue'
 import Modal from "../components/Modal.vue"
 import { useEntitiesStore } from '../store/entities.store';
 
+
 const entitiesStore = useEntitiesStore()
 const loading = ref<boolean>(false)
 const isToggleCreateVeternary = ref<boolean>(false)
@@ -37,12 +39,11 @@ const handleUpdateVet = async (vetId: string) => {
     await entitiesStore.getVeternary(vetId);
     isToggleUpdateModal.value = true
 }
+
 const handleCreateToggleVeternary = () => {
     isToggleCreateVeternary.value = !isToggleCreateVeternary.value
 }
-const closeCreateVeternaryModal = () => {
-    isToggleUpdateModal.value = false
-}
+
 const veternaries = computed(() => entitiesStore.veternaries.map((item) => ({
     ...item,
     fullName: item.User.fullName,

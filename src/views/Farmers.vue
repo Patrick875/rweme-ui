@@ -1,20 +1,26 @@
 <template>
     <div>
-        <Table :data="farmers" :title="'Farmers'" :length="String(farmers.length)" :loading="loading"
-            :handleTableSearch="handleSearch" :handlePrimaryButtonClicks="handleCreateFarmer"
+        <Table :data="farmers" :title="'Farmers'" :length="String(farmers.length)" :user-can-delete="!isVeternary"
+            :loading="loading" :handleTableSearch="handleSearch" :handlePrimaryButtonClicks="handleCreateFarmer"
             :btn-name="'Add  new farmer'" :columns="columns" :handleDeleteItem="deleteFarmer" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import Table from '../components/Table.vue'
 import { useEntitiesStore } from '../store/entities.store';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '../store/auth.store';
+import { userRoles } from '../utils/enums';
 
 const loading = ref<boolean>(false);
 const router = useRouter()
 const entitiesStore = useEntitiesStore()
+const authStore = useAuthStore();
+const logedInUser = computed(() => authStore.user)
+const isVeternary = computed(() => logedInUser.value?.role === userRoles.veternary)
+
 const farmers = computed(() => entitiesStore.farmers.map((item) => ({
     ...item,
     isFarmer: true,

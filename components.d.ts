@@ -36,6 +36,7 @@ declare module 'vue' {
     CreateSupplier: typeof import('./src/components/CreateSupplier.vue')['default']
     CreateVeternary: typeof import('./src/components/CreateVeternary.vue')['default']
     CreateVeternaryForm: typeof import('./src/components/CreateVeternaryForm.vue')['default']
+    DashboardPie: typeof import('./src/components/DashboardPie.vue')['default']
     FarmerContract: typeof import('./src/components/FarmerContract.vue')['default']
     FarmerCreateCompletion: typeof import('./src/components/farmer-create-completion.vue')['default']
     FoodRequestModal: typeof import('./src/components/FoodRequestModal.vue')['default']

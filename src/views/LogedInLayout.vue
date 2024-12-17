@@ -12,37 +12,37 @@
                     </template>
                     <router-link to="/"><span>Dashboard</span></router-link>
                 </a-menu-item>
-                <a-menu-item key="Food Requests">
+                <a-menu-item key="Food Requests" v-if="!isVeternary">
                     <template #icon>
                         <v-icon name="gi-stabbed-note" />
                     </template>
                     <router-link to="/foodrequests"><span>Feed Requests</span></router-link>
                 </a-menu-item>
-                <a-menu-item key="Farmers">
+                <a-menu-item key="Farmers" v-if="!isSupplier">
                     <template #icon>
                         <v-icon name="gi-farm-tractor" />
                     </template>
                     <router-link to="/farmers"><span>All Farmers</span></router-link>
                 </a-menu-item>
-                <a-menu-item key="Veterinaries">
+                <a-menu-item key="Veterinaries" v-if="!isVeternary && !isSupplier">
                     <template #icon>
                         <v-icon name="fa-user-md" />
                     </template>
                     <router-link to="/veterinaries">All Veterinaries</router-link>
                 </a-menu-item>
-                <a-menu-item key="Suppliers">
+                <a-menu-item key="Suppliers" v-if="!isSupplier && !isVeternary">
                     <template #icon>
                         <v-icon name="fa-user-tie" />
                     </template>
                     <router-link to="/suppliers">All Suppliers</router-link>
                 </a-menu-item>
-                <a-menu-item key="Transactions">
+                <a-menu-item key="Transactions" v-if="!isVeternary && !isSupplier">
                     <template #icon>
                         <v-icon name="si-cashapp" />
                     </template>
                     <router-link to="/transactions">Transactions</router-link>
                 </a-menu-item>
-                <a-menu-item key="Settings">
+                <a-menu-item key="Settings" v-if="!isVeternary && !isSupplier">
                     <template #icon>
                         <v-icon name="ri-settings-5-line" />
                     </template>
@@ -59,19 +59,24 @@
     </div>
 </template>
 <script setup lang='ts'>
-import { ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import AdminNavbar from './AdminNavbar.vue';
+import { useAuthStore } from '../store/auth.store';
+import { userRoles } from '../utils/enums';
 
 const route = useRoute();
-const router = useRouter();
+const authStore = useAuthStore()
+const logedInUser = computed(() => authStore.user)
 const selectedKey = ref("Dashboard");
+const isSupplier = logedInUser.value?.role === userRoles.supplier;
+const isVeternary = logedInUser.value?.role === userRoles.veternary
+
+console.log('user', logedInUser)
 
 // Function to determine the selected key based on the current route
 const updateSelectedKey = () => {
     const path = route.path;
-
-    // Map paths or patterns to menu keys
     if (path.startsWith('/farmers')) {
         selectedKey.value = "Farmers";
     } else if (path.startsWith('/fooodrequests')) {

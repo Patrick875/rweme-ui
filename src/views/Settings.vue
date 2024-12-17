@@ -1,7 +1,8 @@
 <template>
     <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="Types Of Feed">
-            <Table :data="typesOfFood" :title="'Types of feed'" :length="typesOfFood.length.toString()" :columns="columns"
+            <Table :data="typesOfFood" :title="'Types of feed'" :length="typesOfFood.length.toString()"
+                :columns="columns" :handle-table-search="searchFeed" :handle-delete-item="deleteFeed"
                 :handlePrimaryButtonClicks="() => isCreateItem = true" :btn-name="'Create type of feed'" />
             <Modal :isOpen="isCreateItem" @modal-close="() => isCreateItem = false" mainHeader="CREATE FEED"
                 subHeader="Please provide the following details" :width="'550px'">
@@ -29,8 +30,10 @@
             </Modal>
         </a-tab-pane>
         <a-tab-pane key="2" tab="Veternary Specializations">
-            <Table :data="specializations" :title="'Vet-Specializations'" :length="specializations.length.toString()" :columns="columns"
-                :handlePrimaryButtonClicks="() => isCreateItem = true" :btn-name="'Create '" />
+            <Table :data="specializations" :title="'Vet-Specializations'" :length="specializations.length.toString()"
+                :columns="columns" :handle-table-search="searchSpecialization"
+                :handle-delete-item="deleteSpecialization" :handlePrimaryButtonClicks="() => isCreateItem = true"
+                :btn-name="'Create '" />
             <Modal :isOpen="isCreateItem" @modal-close="() => isCreateItem = false" mainHeader="CREATE SPECIALIZATION"
                 subHeader="Please provide the following details to create a veternary specialization" :width="'550px'">
                 <template #content>
@@ -57,7 +60,8 @@
             </Modal>
         </a-tab-pane>
         <a-tab-pane key="3" tab="Types Of Chicken">
-            <Table :data="typesOfChicken" :title="'Types of chicken'" :length="typesOfChicken.length.toString()" :columns="columns"
+            <Table :data="typesOfChicken" :title="'Types of chicken'" :length="typesOfChicken.length.toString()"
+                :columns="columns" :handle-table-search="searchChicken" :handle-delete-item="deleteChickenType"
                 :handlePrimaryButtonClicks="() => isCreateItem = true" :btn-name="'Create type'" />
 
             <Modal :isOpen="isCreateItem" @modal-close="() => isCreateItem = false" mainHeader="CREATE SPECIALIZATION"
@@ -92,6 +96,7 @@ import { computed, ref } from 'vue';
 import { useEntitiesStore } from '../store/entities.store';
 import Table from '../components/Table.vue';
 import instance from '../api';
+import { notify } from '../utils/notify';
 const activeKey = ref('1');
 const entitiesStore = useEntitiesStore();
 entitiesStore.getTypesOfFeed();
@@ -145,6 +150,15 @@ const createChicken = async () => {
         createForm.value.name = ''
     }
 }
+const searchChicken = (q: string) => {
+    entitiesStore.getTypesOfChicken(q)
+}
+const searchFeed = (q: string) => {
+    entitiesStore.getTypesOfFeed(q)
+}
+const searchSpecialization = (q: string) => {
+    entitiesStore.getSpecializations(q)
+}
 const columns = [
     {
         title: 'Name',
@@ -157,7 +171,53 @@ const columns = [
         key: 'createdAt',
         format: (val) => new Date(val).toLocaleDateString()
     },
+    {
+        title: 'Actions',
+        dataIndex: 'actions',
+        key: 'action'
+    }
 ]
+const deleteFeed = async (feedId: string) => {
+    loading.value = true
+    try {
+        await entitiesStore.deleteItem(`/typeoffeeds/${feedId}`);
+        notify('success', 'Success', '')
+        entitiesStore.getTypesOfFeed();
+    } catch (error) {
+        notify('error', 'Error', '')
+        console.log('err', error);
+    } finally {
+        loading.value = false
+    }
+}
+const deleteChickenType = async (chickenTypeId: string) => {
+    loading.value = true
+    try {
+        await entitiesStore.deleteItem(`/typeofchicken/${chickenTypeId}`);
+        notify('success', 'Success', '')
+        entitiesStore.getTypesOfChicken();
+    } catch (error) {
+        notify('error', 'Error', '')
+        console.log('err', error);
+    } finally {
+        loading.value = false
+    }
+}
+const deleteSpecialization = async (specId: string) => {
+    loading.value = true
+    try {
+        await entitiesStore.deleteItem(`/specializations/${specId}`);
+        notify('success', 'Success', '')
+        entitiesStore.getSpecializations();
+    } catch (error) {
+        notify('error', "Error", '')
+        console.log('err', error);
+    } finally {
+        loading.value = false
+
+    }
+}
+
 const onFinishFailed = (errorInfo: unknown) => {
     console.log("Failed:", errorInfo)
 }
