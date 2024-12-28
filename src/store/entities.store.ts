@@ -1,8 +1,8 @@
+import { entities } from "./../utils/enums";
 import { NotificationPlacement } from "ant-design-vue";
 import { defineStore } from "pinia";
 import instance from "../api";
 import { notify } from "../utils/notify";
-import { entities } from "../utils/enums";
 import { useRouter } from "vue-router";
 
 const defaultState = {
@@ -10,8 +10,10 @@ const defaultState = {
 	foodrequests: [] as any,
 	farmer: null as any,
 	veternaries: [] as any,
+	veternary: null as any,
 	specializations: [] as any,
 	suppliers: [] as any,
+	supplier: null as any,
 	selectedFarmerId: "",
 	typeofchicken: [] as any,
 	typeoffeeds: [] as any,
@@ -20,6 +22,9 @@ const defaultState = {
 	sectors: [] as any,
 	cells: [] as any,
 	villages: [] as any,
+	dashboardData: null as any,
+	viewableItemId: null as any,
+	detailsItem: null as any,
 	success: false,
 	successMessage: "",
 	failure: false,
@@ -33,11 +38,23 @@ export const useEntitiesStore = defineStore({
 		...defaultState,
 	}),
 	actions: {
-		async getFarmers() {
+		async getDashbordData(q: string = "") {
 			this.resetStatuses();
 			const router = useRouter();
 			try {
-				const response = await instance.get("/farmers");
+				const response = await instance.get(`/dashboard?q=${q}`);
+				this.dashboardData = response.data.data;
+			} catch (err: any) {
+				if (err.response.status === 401 || err.response.status === 403) {
+					router.replace("/login");
+				}
+			}
+		},
+		async getFarmers(q: string = "") {
+			this.resetStatuses();
+			const router = useRouter();
+			try {
+				const response = await instance.get(`/farmers?q=${q}`);
 				this.farmers = response.data.data;
 			} catch (err: any) {
 				if (err.response.status === 401 || err.response.status === 403) {
@@ -56,51 +73,76 @@ export const useEntitiesStore = defineStore({
 				notify("error", "error fetching farmer", err.response.data.message);
 			}
 		},
-		async getVeternaries() {
+		async getVeternaries(q: string = "") {
 			this.resetStatuses();
 
 			try {
-				const response = await instance.get("/veternaries");
+				const response = await instance.get(`/veterinaries?q=${q}`);
 				this.veternaries = response.data.data;
 			} catch (err) {
 				console.log("err", err);
 			}
 		},
-		async getSuppliers() {
+		async getVeternary(id: string) {
+			this.resetStatuses();
+			try {
+				this.loading = true;
+				const response = await instance.get(`/veterinaries/${id}`);
+				this.veternary = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+				notify("error", "Error", "Error fetching veternary");
+			} finally {
+				this.loading = false;
+			}
+		},
+		async getSuppliers(q: string = "") {
 			this.resetStatuses();
 
 			try {
-				const response = await instance.get("/suppliers");
+				const response = await instance.get(`/suppliers?q=${q}`);
 				this.suppliers = response.data.data;
 			} catch (err) {
 				console.log("err", err);
 			}
 		},
-		async getTypesOfChicken() {
+		async getSupplier(id: string) {
+			this.resetStatuses();
+			try {
+				this.loading = true;
+				const response = await instance.get(`/suppliers/${id}`);
+				this.supplier = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+				notify("error", "Error", "Error fetching veternary");
+			} finally {
+				this.loading = false;
+			}
+		},
+		async getTypesOfChicken(q: string = "") {
 			this.resetStatuses();
 
 			try {
-				const response = await instance.get("/typeofchicken");
+				const response = await instance.get(`/typeofchicken?q=${q}`);
 				this.typeofchicken = response.data.data;
 			} catch (err) {
 				console.log("err", err);
 			}
 		},
-		async getTypesOfFeed() {
+		async getTypesOfFeed(q: string = "") {
 			this.resetStatuses();
 
 			try {
-				const response = await instance.get("/typeoffeeds");
+				const response = await instance.get(`/typeoffeeds?q=${q}`);
 				this.typeoffeeds = response.data.data;
 			} catch (err) {
 				console.log("err", err);
 			}
 		},
-		async getSpecializations() {
+		async getSpecializations(q: string = "") {
 			this.resetStatuses();
-
 			try {
-				const response = await instance.get("/specializations");
+				const response = await instance.get(`/specializations?q=${q}`);
 				this.specializations = response.data.data;
 			} catch (err) {
 				console.log("err", err);
@@ -110,7 +152,7 @@ export const useEntitiesStore = defineStore({
 			this.resetStatuses();
 
 			try {
-				const response = await instance.post("/veternaries", data);
+				const response = await instance.post("/veterinaries", data);
 				this.getVeternaries();
 				notify("success", "Success !!!", response.data.message);
 			} catch (err: any) {
@@ -202,13 +244,17 @@ export const useEntitiesStore = defineStore({
 				notify("error", "Error loging in !!!", err.response.data.message);
 			}
 		},
-		async submitFoodRequest(data: any) {
+		async submitFoodRequest(data: any, userId: string = "") {
 			this.loading = true;
 			try {
 				const response = await instance.post("/foodrequests", data);
 				if (response) {
 					notify("success", "Success", "Request submited !!!");
 				}
+				if (userId !== "") {
+					this.getRequestsByFarmer(userId);
+				}
+				this.getFoodRequests();
 				this.loading = false;
 			} catch (error) {
 				this.loading = false;
@@ -216,51 +262,81 @@ export const useEntitiesStore = defineStore({
 				console.log("err", error);
 			}
 		},
-		async getFoodRequests() {
+		async getFoodRequests(q: string = "") {
 			this.resetStatuses();
 			try {
-				const response = await instance.get("/foodrequests");
+				const response = await instance.get(`/foodrequests?q=${q}`);
 				this.foodrequests = response.data.data;
 			} catch (error) {
 				console.log("err", error);
 			}
 		},
-		async getRequestsByFarmer(farmerId: string) {
+		async getFoodRequest(reqId: string) {
 			this.resetStatuses();
 			try {
-				const response = await instance.get(`/foodrequests/farmer/${farmerId}`);
+				const response = await instance.get(`/foodrequests/${reqId}`);
+				this.detailsItem = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getRequestsByFarmer(farmerId: string, q: string = "") {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/foodrequests/farmer/${farmerId}?q=${q}`);
 				this.foodrequests = response.data.data;
 			} catch (error) {
 				console.log("err", error);
 			}
 		},
-		async getRequestsBySupplier(supplierId: string) {
+		async getRequestsBySupplier(supplierId: string, q: string = "") {
 			this.resetStatuses();
 			try {
-				const response = await instance.get(`/foodrequests/supplier/${supplierId}`);
+				const response = await instance.get(`/foodrequests/supplier/${supplierId}?q=${q}`);
 				this.foodrequests = response.data.data;
 			} catch (error) {
 				console.log("err", error);
 			}
 		},
-		async deleteItem(deleteUrl: string, entity: entities) {
+		async deleteItem(deleteUrl: string) {
 			this.resetStatuses();
 
 			try {
-				const response = await instance.delete(deleteUrl);
-				if (response) {
-					notify("success", "Deleted", response.data.message);
-					if (entity == entities.farmers) {
-						this.getFarmers();
-					} else if (entity === entities.veternaries) {
-						this.getVeternaries();
-					} else if (entity === entities.suppliers) {
-						this.getSuppliers;
-					}
-				}
+				await instance.delete(deleteUrl);
+				notify;
 			} catch (error) {
 				console.log("err", error);
 			}
+		},
+		async updateStatus(updateUrl: string, data: any) {
+			this.resetStatuses();
+			try {
+				this.loading = true;
+				const response = await instance.patch(updateUrl, data);
+				notify("success", "Status updated", response.data.message);
+			} catch (error) {
+				console.log("err", error);
+				notify("error", "Failed", error.response.data.message);
+			} finally {
+				this.loading = false;
+			}
+		},
+		async updateEntity(updateUrl: string, data) {
+			this.resetStatuses();
+			try {
+				this.loading = true;
+				const response = await instance.patch(updateUrl, data);
+				notify("success", "Success !!!", response.data.message);
+			} catch (error) {
+				notify("error", "Error", "error updating item");
+			} finally {
+				this.loading = false;
+			}
+		},
+		setViewableItem(itemId: string | null) {
+			console.log("running here");
+
+			this.viewableItemId = itemId;
 		},
 		resetStatuses() {
 			this.success = false;

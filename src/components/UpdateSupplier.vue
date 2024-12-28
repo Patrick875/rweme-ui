@@ -1,13 +1,13 @@
 <template>
     <div class="auth">
-        <a-form :model="supplierForm" ref="formRef" name="basic" :label-col="{ span: 24 }" :wrapper-col="{ span: 24 }"
-            autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
+        <a-form v-if="vet && !loading" :model="veternaryForm" ref="formRef" name="basic" :label-col="{ span: 24 }"
+            :wrapper-col="{ span: 24 }" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
             <a-row :gutter="16">
                 <a-col :span="12">
                     <a-form-item class="label-input-height" label="Full Name" name="fullName"
-                        :rules="[{ required: true, message: 'Please input supplier full name!' }]">
+                        :rules="[{ required: true, message: 'Please input suppluer full name!' }]">
                         <a-input class="input" placeholder="Please enter supplier full name"
-                            v-model:value="supplierForm.fullName" />
+                            v-model:value="veternaryForm.fullName" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
@@ -18,42 +18,36 @@
                             message: 'Phone number should start with 07 and be 10 digits long',
                         },
                     ]">
-                        <a-input class="input" placeholder="07-- --- ---" v-model:value="supplierForm.telephone" />
+                        <a-input :disabled="true" class="input" placeholder="07-- --- ---"
+                            v-model:value="veternaryForm.telephone" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
                     <a-form-item class="label-input-height" label="Email Address" name="email"
                         :rules="[{ required: true, message: 'Please input an email !' }]">
-                        <a-input class="input" placeholder="Enter a valid email" v-model:value="supplierForm.email" />
+                        <a-input :disabled="true" class="input" placeholder="Enter a valid email"
+                            v-model:value="veternaryForm.email" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
                     <a-form-item class="label-input-height" label="National Id" name="nationalId"
                         :rules="[{ required: true, pattern: /^(1|2)\d{15}$/, message: 'Please input a valid national id !' }]">
                         <a-input class="input" placeholder="Enter a valid national Id"
-                            v-model:value="supplierForm.nationalId" />
+                            v-model:value="veternaryForm.nationalId" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
-                    <a-form-item name="typeOfFeedIds" label="Select type of feeds" has-feedback
+                    <a-form-item name="typeoffeeds" label="Select type of feeds" has-feedback
                         :rules="[{ required: true, message: 'Please select type of feeds!' }]">
-                        <a-select v-model:value="supplierForm.typeOfFeedIds" :options="typesOfFeed" mode="multiple"
-                            :size="'middle'" placeholder="Please select types of feed" @popupScroll="popupScroll">
-
-                        </a-select>
-                    </a-form-item>
-                </a-col>
-                <a-col :span="12">
-                    <a-form-item class="label-input-height" label="MOMO Pay Code" name="momoPay"
-                        :rules="[{ required: true, pattern: /^[1-9]\d{5}(\d{3})?$/, message: 'Please input a valid MOMO Pay Code !' }]">
-                        <a-input class="input" placeholder="Enter a valid momoPay"
-                            v-model:value="supplierForm.momoPay" />
+                        <a-select v-model:value="veternaryForm.typeoffeeds" :options="typeoffeeds" mode="multiple"
+                            :size="'middle'" placeholder="Please select type of feeds"
+                            @popupScroll="popupScroll"></a-select>
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
                     <a-form-item class="label-input-height" label="Province" name="provinceId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
-                        <a-select v-model:value="supplierForm.provinceId" :size="'middle'"
+                        <a-select v-model:value="veternaryForm.provinceId" :size="'middle'"
                             placeholder="Please select !!" @popupScroll="popupScroll">
                             <a-select-option v-for="province in provinces" :key="province.id" :value="province.key">
                                 {{ province.name }}
@@ -64,10 +58,10 @@
                 <a-col :span="12">
                     <a-form-item class="label-input-height" label="District" name="districtId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
-                        <a-select :disabled="!supplierForm.provinceId" v-model:value="supplierForm.districtId"
+                        <a-select :disabled="!veternaryForm.provinceId" v-model:value="veternaryForm.districtId"
                             :size="'middle'" placeholder="Please select !!" @popupScroll="popupScroll">
                             <a-select-option
-                                v-for="district in districts.filter((distr) => distr.provinceId === supplierForm.provinceId)"
+                                v-for="district in districts.filter((distr) => distr.provinceId === veternaryForm.provinceId)"
                                 :key="district.id" :value="district.key">
                                 {{ district.name }}
                             </a-select-option>
@@ -77,10 +71,10 @@
                 <a-col :span="12">
                     <a-form-item class="label-input-height" label="Sector" name="sectorId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
-                        <a-select :disabled="!supplierForm.districtId" v-model:value="supplierForm.sectorId"
+                        <a-select :disabled="!veternaryForm.districtId" v-model:value="veternaryForm.sectorId"
                             :size="'middle'" placeholder="Please select !!" @popupScroll="popupScroll">
                             <a-select-option
-                                v-for="sector in sectors.filter((sect) => sect.districtId === supplierForm.districtId)"
+                                v-for="sector in sectors.filter((sect) => sect.districtId === veternaryForm.districtId)"
                                 :key="sector.id" :value="sector.key">
                                 {{ sector.name }}
                             </a-select-option>
@@ -90,10 +84,10 @@
                 <a-col :span="12">
                     <a-form-item class="label-input-height" label="Cell" name="cellId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
-                        <a-select :disabled="!supplierForm.sectorId" v-model:value="supplierForm.cellId"
+                        <a-select :disabled="!veternaryForm.sectorId" v-model:value="veternaryForm.cellId"
                             :size="'middle'" placeholder="Please select !!" @popupScroll="popupScroll">
                             <a-select-option
-                                v-for="cell in cells.filter((cell) => cell.sectorId === supplierForm.sectorId)"
+                                v-for="cell in cells.filter((cell) => cell.sectorId === veternaryForm.sectorId)"
                                 :key="cell.id" :value="cell.key">
                                 {{ cell.name }}
                             </a-select-option>
@@ -103,10 +97,10 @@
                 <a-col :span="12">
                     <a-form-item class="label-input-height" label="Village" name="addressId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
-                        <a-select :disabled="!supplierForm.cellId" v-model:value="supplierForm.addressId"
+                        <a-select :disabled="!veternaryForm.cellId" v-model:value="veternaryForm.addressId"
                             :size="'middle'" placeholder="Please select !!" @popupScroll="popupScroll">
                             <a-select-option
-                                v-for="village in villages.filter((vill) => vill.cellId === supplierForm.cellId)"
+                                v-for="village in villages.filter((vill) => vill.cellId === veternaryForm.cellId)"
                                 :key="village.id" :value="village.key">
                                 {{ village.name }}
                             </a-select-option>
@@ -119,24 +113,27 @@
                 <div class="double-form-btn g-flex">
                     <a-button class="cancel-form-btn" danger html-type="button"
                         @click="() => props.cancelButton()">CANCEL</a-button>
-                    <a-button :loading="loading" class="btn-auth" html-type="submit">CREATE SUPPLIER</a-button>
+                    <a-button :loading="loading" class="btn-auth" html-type="submit">UPDATE SUPPLIER</a-button>
                 </div>
             </a-form-item>
         </a-form>
+        <div v-else-if="loading" class="loading-cover">
+            <p>...loading</p>
+        </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from "vue"
+import { ref, computed, watch } from "vue"
 import { useEntitiesStore } from '../store/entities.store'
-import { userRoles } from "../utils/enums";
-interface supplierForm {
+
+interface SupplierForm {
     fullName: string
     email: string
     telephone: string
-    nationalId: string
     momoPay: string
-    typeOfFeedIds: string[]
+    typeoffeeds: string[]
+    nationalId: string
     provinceId: string | null
     districtId: string | null
     sectorId: string | null
@@ -147,14 +144,23 @@ interface supplierForm {
 const popupScroll = () => {
     console.log('popupScroll');
 };
-const formRef = ref<InstanceType<any> | null>(null)
-const visible = ref<boolean>(true)
-const entitiesStore = useEntitiesStore()
+const props = defineProps({
+    vet: {
+        type: Object,
+        default: null
+    },
+    cancelButton: {
+        type: Function,
+        default: () => { },
+    },
+})
 
-const typesOfFeed = computed(() => entitiesStore.typeoffeeds?.map((el) => ({
+const formRef = ref<InstanceType<any> | null>(null)
+const entitiesStore = useEntitiesStore()
+const typeoffeeds = computed(() => entitiesStore.typeoffeeds.map((el) => ({
     label: el.name,
     value: el.id
-})));
+})))
 const provinces = computed(() => entitiesStore.provinces?.map((prov) => ({
     ...prov,
     label: prov.name,
@@ -182,62 +188,87 @@ const villages = computed(() => entitiesStore.villages?.map((vl) => ({
     key: vl.id
 })))
 
-const handleClose = () => {
-    visible.value = false
-}
-const loading = ref<boolean>(false);
-const supplierForm = ref<supplierForm>({
-    fullName: "",
-    email: "",
-    telephone: "",
-    nationalId: "",
-    momoPay: '',
-    typeOfFeedIds: [],
-    provinceId: null,
-    districtId: null,
-    sectorId: null,
-    cellId: null,
-    addressId: null,
+const loading = computed(() => entitiesStore.loading)
+const veternaryForm = ref<SupplierForm>({
+    fullName: props.vet?.User?.fullName || '',
+    email: props.vet?.User?.email || '',
+    telephone: props.vet?.User.telephone || "",
+    momoPay: props.vet?.User.telephone || "",
+    typeoffeeds: props.vet?.TypeOfFeed.map((el) => el.id) || [],
+    nationalId: props.vet?.User?.nationalId || "",
+    provinceId: props.vet?.User?.Village.provinceId || null,
+    districtId: props.vet?.User?.Village.districtId || null,
+    sectorId: props.vet?.User?.Village.sectorId || null,
+    cellId: props.vet?.User?.Village.cellId || null,
+    addressId: props.vet?.User?.Village.id || null
 })
 
-const props = defineProps({
-    cancelButton: {
-        type: Function,
-        default: () => { },
-    },
-})
+watch(
+    () => veternaryForm.value.provinceId,
+    (provinceId) => {
+        if (provinceId) {
+            veternaryForm.value.districtId = null
+            veternaryForm.value.sectorId = null
+            veternaryForm.value.cellId = null
+            veternaryForm.value.addressId = null
+        }
+    }
+)
+
+watch(
+    () => veternaryForm.value.districtId,
+    (districtId) => {
+        if (districtId) {
+            veternaryForm.value.sectorId = null
+            veternaryForm.value.cellId = null
+            veternaryForm.value.addressId = null
+        }
+    }
+)
+watch(
+    () => veternaryForm.value.sectorId,
+    (sectorId) => {
+        if (sectorId) {
+            veternaryForm.value.cellId = null
+            veternaryForm.value.addressId = null
+        }
+    }
+)
+watch(
+    () => veternaryForm.value.cellId,
+    (cellId) => {
+        if (cellId) {
+            veternaryForm.value.addressId = null
+        }
+    }
+)
 const onFinish = async (values: any) => {
-    loading.value = true;
+    const updateUrl = `http://localhost:5000/api/v1/suppliers/${props.vet.id}`
     try {
 
-        await entitiesStore.createSupplier({
+        await entitiesStore.updateEntity(updateUrl, {
             fullName: values.fullName,
-            email: values.email,
-            telephone: values.telephone,
             nationalId: values.nationalId,
-            momoPay: values.momoPay,
-            role: userRoles.supplier,
-            addressId: values.addressId,
-            typeOfFeedIds: values.typeOfFeedIds
+            typeoffeeds: values.typeoffeeds,
+            addressId: values.addressId
         })
 
-    } catch (error: any) {
-        console.error('Error in onFinish:', error)
+
     } finally {
-        loading.value = false;
-        supplierForm.value = {
+        veternaryForm.value = {
             fullName: "",
             email: "",
             telephone: "",
-            nationalId: "",
+            typeoffeeds: [],
             momoPay: "",
+            nationalId: "",
             provinceId: null,
-            typeOfFeedIds: [],
             districtId: null,
             sectorId: null,
             cellId: null,
             addressId: null,
         }
+        entitiesStore.getSuppliers()
         props.cancelButton()
     }
     console.log('values', values);
@@ -246,9 +277,10 @@ const onFinish = async (values: any) => {
 const onFinishFailed = (errorInfo: unknown) => {
     console.log("Failed:", errorInfo)
 }
-
-entitiesStore.getLocations()
 entitiesStore.getTypesOfFeed()
+entitiesStore.getLocations()
+
+console.log('vet', props.vet)
 
 </script>
 
@@ -268,6 +300,13 @@ entitiesStore.getTypesOfFeed()
         width: 100%;
     }
 
+}
+
+.loading-cover {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    place-content: center;
 }
 
 .double-form-btn {

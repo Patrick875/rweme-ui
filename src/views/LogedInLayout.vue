@@ -6,43 +6,49 @@
                 <img src="./../assets/Rweme Logo.svg" class="logo" alt="rweme-platform-logo" />
             </div>
             <a-menu mode="inline" :selectedKeys="[selectedKey]" @click="handleMenuClick">
-                <a-menu-item key="admin-dashbord">
+                <a-menu-item key="Dashboard">
                     <template #icon>
                         <v-icon name="md-dashboard-outlined" />
                     </template>
                     <router-link to="/"><span>Dashboard</span></router-link>
                 </a-menu-item>
-                <a-menu-item key="Food Requests">
+                <a-menu-item key="Feed Requests" v-if="!isVeternary">
                     <template #icon>
                         <v-icon name="gi-stabbed-note" />
                     </template>
-                    <router-link to="/foodrequests"><span>Feed Requests</span></router-link>
+                    <router-link to="/feedrequests"><span>Feed Requests</span></router-link>
                 </a-menu-item>
-                <a-menu-item key="Farmers">
+                <a-menu-item key="Appointments" v-if="!isVeternary && !isSupplier">
+                    <template #icon>
+                        <v-icon name="gi-stabbed-note" />
+                    </template>
+                    <router-link to="/appointments"><span>Appointments</span></router-link>
+                </a-menu-item>
+                <a-menu-item key="Farmers" v-if="!isSupplier">
                     <template #icon>
                         <v-icon name="gi-farm-tractor" />
                     </template>
                     <router-link to="/farmers"><span>All Farmers</span></router-link>
                 </a-menu-item>
-                <a-menu-item key="Veterinaries">
+                <a-menu-item key="Veterinaries" v-if="!isVeternary && !isSupplier">
                     <template #icon>
                         <v-icon name="fa-user-md" />
                     </template>
                     <router-link to="/veterinaries">All Veterinaries</router-link>
                 </a-menu-item>
-                <a-menu-item key="Suppliers">
+                <a-menu-item key="Suppliers" v-if="!isSupplier && !isVeternary">
                     <template #icon>
                         <v-icon name="fa-user-tie" />
                     </template>
                     <router-link to="/suppliers">All Suppliers</router-link>
                 </a-menu-item>
-                <a-menu-item key="Transactions">
+                <a-menu-item key="Transactions" v-if="!isVeternary && !isSupplier">
                     <template #icon>
                         <v-icon name="si-cashapp" />
                     </template>
                     <router-link to="/transactions">Transactions</router-link>
                 </a-menu-item>
-                <a-menu-item key="Settings">
+                <a-menu-item key="Settings" v-if="!isVeternary && !isSupplier">
                     <template #icon>
                         <v-icon name="ri-settings-5-line" />
                     </template>
@@ -59,23 +65,27 @@
     </div>
 </template>
 <script setup lang='ts'>
-import { ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { computed, ref, watch, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import AdminNavbar from './AdminNavbar.vue';
+import { useAuthStore } from '../store/auth.store';
+import { userRoles } from '../utils/enums';
 
 const route = useRoute();
-const router = useRouter();
+const authStore = useAuthStore()
+const logedInUser = computed(() => authStore.user)
 const selectedKey = ref("Dashboard");
+const isSupplier = logedInUser.value?.role === userRoles.supplier;
+const isVeternary = logedInUser.value?.role === userRoles.veternary
 
-// Function to determine the selected key based on the current route
+console.log('selected-key', selectedKey.value)
 const updateSelectedKey = () => {
     const path = route.path;
-
-    // Map paths or patterns to menu keys
+    console.log('path-path', path)
     if (path.startsWith('/farmers')) {
         selectedKey.value = "Farmers";
-    } else if (path.startsWith('/fooodrequests')) {
-        selectedKey.value = "Food Requests";
+    } else if (path.startsWith('/feedrequests')) {
+        selectedKey.value = "Feed Requests";
     }
     else if (path.startsWith('/veterinaries')) {
         selectedKey.value = "Veterinaries";
@@ -83,9 +93,17 @@ const updateSelectedKey = () => {
         selectedKey.value = "Suppliers";
     } else if (path.startsWith('/transactions')) {
         selectedKey.value = "Transactions";
-    } else if (path.startsWith('/settings')) {
+    }
+    else if (path.startsWith('/appointments')) {
+        selectedKey.value = "Appointments";
+    }
+    else if (path.startsWith('/settings')) {
         selectedKey.value = "Settings";
-    } else {
+    }
+    else if (path === '/') {
+        selectedKey.value = "Dashboard";
+    }
+    else {
         selectedKey.value = "Dashboard";
     }
 };
@@ -97,9 +115,11 @@ watch(
         updateSelectedKey();
     }
 );
+onMounted(() => {
+    // Initialize on mount
+    updateSelectedKey();
+})
 
-// Initialize on mount
-updateSelectedKey();
 
 const handleMenuClick = (e) => {
     selectedKey.value = e.key;

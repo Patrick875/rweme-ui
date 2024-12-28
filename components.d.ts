@@ -20,6 +20,7 @@ declare module 'vue' {
     AInputPassword: typeof import('ant-design-vue/es')['InputPassword']
     AMenu: typeof import('ant-design-vue/es')['Menu']
     AMenuItem: typeof import('ant-design-vue/es')['MenuItem']
+    AppointmentsCalendar: typeof import('./src/components/AppointmentsCalendar.vue')['default']
     ARow: typeof import('ant-design-vue/es')['Row']
     ASelect: typeof import('ant-design-vue/es')['Select']
     ASelectOption: typeof import('ant-design-vue/es')['SelectOption']
@@ -36,8 +37,11 @@ declare module 'vue' {
     CreateSupplier: typeof import('./src/components/CreateSupplier.vue')['default']
     CreateVeternary: typeof import('./src/components/CreateVeternary.vue')['default']
     CreateVeternaryForm: typeof import('./src/components/CreateVeternaryForm.vue')['default']
+    DashboardBarChart: typeof import('./src/components/DashboardBarChart.vue')['default']
+    DashboardPie: typeof import('./src/components/DashboardPie.vue')['default']
     FarmerContract: typeof import('./src/components/FarmerContract.vue')['default']
     FarmerCreateCompletion: typeof import('./src/components/farmer-create-completion.vue')['default']
+    FoodRequestDetailsModal: typeof import('./src/components/FoodRequestDetailsModal.vue')['default']
     FoodRequestModal: typeof import('./src/components/FoodRequestModal.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Logo: typeof import('./src/components/logo.vue')['default']
@@ -45,5 +49,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Table: typeof import('./src/components/Table.vue')['default']
+    UpdateSupplier: typeof import('./src/components/UpdateSupplier.vue')['default']
+    UpdateVeternary: typeof import('./src/components/UpdateVeternary.vue')['default']
   }
 }

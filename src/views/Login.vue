@@ -19,7 +19,7 @@
                         </a-form-item>
                         <a-form-item label="Password" name="password"
                             :rules="[{ required: true, message: 'Please enter your password' }]">
-                            <a-input type="password" v-model:value="formState.password" />
+                            <a-input-password v-model:value="formState.password" />
                         </a-form-item>
                         <a href="/forgot-password" class="forgot-password-text">Forgot password</a>
                         <a-form-item>
@@ -35,9 +35,11 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import { login } from '../api/auth';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '../store/auth.store';
+import { userRoles } from '../utils/enums';
 
 interface FormState {
     login: string;
@@ -47,7 +49,7 @@ interface FormState {
 const router = useRouter();
 
 const loading = ref<boolean>(false);
-
+const logedInUser = computed(() => useAuthStore().user)
 const formState = reactive<FormState>({
     login: "",
     password: ""
@@ -57,7 +59,14 @@ const onLogin = async (values: FormState) => {
     loading.value = true;
     try {
         await login(values);
-        router.replace('/')
+        // router.replace('/')
+        if (logedInUser.value?.role == userRoles.supplier) {
+            router.replace("/supplier");
+        } else if (logedInUser.value?.role == userRoles.veternary) {
+            router.replace("/veternary");
+        } else {
+            router.replace("/");
+        }
     } catch (error) {
 
     } finally {

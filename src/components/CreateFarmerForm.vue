@@ -109,10 +109,9 @@
                 </a-col>
                 <a-col :span="12">
                     <a-form-item class="label-input-height" label="Number of Chicken" name="numberOfChicken"
-                        :rules="[{ required: true, min: 1, type: 'number', message: 'Please input a valid number' }]">
-                        <a-input-number class="input" :formatter="value => `${value}`"
-                            :parser="value => value.replace(/[^\d.-]/g, '')" type="number"
-                            placeholder="Enter a valid number" v-model:value="farmerForm.numberOfChicken" />
+                        :rules="[{ message: 'Please input a valid number', required: true, }]">
+                        <a-input-number :min="1" class="input" placeholder="Enter a valid number"
+                            v-model:value="farmerForm.numberOfChicken" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
@@ -136,6 +135,16 @@
                         </a-select>
                     </a-form-item>
                 </a-col>
+                <a-col :span="12">
+                    <a-form-item class="label-input-height" label="Assigned Veternary" name="assignedTo"
+                        :rules="[{ message: 'Please select !!' }]">
+                        <a-select v-model:value="farmerForm.assignedTo" :size="'middle'" placeholder="Please select">
+                            <a-select-option disabled value="">Select veternary</a-select-option>
+                            <a-select-option v-for="(vet) in veternaries" :value="vet.key" :key="vet.key">{{
+                                vet.fullName + ' / ' + vet.telephone }} </a-select-option>
+                        </a-select>
+                    </a-form-item>
+                </a-col>
                 <a-col :span="24">
                     <p>Initial food request details</p>
                 </a-col>
@@ -149,29 +158,28 @@
                 <a-col :span="12">
                     <a-form-item class="label-input-height" label="Amount of feed on a daily basis /chicken"
                         name="amountOfFeedOnDailyBasisPerChicken"
-                        :rules="[{ required: true, type: 'number', message: 'Please input a valid number' }]">
-                        <a-input-number class="input" type="number" placeholder="Enter a valid number 0.00" :step="0.01"
-                            :formatter="value => `${value}`" :parser="value => value.replace(/[^\d.-]/g, '')"
+                        :rules="[{ required: true, message: 'Please input a valid number' }]">
+                        <a-input-number class="input" placeholder="Enter a valid number 0.00" :step="0.01" :min="1"
                             v-model:value="farmerForm.amountOfFeedOnDailyBasisPerChicken" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
                     <a-form-item class="label-input-height" label="Price of feed" name="priceOfFeedToBeDelivered"
-                        :rules="[{ required: true, type: 'number', message: 'Please input a valid number' }, { message: 'price must be more than 1' }]"
+                        :rules="[{ required: true, type: 'number', message: 'Please input a valid number' },]"
                         validate-trigger="onBlur">
-                        <a-input-number min="1.00" class="input" type="number" placeholder="Enter a valid number 0.00"
+                        <a-input-number :min="1" class="input" type="number" placeholder="Enter a valid number 0.00"
                             @blur="validateAmount" v-model:value="farmerForm.priceOfFeedToBeDelivered" :step="0.01" />
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
                     <a-form-item class="label-input-height" label="Amount Of Feed To Be Delivered"
                         name="amountOfFeedToBeDelivered"
-                        :rules="[{ required: true, type: 'number', message: 'Please input a valid number' }, { min: 1, message: 'amount of feed must be higher than 1' }]"
-                        validate-trigger="onBlur">
-                        <a-input-number class="input" type="number" :step="0.01" placeholder="Enter a valid number 0.00"
+                        :rules="[{ required: true, message: 'Please input a valid number' }]" validate-trigger="onBlur">
+                        <a-input-number class="input" :min="0.01" :step="0.01" placeholder="Enter a valid number 0.00"
                             @blur="validateAmount" v-model:value="farmerForm.amountOfFeedToBeDelivered" />
                     </a-form-item>
                 </a-col>
+
 
             </a-row>
         </a-form>
@@ -206,16 +214,23 @@
                     </a-form-item>
                 </a-col>
                 <a-col :span="12">
-                    <a-form-item class="label-input-height" label="Relation" name="relation"
-                        :rules="[{ required: true, message: 'Please input relation!' }]">
-                        <a-input class="input" placeholder="Please enter  relation"
-                            v-model:value="nextOfKinForm.relation" />
+                    <a-form-item name="relation" label="Relation" has-feedback
+                        :rules="[{ required: true, message: 'Please select !' }]">
+                        <a-select v-model:value="nextOfKinForm.relation" :size="'middle'"
+                            placeholder="Please select type of Feeds" placement="topLeft">
+                            <a-option value="Spouse">Spouse</a-option>
+                            <a-option value="Parent">Parent</a-option>
+                            <a-option value="Relative">Relative</a-option>
+                            <a-option value="Child">Child</a-option>
+                            <a-option value="Business Partner">Business Partner</a-option>
+                            <a-option value="Other">Other</a-option>
+                        </a-select>
                     </a-form-item>
                 </a-col>
             </a-row>
         </a-form>
         <div class="double-form-btn g-flex">
-            <a-button class="cancel-form-btn" danger html-type="button" @click="() => router.back()">CANCEL</a-button>
+            <a-button class="cancel-form-btn" danger html-type="button" @click="props.cancelButton">CANCEL</a-button>
             <a-button :loading="loading" class="btn-auth" @click="createFarmer">CREATE FARMER</a-button>
         </div>
     </div>
@@ -244,6 +259,7 @@ interface farmerForm {
     sectorId: string | null,
     cellId: string | null,
     addressId: string | null
+    assignedTo: string | null
 }
 
 interface NextOfKinForm {
@@ -255,7 +271,6 @@ interface NextOfKinForm {
 const popupScroll = () => {
     console.log('popupScroll');
 };
-const router = useRouter()
 const nextOfKinformRef = ref<InstanceType<any> | null>(null)
 const entitiesStore = useEntitiesStore()
 const isActionSuccess = computed(() => entitiesStore.success)
@@ -295,6 +310,20 @@ const villages = computed(() => entitiesStore.villages?.map((vl) => ({
     key: vl.id
 })))
 
+const veternaries = computed(() => entitiesStore.veternaries.map((item) => ({
+    ...item,
+    fullName: item.User.fullName,
+    telephone: item.User.telephone,
+    email: item.User.email,
+    specializations: item.specializations,
+    status: item.User.status,
+    key: item.id,
+    location: item.User.Village.name,
+
+})))
+
+console.log('veternaries', veternaries.value)
+
 const loading = ref<boolean>(false);
 const formRef = ref<InstanceType<any> | null>(null)
 
@@ -315,7 +344,8 @@ const farmerForm = ref<farmerForm>({
     districtId: null,
     sectorId: null,
     cellId: null,
-    addressId: null
+    addressId: null,
+    assignedTo: null
 })
 
 const nextOfKinForm = ref<NextOfKinForm>({
@@ -368,7 +398,8 @@ const createFarmer = async () => {
             districtId: null,
             sectorId: null,
             cellId: null,
-            addressId: null
+            addressId: null,
+            assignedTo: null
 
         };
         nextOfKinForm.value = {
@@ -383,11 +414,6 @@ const createFarmer = async () => {
     }
 
 }
-const onFinishFailed = (errorInfo: unknown) => {
-    console.log("Failed:", errorInfo)
-}
-
-
 watch(
     () => [farmerForm.value.amountOfFeedOnDailyBasisPerChicken, farmerForm.value.numberOfChicken],
     ([newPrice, newNumber]) => {

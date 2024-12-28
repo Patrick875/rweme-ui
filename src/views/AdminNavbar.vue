@@ -21,7 +21,9 @@
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '../store/auth.store';
 
-const { loggedInUser, logoutUser } = useAuthStore()
+const { loggedInUser, logoutUser } = useAuthStore();
+
+console.log('logged-in-user', loggedInUser)
 
 const route = useRoute()
 const router = useRouter()

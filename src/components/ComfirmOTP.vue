@@ -193,6 +193,7 @@ const submitOtp = async () => {
 
     &:hover:not(:disabled) {
         background-color: #0056b3;
+        color: white;
     }
 }
 </style>
