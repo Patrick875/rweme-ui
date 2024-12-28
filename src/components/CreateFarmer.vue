@@ -1,30 +1,17 @@
 <template>
     <div>
-        <back-button></back-button>
-        <div class="steps-container">
-            <a-steps v-model:current="current" :items="items"></a-steps>
-            <div class="steps-content">
-                <create-farmer-form v-if="steps[current].key === 'create'" :cancelButton="prev"
-                    :onComplete="next"></create-farmer-form>
-                <farmer-contract v-if="steps[current].key === 'contract'"></farmer-contract>
-                <farmer-create-completion v-if="steps[current].key === 'complete'"></farmer-create-completion>
-            </div>
-        </div>
+        <create-farmer-form v-if="steps[current].key === 'create'" :cancelButton="props.cancelButton"
+            :onComplete="next"></create-farmer-form>
 
-        <div class="steps-action">
-            <a-button v-if="current < steps.length - 1" type="primary" @click="handleOnNext">Next</a-button>
-            <a-button v-if="current == steps.length - 1" type="primary" @click="onDone">
-                Done
-            </a-button>
-            <a-button v-if="current > 0" style="margin-left: 8px" @click="prev">Previous</a-button>
-        </div>
+        <farmer-contract></farmer-contract>
+        <farmer-create-completion v-if="steps[current].key === 'complete'"></farmer-create-completion>
     </div>
-    <Modal :isOpen="isToggleComfirmFarmer" @modal-close="closeComfirmFarmerModal" mainHeader="" subHeader=""
+    <!-- <Modal :isOpen="isToggleComfirmFarmer" @modal-close="closeComfirmFarmerModal" mainHeader="" subHeader=""
         :width="'550px'">
         <template #content>
             <ComfirmOTP :next="next" :cancelButton="closeComfirmFarmerModal"></ComfirmOTP>
         </template>
-    </Modal>
+</Modal> -->
 </template>
 
 <script lang="ts" setup>

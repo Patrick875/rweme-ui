@@ -1,13 +1,33 @@
 <template>
-    <apexchart type="donut" :options="options" :series="series"></apexchart>
+    <div class='container'>
+        <apexchart type="donut" :options="options" :series="Object.values(props.data)"></apexchart>
+    </div>
 </template>
 <script setup lang='ts'>
+const props = defineProps({
+    data: {
+        type: Object,
+        default: {}
+    }
+})
 const options = {
-    width: 250,
-    height: 300,
-    
+    chart: {
+        width: '100px',
+        height: '100px',
+    },
+    chartOptions: {
+        labels: Object.keys(props.data),
+    },
+    labels: Object.keys(props.data),
+
 };
-const series = [44, 55, 41, 17, 15]
+
+
+
 
 </script>
-<style scoped lang='scss'></style>
+<style scoped lang='scss'>
+.container {
+    width: 500px
+}
+</style>

@@ -1,10 +1,12 @@
 import { createApp } from "vue";
-import {createPinia} from 'pinia'
+import { createPinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+
 import "./style.css";
 import App from "./App.vue";
 import router from "./routes";
-import VueApexCharts from 'vue3-apexcharts'
-import { OhVueIcon,addIcons } from "oh-vue-icons";
+import VueApexCharts from "vue3-apexcharts";
+import { OhVueIcon, addIcons } from "oh-vue-icons";
 import {
 	BiArrowLeft,
 	GiStabbedNote,
@@ -28,17 +30,39 @@ import {
 	BiPersonBadgeFill,
 	BiPersonLinesFill,
 	RiNewspaperFill,
-	MdStoreRound
+	MdStoreRound,
+	ViFileTypePdf2,
 } from "oh-vue-icons/icons";
 
-addIcons(BiArrowLeft,MdStoreRound,RiNewspaperFill, BiPersonLinesFill,MdPersonpinRound,BiPersonBadgeFill, BiEyeSlash,GiStabbedNote, FaEdit, IoAddCircleOutline,BiPatchCheck,BiEye,CoCheckAlt,MdDashboardOutlined,IoCloseOutline, GiFarmTractor, FaUserMd, FaUserTie,LaEditSolid, SiCashapp, RiDeleteBin7Line, RiSettings5Line,HiSolidUserCircle);
+addIcons(
+	BiArrowLeft,
+	MdStoreRound,
+	RiNewspaperFill,
+	BiPersonLinesFill,
+	MdPersonpinRound,
+	BiPersonBadgeFill,
+	BiEyeSlash,
+	GiStabbedNote,
+	FaEdit,
+	IoAddCircleOutline,
+	BiPatchCheck,
+	BiEye,
+	CoCheckAlt,
+	MdDashboardOutlined,
+	IoCloseOutline,
+	GiFarmTractor,
+	FaUserMd,
+	FaUserTie,
+	LaEditSolid,
+	SiCashapp,
+	RiDeleteBin7Line,
+	RiSettings5Line,
+	HiSolidUserCircle,
+	ViFileTypePdf2
+);
 
-const pinia= createPinia()
 
-createApp(App)
-.component('v-icon',OhVueIcon)
-.use(VueApexCharts)
-.use(pinia)
-.use(router)
-.mount("#app");
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
 
+createApp(App).component("v-icon", OhVueIcon).use(VueApexCharts).use(pinia).use(router).mount("#app");

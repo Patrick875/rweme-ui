@@ -8,7 +8,7 @@
                 <a-button>Export</a-button>
             </div>
         </div>
-        <div class='dash-statistics'>
+        <!-- <div class='dash-statistics'>
             <div class='dash-card'>
                 <p class='dash-card-header'>Total incomes</p>
                 <p class='dash-card-body'>$2000</p>
@@ -29,21 +29,21 @@
                 <p class='dash-card-body'>70%</p>
                 <p class='dash-card-footer'>Target 80%</p>
             </div>
-        </div>
+        </div> -->
         <div class='dash-statistics'>
             <div class='dash-card'>
                 <p class='dash-card-header'>
                     <img src="./../assets/icon-1.svg" class="" alt="Veternaries" />
                 </p>
                 <p class='dash-card-footer'>Veternaries</p>
-                <p class='dash-card-body'>247</p>
+                <p class='dash-card-body'>{{ dashboardData?.veternaries }}</p>
             </div>
             <div class='dash-card'>
                 <p class='dash-card-header'>
                     <img src="./../assets/icon-3.svg" class="" alt="Farmers" />
                 </p>
                 <p class='dash-card-footer'>Farmers</p>
-                <p class='dash-card-body'>123</p>
+                <p class='dash-card-body'>{{ dashboardData?.farmers }}</p>
             </div>
             <div class='dash-card'>
                 <p class='dash-card-header'>
@@ -51,7 +51,7 @@
 
                 </p>
                 <p class='dash-card-footer'>Suppliers</p>
-                <p class='dash-card-body'>36</p>
+                <p class='dash-card-body'> {{ dashboardData?.suppliers }}</p>
             </div>
             <div class='dash-card'>
                 <p class='dash-card-header'>
@@ -69,18 +69,67 @@
             </div>
 
         </div>
-        <div class='dash-graphs'>
-            <div class="dash-pie">
-                <dashboard-pie></dashboard-pie>
+        <div class='dash-graphs' v-if="provinceCounts.length > 0">
+            <div class="dash-pie" v-if="Object.values(typeOfFeedStats).length > 0">
+                <dashboard-pie :data="typeOfFeedStats"></dashboard-pie>
             </div>
             <div class="dash-histogram">
-                demography
+                <dashboard-bar-chart :data="provinceCounts" :categories="chartCategories"></dashboard-bar-chart>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { computed, watchEffect, ref } from 'vue';
+import { useEntitiesStore } from '../store/entities.store';
+
+const entitiesStore = useEntitiesStore();
+const dashboardData = computed(() => entitiesStore.dashboardData)
+const chartCategories = computed(() => {
+    const uniqueProvinces = new Set<string>();
+    entitiesStore.dashboardData?.farmersDemographics?.forEach((el) => {
+        uniqueProvinces.add(el.Village.Province.name);
+    });
+    return Array.from(uniqueProvinces);
+});
+const provinceCounts = ref<number[]>([]);
+const typeOfFeedStats = ref<Record<string, number>>({});
+const getProvinceCounts = computed(() => {
+    const provinceCountMap: Record<string, number> = {};
+    entitiesStore.dashboardData?.farmersDemographics.forEach((el) => {
+        const provinceName = el.Village.Province.name;
+        if (!provinceCountMap[provinceName]) {
+            provinceCountMap[provinceName] = 0;
+        }
+        provinceCountMap[provinceName] += Number(el.count);
+    });
+    return Object.values(provinceCountMap);
+});
+const getTypesOfFeedStats = computed(() => {
+    const typeOfFeedMap: Record<string, number> = {};
+    entitiesStore.dashboardData?.typeOfFeedData.forEach((el) => {
+        const feedName = el.TypeOfFeed.name;
+        if (!typeOfFeedMap[feedName]) {
+            typeOfFeedMap[feedName] = 0;
+        }
+        typeOfFeedMap[feedName] += Number(el.requests);
+    });
+    return typeOfFeedMap;
+});
+
+watchEffect(() => {
+    if (getProvinceCounts.value) {
+        provinceCounts.value = getProvinceCounts.value;
+        typeOfFeedStats.value = entitiesStore.dashboardData?.typeOfFeedData;
+    }
+    if (getTypesOfFeedStats.value) {
+        typeOfFeedStats.value = getTypesOfFeedStats.value;
+    }
+})
+
+entitiesStore.getDashbordData();
+
 
 </script>
 
@@ -103,7 +152,7 @@
     display: flex;
     width: 100%;
     gap: 1.45em;
-    flex-flow: wrap;
+    // flex-flow: wrap;
     margin-bottom: 1.75em;
 
 }
@@ -132,7 +181,7 @@
 
 .dash-card-header {
     padding: 3px;
-    borded-radius: 50%;
+    border-radius: 50%;
 }
 
 .dash-card-footer {
@@ -141,7 +190,7 @@
 
 .dash-pie,
 .dash-histogram {
-    flex-grow: 1;
+    width: 50%;
     background-color: white;
 }
 </style>

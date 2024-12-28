@@ -14,7 +14,7 @@ const routes = [
 				component: Dashboard,
 			},
 			{
-				path: "foodrequests",
+				path: "feedrequests",
 				name: "SupplierFoodRequests",
 				component: FoodRequests,
 			},

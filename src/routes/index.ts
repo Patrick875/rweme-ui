@@ -9,4 +9,9 @@ const router = createRouter({
 	history: createWebHistory(),
 	routes,
 });
+
+// router.beforeEach((to,from,next)=>{
+// 	if(to='')
+// })
+
 export default router;

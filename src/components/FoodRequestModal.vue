@@ -18,7 +18,7 @@
                             </a-form-item>
                         </a-col>
                         <a-col :span="12">
-                            <a-form-item class="label-input-height" label="Food" name="typeOfFood"
+                            <a-form-item class="label-input-height" label="Feed" name="typeOfFood"
                                 :rules="[{ message: 'Please select !!' }]">
                                 <a-select v-model:value="foodRequest.typeOfFeed" :size="'middle'"
                                     placeholder="Please select">
@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import { useEntitiesStore } from '../store/entities.store';
 
 
@@ -136,8 +136,9 @@ const foodRequest = ref<FoodRequest>({
 })
 
 const submitRequest = async () => {
-    const submitData = { foodRequestDetails: [{ ...foodRequest.value, subtotal: totalToBePaid.value }], farmerId: foodRequest.value.farmerId, supplierId: foodRequest.value.supplierId, totalAmount: totalToBePaid.value };
-    await entitiesStore.submitFoodRequest(submitData)
+    const farmerDetailsId = props.farmerId ? props.farmerId : '';
+    const submitData = { farmerId: foodRequest.value.farmerId, supplierId: foodRequest.value.supplierId, typeOfFeed: foodRequest.value.typeOfFeed, price: foodRequest.value.priceOfFeed, quantityOfFeed: foodRequest.value.quantityOfFeed, totalAmount: totalToBePaid.value };
+    await entitiesStore.submitFoodRequest(submitData, farmerDetailsId)
     foodRequest.value = {
         farmerId: null,
         supplierId: null,
@@ -179,6 +180,11 @@ const submitRequest = async () => {
 
 :deep .ant-input-number .ant-input-number-in-form-item {
     width: 100%;
-    display: block
+    display: block !important
+}
+
+:where(.css-dev-only-do-not-override-17yhhjv).ant-input-number {
+    width: 100%;
+    display: block !important
 }
 </style>

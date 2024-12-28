@@ -6,17 +6,23 @@
                 <img src="./../assets/Rweme Logo.svg" class="logo" alt="rweme-platform-logo" />
             </div>
             <a-menu mode="inline" :selectedKeys="[selectedKey]" @click="handleMenuClick">
-                <a-menu-item key="admin-dashbord">
+                <a-menu-item key="Dashboard">
                     <template #icon>
                         <v-icon name="md-dashboard-outlined" />
                     </template>
                     <router-link to="/"><span>Dashboard</span></router-link>
                 </a-menu-item>
-                <a-menu-item key="Food Requests" v-if="!isVeternary">
+                <a-menu-item key="Feed Requests" v-if="!isVeternary">
                     <template #icon>
                         <v-icon name="gi-stabbed-note" />
                     </template>
-                    <router-link to="/foodrequests"><span>Feed Requests</span></router-link>
+                    <router-link to="/feedrequests"><span>Feed Requests</span></router-link>
+                </a-menu-item>
+                <a-menu-item key="Appointments" v-if="!isVeternary && !isSupplier">
+                    <template #icon>
+                        <v-icon name="gi-stabbed-note" />
+                    </template>
+                    <router-link to="/appointments"><span>Appointments</span></router-link>
                 </a-menu-item>
                 <a-menu-item key="Farmers" v-if="!isSupplier">
                     <template #icon>
@@ -59,7 +65,7 @@
     </div>
 </template>
 <script setup lang='ts'>
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import AdminNavbar from './AdminNavbar.vue';
 import { useAuthStore } from '../store/auth.store';
@@ -72,15 +78,14 @@ const selectedKey = ref("Dashboard");
 const isSupplier = logedInUser.value?.role === userRoles.supplier;
 const isVeternary = logedInUser.value?.role === userRoles.veternary
 
-console.log('user', logedInUser)
-
-// Function to determine the selected key based on the current route
+console.log('selected-key', selectedKey.value)
 const updateSelectedKey = () => {
     const path = route.path;
+    console.log('path-path', path)
     if (path.startsWith('/farmers')) {
         selectedKey.value = "Farmers";
-    } else if (path.startsWith('/fooodrequests')) {
-        selectedKey.value = "Food Requests";
+    } else if (path.startsWith('/feedrequests')) {
+        selectedKey.value = "Feed Requests";
     }
     else if (path.startsWith('/veterinaries')) {
         selectedKey.value = "Veterinaries";
@@ -88,9 +93,17 @@ const updateSelectedKey = () => {
         selectedKey.value = "Suppliers";
     } else if (path.startsWith('/transactions')) {
         selectedKey.value = "Transactions";
-    } else if (path.startsWith('/settings')) {
+    }
+    else if (path.startsWith('/appointments')) {
+        selectedKey.value = "Appointments";
+    }
+    else if (path.startsWith('/settings')) {
         selectedKey.value = "Settings";
-    } else {
+    }
+    else if (path === '/') {
+        selectedKey.value = "Dashboard";
+    }
+    else {
         selectedKey.value = "Dashboard";
     }
 };
@@ -102,9 +115,11 @@ watch(
         updateSelectedKey();
     }
 );
+onMounted(() => {
+    // Initialize on mount
+    updateSelectedKey();
+})
 
-// Initialize on mount
-updateSelectedKey();
 
 const handleMenuClick = (e) => {
     selectedKey.value = e.key;

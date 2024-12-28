@@ -19,7 +19,7 @@
                         </a-form-item>
                         <a-form-item label="Password" name="password"
                             :rules="[{ required: true, message: 'Please enter your password' }]">
-                            <a-input type="password" v-model:value="formState.password" />
+                            <a-input-password v-model:value="formState.password" />
                         </a-form-item>
                         <a href="/forgot-password" class="forgot-password-text">Forgot password</a>
                         <a-form-item>

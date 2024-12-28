@@ -6,8 +6,9 @@ import Settings from "../views/Settings.vue";
 import Suppliers from "../views/Suppliers.vue";
 import Transactions from "../views/Transactions.vue";
 import Veterinaries from "../views/Veterinaries.vue";
-import FarmerDetails from '../views/FarmerDetails.vue'
-import FoodRequests from '../views/FoodRequests.vue'
+import FarmerDetails from "../views/FarmerDetails.vue";
+import FoodRequests from "../views/FoodRequests.vue";
+import AppointmentsCalendar from "../components/AppointmentsCalendar.vue";
 
 const routes = [
 	{
@@ -20,9 +21,14 @@ const routes = [
 				component: Dashboard,
 			},
 			{
-				path: "foodrequests",
-				name: "Food Requests",
+				path: "feedrequests",
+				name: "Feed Requests",
 				component: FoodRequests,
+			},
+			{
+				path: "appointments",
+				name: "Appointments",
+				component: AppointmentsCalendar,
 			},
 			{
 				path: "farmers",

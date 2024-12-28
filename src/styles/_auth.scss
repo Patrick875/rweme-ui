@@ -85,12 +85,13 @@
 
         &:hover {
             background-color: rgba(28, 130, 23, 1);
+            color: white;
         }
     }
 
-    :deep {
-        .ant-input {
-            height: 2.25rem;
-        }
-    }
+    // :deep {
+    //     .ant-input {
+    //         height: 2.5rem;
+    //     }
+    // }
 }

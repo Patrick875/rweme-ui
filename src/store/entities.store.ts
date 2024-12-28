@@ -22,6 +22,9 @@ const defaultState = {
 	sectors: [] as any,
 	cells: [] as any,
 	villages: [] as any,
+	dashboardData: null as any,
+	viewableItemId: null as any,
+	detailsItem: null as any,
 	success: false,
 	successMessage: "",
 	failure: false,
@@ -35,6 +38,18 @@ export const useEntitiesStore = defineStore({
 		...defaultState,
 	}),
 	actions: {
+		async getDashbordData(q: string = "") {
+			this.resetStatuses();
+			const router = useRouter();
+			try {
+				const response = await instance.get(`/dashboard?q=${q}`);
+				this.dashboardData = response.data.data;
+			} catch (err: any) {
+				if (err.response.status === 401 || err.response.status === 403) {
+					router.replace("/login");
+				}
+			}
+		},
 		async getFarmers(q: string = "") {
 			this.resetStatuses();
 			const router = useRouter();
@@ -229,12 +244,15 @@ export const useEntitiesStore = defineStore({
 				notify("error", "Error loging in !!!", err.response.data.message);
 			}
 		},
-		async submitFoodRequest(data: any) {
+		async submitFoodRequest(data: any, userId: string = "") {
 			this.loading = true;
 			try {
 				const response = await instance.post("/foodrequests", data);
 				if (response) {
 					notify("success", "Success", "Request submited !!!");
+				}
+				if (userId !== "") {
+					this.getRequestsByFarmer(userId);
 				}
 				this.getFoodRequests();
 				this.loading = false;
@@ -253,10 +271,19 @@ export const useEntitiesStore = defineStore({
 				console.log("err", error);
 			}
 		},
-		async getRequestsByFarmer(farmerId: string) {
+		async getFoodRequest(reqId: string) {
 			this.resetStatuses();
 			try {
-				const response = await instance.get(`/foodrequests/farmer/${farmerId}`);
+				const response = await instance.get(`/foodrequests/${reqId}`);
+				this.detailsItem = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getRequestsByFarmer(farmerId: string, q: string = "") {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/foodrequests/farmer/${farmerId}?q=${q}`);
 				this.foodrequests = response.data.data;
 			} catch (error) {
 				console.log("err", error);
@@ -305,6 +332,11 @@ export const useEntitiesStore = defineStore({
 			} finally {
 				this.loading = false;
 			}
+		},
+		setViewableItem(itemId: string | null) {
+			console.log("running here");
+
+			this.viewableItemId = itemId;
 		},
 		resetStatuses() {
 			this.success = false;

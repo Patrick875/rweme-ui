@@ -17,8 +17,6 @@
                             :rules="[{ required: true, message: 'Please input your email/telephone!' }]">
                             <a-input type="text" :v-model:value="formState.login" />
                         </a-form-item>
-
-
                         <a-button class='auth-btn'>SUBMIT</a-button>
                     </a-form>
                 </div>

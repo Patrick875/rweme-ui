@@ -69,14 +69,15 @@
         <template v-else-if="column.key === 'status'">
           <span>
             <a-tag
-              :color="record.status === accountStatus.active ? 'success' : [accountStatus.blocked, accountStatus.deleted, accountStatus.inactive].includes(record.status) ? 'error' : 'default'">
+              :color="[accountStatus.active, 'Completed'].includes(record.status) ? 'success' : [accountStatus.blocked, accountStatus.deleted, accountStatus.inactive].includes(record.status) ? 'error' : 'default'">
               {{ record.status.toUpperCase() }}
             </a-tag>
           </span>
         </template>
         <template v-else-if="column.key === 'action'">
           <div class="actions-column">
-            <v-icon v-if="record.isFarmer" @click="onView(record)" class='view-icon-style' name="bi-eye" />
+            <v-icon v-if="record.isFarmer || record.isFoodRequest" @click="onView(record)" class='view-icon-style'
+              name="bi-eye" />
             <div @click="props.handleUpdateAction(record.id)" class="action-icon" data-caption='Edit'>
               <v-icon v-if="record.status == accountStatus.active" class='edit-icon-style ' name="fa-edit" />
             </div>
@@ -130,6 +131,7 @@ import { PropType, ref, watch } from 'vue';
 import { accountStatus } from '../utils/enums';
 import Modal from './Modal.vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useEntitiesStore } from '../store/entities.store';
 interface Column {
   title: string
   dataIndex: string
@@ -144,9 +146,13 @@ interface updateData {
 const router = useRouter();
 const route = useRoute()
 const currentEntity = route.fullPath.substring(1, route.fullPath.length - 1)
-const onView = (record) => {
+const entitiesStore = useEntitiesStore()
+const onView = (record: any) => {
   if (record.isFarmer) {
     router.push(`/farmers/${record.id}`)
+  } else {
+    props.handleViewDetails(record)
+    // entitiesStore.setViewableItem(record.id)
   }
 }
 const deleteTargetItemId = ref<string>('')
@@ -263,6 +269,10 @@ const props = defineProps({
     type: Function,
     default: () => { },
   },
+  handleViewDetails: {
+    type: Function,
+    default: () => { }
+  },
   handleExport: {
     type: Function,
     default: () => { },
@@ -307,7 +317,6 @@ const props = defineProps({
   }
 })
 
-console.log('user-can-delete', props.userCanDelete);
 
 
 </script>
