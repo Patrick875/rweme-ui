@@ -1,5 +1,5 @@
 [build]
-  environment = { NODE_VERSION = "20.x" }
+  environment = { NODE_VERSION = "20.12.0" }
 [[redirects]]
 from="/*"
 to="/index.html"
