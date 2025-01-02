@@ -4,6 +4,7 @@ import { defineStore } from "pinia";
 import instance from "../api";
 import { notify } from "../utils/notify";
 import { useRouter } from "vue-router";
+import { Axios, AxiosError } from "axios";
 
 const defaultState = {
 	farmers: [] as any,
@@ -12,6 +13,7 @@ const defaultState = {
 	veternaries: [] as any,
 	veternary: null as any,
 	specializations: [] as any,
+	appointments: [] as any,
 	suppliers: [] as any,
 	supplier: null as any,
 	selectedFarmerId: "",
@@ -68,9 +70,9 @@ export const useEntitiesStore = defineStore({
 				const response = await instance.get(`/farmers/${farmerId}`);
 				console.log("the response", response);
 				this.farmer = response.data.data;
-			} catch (err) {
+			} catch (err: any) {
 				console.log("err", err);
-				notify("error", "error fetching farmer", err.response.data.message);
+				notify("error", "error fetching farmer", err?.response?.data.message as string);
 			}
 		},
 		async getVeternaries(q: string = "") {
@@ -104,6 +106,15 @@ export const useEntitiesStore = defineStore({
 				this.suppliers = response.data.data;
 			} catch (err) {
 				console.log("err", err);
+			}
+		},
+		async getAppointments(q: string = "") {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/appointments?q=${q}`);
+				this.appointments = response.data.data;
+			} catch (error) {
+				console.log("err", error);
 			}
 		},
 		async getSupplier(id: string) {
@@ -200,7 +211,7 @@ export const useEntitiesStore = defineStore({
 					this.getFarmer(data.farmerId);
 				}
 				notify("success", "Status Recorded", "", "top");
-			} catch (err) {
+			} catch (err: any) {
 				console.log("err", err);
 				notify("error", "Error", err.response.data.message, "top");
 			}
@@ -239,7 +250,7 @@ export const useEntitiesStore = defineStore({
 						state.villages = villages.data.data;
 					});
 				}
-			} catch (err) {
+			} catch (err: any) {
 				console.log("err", err);
 				notify("error", "Error loging in !!!", err.response.data.message);
 			}
@@ -314,7 +325,7 @@ export const useEntitiesStore = defineStore({
 				this.loading = true;
 				const response = await instance.patch(updateUrl, data);
 				notify("success", "Status updated", response.data.message);
-			} catch (error) {
+			} catch (error: any) {
 				console.log("err", error);
 				notify("error", "Failed", error.response.data.message);
 			} finally {

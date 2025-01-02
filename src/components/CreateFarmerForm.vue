@@ -179,8 +179,17 @@
                             @blur="validateAmount" v-model:value="farmerForm.amountOfFeedToBeDelivered" />
                     </a-form-item>
                 </a-col>
-
-
+                <a-col :span="12">
+                    <a-form-item class="label-input-height" label="Supplier" name="supplierId"
+                        :rules="[{ message: 'Please select !!' }]">
+                        <a-select v-model:value="farmerForm.supplierId" :size="'middle'" placeholder="Please select">
+                            <a-select-option disabled value="">Select supplier</a-select-option>
+                            <a-select-option v-for="(supplier) in suppliers" :value="supplier.key"
+                                :key="supplier.key">{{
+                                    supplier.label + ' / ' + supplier.telephone }} </a-select-option>
+                        </a-select>
+                    </a-form-item>
+                </a-col>
             </a-row>
         </a-form>
         <a-divider />
@@ -258,7 +267,8 @@ interface farmerForm {
     districtId: string | null,
     sectorId: string | null,
     cellId: string | null,
-    addressId: string | null
+    addressId: string | null,
+    supplierId: string | null,
     assignedTo: string | null
 }
 
@@ -321,8 +331,13 @@ const veternaries = computed(() => entitiesStore.veternaries.map((item) => ({
     location: item.User.Village.name,
 
 })))
+const suppliers = computed(() => entitiesStore.suppliers.map((el) => ({
+    label: el.User.fullName,
+    key: el.id,
+    telephone: el.User.telephone,
+    ...el,
+})))
 
-console.log('veternaries', veternaries.value)
 
 const loading = ref<boolean>(false);
 const formRef = ref<InstanceType<any> | null>(null)
@@ -345,6 +360,7 @@ const farmerForm = ref<farmerForm>({
     sectorId: null,
     cellId: null,
     addressId: null,
+    supplierId: null,
     assignedTo: null
 })
 
@@ -398,6 +414,7 @@ const createFarmer = async () => {
             districtId: null,
             sectorId: null,
             cellId: null,
+            supplierId: null,
             addressId: null,
             assignedTo: null
 
@@ -485,6 +502,7 @@ entitiesStore.getLocations()
 
         &:hover {
             background-color: rgba(28, 130, 23, 1);
+            color: white
         }
     }
 

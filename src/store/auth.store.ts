@@ -26,7 +26,7 @@ export const useAuthStore = defineStore({
 			this.user = null;
 		},
 	},
-	persist: {
-		enabled: true,
-	},
+	// persist: {
+	// 	enabled: true,
+	// },
 });

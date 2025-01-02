@@ -7,7 +7,10 @@
                 farmer's mobile number
             </p>
             <div class="otp-input-group">
-                <input v-for="(_, index) in 6" :key="index" :ref="el => setInputRef(el, index)"
+                <!-- <input v-for="(_, index) in 6" :key="index" :ref="el => setInputRef(el, index)"
+                    v-model="otpModel[`value${index + 1}`]" type="text" maxlength="1" pattern="\d*" inputmode="numeric"
+                    @input="handleInput(index)" @keydown="handleKeyDown(index)" class="otp-input" /> -->
+                <input v-for="(_, index) in 6" :key="index" :ref="el => setInputRef(el as HTMLInputElement, index)"
                     v-model="otpModel[`value${index + 1}`]" type="text" maxlength="1" pattern="\d*" inputmode="numeric"
                     @input="handleInput(index)" @keydown="handleKeyDown(index)" class="otp-input" />
             </div>
@@ -43,25 +46,33 @@ const props = defineProps({
         default: () => { }
     }
 })
-const otpModel = reactive<OtpModel>({
+// const otpModel = reactive<OtpModel>({
+//     value1: null,
+//     value2: null,
+//     value3: null,
+//     value4: null,
+//     value5: null,
+//     value6: null
+// })
+
+const otpModel = ref<{ [key: string]: string | null }>({
     value1: null,
     value2: null,
     value3: null,
     value4: null,
     value5: null,
-    value6: null
-})
-
-
+    value6: null,
+});
 const loading = ref<boolean>(false)
 
 // Refs for input elements
 const inputRefs = ref<(HTMLInputElement | null)[]>([])
 
 // Set input refs
-const setInputRef = (el: HTMLInputElement | null, index: number) => {
-    inputRefs.value[index] = el
+const setInputRef = (el: Element | null, index: number) => {
+    inputRefs.value[index] = el as HTMLInputElement | null
 }
+
 
 // Computed property to check if OTP is complete
 const isOtpComplete = computed(() => {
