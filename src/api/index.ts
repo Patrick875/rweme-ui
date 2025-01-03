@@ -13,7 +13,7 @@ instance.interceptors.response.use((response) => {
 	const router = useRouter();
 	if (response.status === 403 || response.status === 401) {
 		axios.post(`${localServer}/auth/logout`).then(() => {
-			router.replace("/login");
+			router.replace("/auth/login");
 		});
 	}
 	return response;
