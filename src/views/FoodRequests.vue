@@ -24,10 +24,7 @@
                                 farmer's mobile number
                             </p>
                             <div class="otp-input-group">
-                                <input v-for="(_, index) in 6" :key="index" :ref="el => setInputRef(el, index)"
-                                    v-model="otpModel[`value${index + 1}`]" type="text" maxlength="1" pattern="\d*"
-                                    inputmode="numeric" @input="handleInput(index)" @keydown="handleKeyDown(index)"
-                                    class="otp-input" />
+                                <OTPPad @entered="(v) => otpValue = v" />
                             </div>
                             <a-button class="submit-btn" @click="submitOtp" :loading="loading"
                                 :disabled="!isOtpComplete">
@@ -55,6 +52,7 @@ const isSupplier = computed(() => logedInUser.value?.role === userRoles.supplier
 const viewableItemId = computed(() => entitiesStore.viewableItemId)
 const viewableFoodRequest: any = ref<null>
 const loading = ref<boolean>(false)
+const otpValue = ref('');
 
 if (isSupplier.value) {
     entitiesStore.getRequestsBySupplier(logedInUser.value.Supplier.id)
@@ -133,34 +131,11 @@ const columns = [
     }
 ]
 const supplierColums = columns.filter((el) => el.key !== 'supplierName')
-
-// watch([viewableItemId], async ([newId]) => {
-//     loading.value = true
-//     await instance.get(`/foodrequests/${newId}`).then((res) => {
-//         viewableFoodRequest.value = res.data.data
-//         loading.value = false
-//         isViewFoodRequest.value = true
-//     }).catch((err) => {
-//         loading.value = false
-//         console.log('err', err)
-//     })
-
-// })
-
 const openFoodRequest = (record: any) => {
     viewableFoodRequest.value = record
     isViewFoodRequest.value = true
 }
 
-// OTP Model Interface
-interface OtpModel {
-    value1: string | null
-    value2: string | null
-    value3: string | null
-    value4: string | null
-    value5: string | null
-    value6: string | null
-}
 
 const props = defineProps({
     cancelButton: {
@@ -172,64 +147,18 @@ const props = defineProps({
         default: () => { }
     },
 })
-const otpModel = reactive<OtpModel>({
-    value1: null,
-    value2: null,
-    value3: null,
-    value4: null,
-    value5: null,
-    value6: null
-})
-const inputRefs = ref<(HTMLInputElement | null)[]>([])
 
-// Set input refs
-const setInputRef = (el: HTMLInputElement | null, index: number) => {
-    inputRefs.value[index] = el
-}
-
-// Computed property to check if OTP is complete
 const isOtpComplete = computed(() => {
-    return Object.values(otpModel).every(value => value !== null && value !== '')
+    return otpValue.value.length === 6
 })
 
-// Handle input change
-const handleInput = (index: number) => {
-    const currentKey = `value${index + 1}` as keyof OtpModel
-    const currentValue = otpModel[currentKey]
-
-    // Validate numeric input
-    if (currentValue && !/^\d$/.test(currentValue)) {
-        otpModel[currentKey] = null
-        return
-    }
-
-    // Move to next input if current input is filled
-    if (currentValue && index < 5) {
-        inputRefs.value[index + 1]?.focus()
-    }
-}
-
-// Handle keydown (especially backspace)
-const handleKeyDown = (index: number) => {
-    const event = window.event as KeyboardEvent
-    const currentKey = `value${index + 1}` as keyof OtpModel
-
-    // Move to previous input on backspace if current input is empty
-    if (event.key === 'Backspace' && !otpModel[currentKey] && index > 0) {
-        inputRefs.value[index - 1]?.focus()
-    }
-}
 
 const submitOtp = async () => {
-    console.log('loging logs');
-
     loading.value = true
-    const otpCode = Object.values(otpModel)
-        .map(value => value || '')
-        .join('')
-    if (otpCode.length === 6 && /^\d{6}$/.test(otpCode)) {
+
+    if (otpValue.value.length === 6 && /^\d{6}$/.test(otpValue.value)) {
         try {
-            const response = await instance.post('/foodrequests/comfirmdelivery', { otp: otpCode, requestId: viewableFoodRequest.value.id })
+            const response = await instance.post('/foodrequests/comfirmdelivery', { otp: otpValue.value, requestId: viewableFoodRequest.value.id })
             notify('success', 'Success', response.data.message)
             setTimeout(() => {
                 props.cancelButton()
@@ -244,19 +173,13 @@ const submitOtp = async () => {
             }, 3500)
         } finally {
             entitiesStore.getFoodRequests()
-            otpModel.value1 = null;
-            otpModel.value2 = null;
-            otpModel.value3 = null;
-            otpModel.value4 = null;
-            otpModel.value5 = null;
-            otpModel.value6 = null;
+            otpValue.value = ''
         }
     } else {
         console.error('Invalid OTP')
     }
     loading.value = false
 }
-
 
 </script>
 <style scoped lang="scss">

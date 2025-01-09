@@ -444,7 +444,8 @@ watch(
 entitiesStore.getTypesOfChicken()
 entitiesStore.getTypesOfFeed()
 entitiesStore.getLocations()
-
+entitiesStore.getVeternaries()
+entitiesStore.getSuppliers()
 </script>
 
 <style scoped lang="scss">

@@ -7,7 +7,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AAlert: typeof import('ant-design-vue/es')['Alert']
     AButton: typeof import('ant-design-vue/es')['Button']
     ACol: typeof import('ant-design-vue/es')['Col']
     AddFarmStatusModel: typeof import('./src/components/AddFarmStatusModel.vue')['default']
@@ -25,7 +24,6 @@ declare module 'vue' {
     ASelect: typeof import('ant-design-vue/es')['Select']
     ASelectOption: typeof import('ant-design-vue/es')['SelectOption']
     ASpace: typeof import('ant-design-vue/es')['Space']
-    ASteps: typeof import('ant-design-vue/es')['Steps']
     ATable: typeof import('ant-design-vue/es')['Table']
     ATabPane: typeof import('ant-design-vue/es')['TabPane']
     ATabs: typeof import('ant-design-vue/es')['Tabs']
@@ -37,7 +35,6 @@ declare module 'vue' {
     CreateFarmerForm: typeof import('./src/components/CreateFarmerForm.vue')['default']
     CreateSupplier: typeof import('./src/components/CreateSupplier.vue')['default']
     CreateVeternary: typeof import('./src/components/CreateVeternary.vue')['default']
-    CreateVeternaryForm: typeof import('./src/components/CreateVeternaryForm.vue')['default']
     DashboardBarChart: typeof import('./src/components/DashboardBarChart.vue')['default']
     DashboardPie: typeof import('./src/components/DashboardPie.vue')['default']
     EventsCalendar: typeof import('./src/components/EventsCalendar.vue')['default']
@@ -45,9 +42,9 @@ declare module 'vue' {
     FarmerCreateCompletion: typeof import('./src/components/farmer-create-completion.vue')['default']
     FoodRequestDetailsModal: typeof import('./src/components/FoodRequestDetailsModal.vue')['default']
     FoodRequestModal: typeof import('./src/components/FoodRequestModal.vue')['default']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     Logo: typeof import('./src/components/logo.vue')['default']
     Modal: typeof import('./src/components/Modal.vue')['default']
+    OTPPad: typeof import('./src/components/OTPPad.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Table: typeof import('./src/components/Table.vue')['default']
