@@ -33,7 +33,7 @@ const submit = async () => {
         await instance.post('/auth/initiateForgotPassword', { login: formState.value.auth }).then((res) => {
             notify('success', 'Success !!!', res.data.message)
             setTimeout(() => {
-                router.replace('/login')
+                router.replace('/auth/login')
             }, 4000);
         })
     } catch (error: any) {

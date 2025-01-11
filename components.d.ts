@@ -28,6 +28,7 @@ declare module 'vue' {
     ATabPane: typeof import('ant-design-vue/es')['TabPane']
     ATabs: typeof import('ant-design-vue/es')['Tabs']
     ATag: typeof import('ant-design-vue/es')['Tag']
+    ATextarea: typeof import('ant-design-vue/es')['Textarea']
     AuthLayout: typeof import('./src/components/AuthLayout.vue')['default']
     BackButton: typeof import('./src/components/BackButton.vue')['default']
     ComfirmOTP: typeof import('./src/components/ComfirmOTP.vue')['default']

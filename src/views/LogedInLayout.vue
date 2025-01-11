@@ -18,7 +18,7 @@
                     </template>
                     <router-link to="/feedrequests"><span>Feed Requests</span></router-link>
                 </a-menu-item>
-                <a-menu-item key="Appointments" v-if="!isVeternary && !isSupplier">
+                <a-menu-item key="Appointments" v-if="!isSupplier">
                     <template #icon>
                         <v-icon name="gi-stabbed-note" />
                     </template>
@@ -42,7 +42,7 @@
                     </template>
                     <router-link to="/suppliers">All Suppliers</router-link>
                 </a-menu-item>
-                <a-menu-item key="Transactions" v-if="!isVeternary && !isSupplier">
+                <a-menu-item key="Transactions" v-if="!isVeternary">
                     <template #icon>
                         <v-icon name="si-cashapp" />
                     </template>
@@ -78,7 +78,6 @@ const selectedKey = ref("Dashboard");
 const isSupplier = logedInUser.value?.role === userRoles.supplier;
 const isVeternary = logedInUser.value?.role === userRoles.veternary
 
-console.log('selected-key', selectedKey.value)
 const updateSelectedKey = () => {
     const path = route.path;
     console.log('path-path', path)

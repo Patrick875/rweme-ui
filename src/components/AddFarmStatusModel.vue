@@ -7,6 +7,18 @@
                     :wrapper-col="{ span: 24 }" autocomplete="off">
                     <a-row :gutter="16">
                         <a-col :span="12">
+                            <a-form-item v-if="props.byVeternary" class="label-input-height" label="Farmer"
+                                name="farmerId" :rules="[{ message: 'Please select farmer' }]">
+                                <a-select class="input" type="text" placeholder="Select farmer"
+                                    v-model:value="farmStatus.farmerId">
+                                    <a-select-option v-for="(farmer, index) in vetFarmers" :key="index"
+                                        :value="farmer.key">
+                                        {{ farmer.fullName }}
+                                    </a-select-option>
+                                </a-select>
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="12">
                             <a-form-item class="label-input-height" label="Number of Chicken" name="numberOfChicken"
                                 :rules="[{ message: 'Please input a valid number' }]">
                                 <a-input class="input" type="number" placeholder="Enter the number of chicken"
@@ -59,11 +71,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useEntitiesStore } from '../store/entities.store';
 
 
 interface farmStatus {
+    farmerId: string | null
     numberOfChicken: string | null
     amountOfFeedOnDailyBasisPerChicken: string | null
     hasInsurance: string
@@ -71,8 +84,15 @@ interface farmStatus {
 }
 
 const entitiesStore = useEntitiesStore()
+
+const vetFarmers = computed(() => entitiesStore.vetFarmers?.map(el => ({
+    label: el.fullName,
+    key: el.id,
+    ...el,
+})));
 const loading = ref<boolean>(false)
 const farmStatus = {
+    farmerId: null,
     numberOfChicken: null,
     amountOfFeedOnDailyBasisPerChicken: null,
     hasInsurance: '',
@@ -87,6 +107,10 @@ const props = defineProps({
         type: Function,
         default: () => { }
     },
+    byVeternary: {
+        type: String || null,
+        default: null
+    },
     farmerId: {
         type: String,
     },
@@ -94,9 +118,12 @@ const props = defineProps({
         type: String,
     }
 })
+if (props.byVeternary) {
+    entitiesStore.getFarmersAssignedToVet(props.byVeternary)
+}
 const addStatus = async () => {
     loading.value = true
-    const submitData = { ...farmStatus, farmerId: props.farmerId, chickenTypeId: props.chickenTypeId }
+    const submitData = { ...farmStatus, farmerId: props.farmerId ? props.farmerId : farmStatus.farmerId, chickenTypeId: props.chickenTypeId }
     try {
         await entitiesStore.addFarmStatus(submitData);
     } catch (error) {

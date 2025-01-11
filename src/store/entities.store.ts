@@ -14,6 +14,9 @@ const defaultState = {
 	veternary: null as any,
 	specializations: [] as any,
 	appointments: [] as any,
+	farmerAppointments: [] as any,
+	vetFarmers: [] as any,
+	veternaryvisits: [] as any,
 	suppliers: [] as any,
 	supplier: null as any,
 	selectedFarmerId: "",
@@ -27,6 +30,7 @@ const defaultState = {
 	dashboardData: null as any,
 	viewableItemId: null as any,
 	detailsItem: null as any,
+	transactions: [] as any,
 	success: false,
 	successMessage: "",
 	failure: false,
@@ -48,7 +52,7 @@ export const useEntitiesStore = defineStore({
 				this.dashboardData = response.data.data;
 			} catch (err: any) {
 				if (err.response.status === 401 || err.response.status === 403) {
-					router.replace("/login");
+					router.replace("/auth/login");
 				}
 			}
 		},
@@ -60,8 +64,17 @@ export const useEntitiesStore = defineStore({
 				this.farmers = response.data.data;
 			} catch (err: any) {
 				if (err.response.status === 401 || err.response.status === 403) {
-					router.replace("/login");
+					router.replace("/auth/login");
 				}
+			}
+		},
+		async getFarmersAssignedToVet(vetId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/farmers/veternary/${vetId}`);
+				this.vetFarmers = response.data.data;
+			} catch (error) {
+				console.log("err", error);
 			}
 		},
 		async getFarmer(farmerId: string) {
@@ -113,6 +126,24 @@ export const useEntitiesStore = defineStore({
 			try {
 				const response = await instance.get(`/appointments?q=${q}`);
 				this.appointments = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getAppointmentsByVet(vetId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/appointments/veternary/${vetId}`);
+				this.appointments = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getAppointmentsByFarmer(farmerId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/appointments/farmer/${farmerId}`);
+				this.farmerAppointments = response.data.data;
 			} catch (error) {
 				console.log("err", error);
 			}
@@ -255,17 +286,18 @@ export const useEntitiesStore = defineStore({
 				notify("error", "Error loging in !!!", err.response.data.message);
 			}
 		},
-		async submitFoodRequest(data: any, userId: string = "") {
+		async submitFoodRequest(data: any, farmerId: string = "") {
 			this.loading = true;
 			try {
 				const response = await instance.post("/foodrequests", data);
 				if (response) {
 					notify("success", "Success", "Request submited !!!");
 				}
-				if (userId !== "") {
-					this.getRequestsByFarmer(userId);
+				if (farmerId !== "") {
+					this.getRequestsByFarmer(farmerId);
+				} else {
+					this.getFoodRequests();
 				}
-				this.getFoodRequests();
 				this.loading = false;
 			} catch (error) {
 				this.loading = false;
@@ -305,6 +337,51 @@ export const useEntitiesStore = defineStore({
 			try {
 				const response = await instance.get(`/foodrequests/supplier/${supplierId}?q=${q}`);
 				this.foodrequests = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getAllVeternaryVisits() {
+			this.resetStatuses();
+			try {
+				const response = await instance.get("/farmstatus");
+				this.veternaryvisits = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getVeternaryVisitsByVet(vetId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/farmstatus/veternary/${vetId}`);
+				this.veternaryvisits = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getAllTransactions() {
+			this.resetStatuses();
+			try {
+				const response = await instance.get("/transactions");
+				this.transactions = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getAllTransactionsByFarmer(farmerId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/transactions/farmer/${farmerId}`);
+				this.transactions = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getAllTransactionsBySupplier(supplierId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/transactions/supplier/${supplierId}`);
+				this.transactions = response.data.data;
 			} catch (error) {
 				console.log("err", error);
 			}

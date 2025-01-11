@@ -44,7 +44,7 @@ const accountComfirm = async (values: FormState) => {
     try {
         await comfirmAccount(values).then(() => {
             setTimeout(() => {
-                router.replace('/login')
+                router.replace('/auth/login')
             }, 4000);
         })
     } catch (error) {

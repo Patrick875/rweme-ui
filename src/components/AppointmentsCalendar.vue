@@ -1,42 +1,24 @@
 <template>
 	<div>
-		<!-- <ScheduleXCalendar :calendar-app="calendarApp" /> -->
-		<!-- <events-calendar :events="appointments"></events-calendar> -->
-		<div class="demo-app">
-			<!-- <div class='demo-app-sidebar'>
-            <div class='demo-app-sidebar-section'>
-                <h2>Instructions</h2>
-                <ul>
-                    <li>Select dates and you will be prompted to create a new event</li>
-                    <li>Drag, drop, and resize events</li>
-                    <li>Click an event to delete it</li>
-                </ul>
-            </div>
-            <div class='demo-app-sidebar-section'>
-                <label>
-                    <input type='checkbox' :checked='calendarOptions.weekends' @change='handleWeekendsToggle' />
-                    toggle weekends
-                </label>
-            </div>
-            <div class='demo-app-sidebar-section'>
-                <h2>All Events ({{ currentEvents.length }})</h2>
-                <ul>
-                    <li v-for='event in currentEvents' :key='event.id'>
-                        <b>{{ event.startStr }}</b>
-                        <i>{{ event.title }}</i>
-                    </li>
-                </ul>
-            </div>
-        </div> -->
-			<div class="demo-app-main">
-				<FullCalendar :ref="calendarRef" class="demo-app-calendar" :options="calendarOptions">
-					<template v-slot:eventContent="arg">
-						<b>{{ arg.timeText }}</b>
-						<i>{{ arg.event.title }}</i>
-					</template>
-				</FullCalendar>
-			</div>
-		</div>
+		<a-tabs v-model:activeKey="activeKey">
+			<a-tab-pane key="1" tab="Veternary visits">
+				<Table :data="veternaryVisits" :title="'Visits'" :length="veternaryVisits.length.toString()"
+					:columns="columns" :handle-table-search="searchVisit"
+					:handlePrimaryButtonClicks="() => isRecordVisit = true" :btn-name="'Record Visit '" />
+			</a-tab-pane>
+			<a-tab-pane key="2" tab="Calendar">
+				<div class="demo-app">
+					<div class="demo-app-main">
+						<FullCalendar :ref="calendarRef" class="demo-app-calendar" :options="calendarOptions">
+							<template v-slot:eventContent="arg">
+								<b>{{ arg.timeText }}</b>
+								<i>{{ arg.event.title }}</i>
+							</template>
+						</FullCalendar>
+					</div>
+				</div>
+			</a-tab-pane>
+		</a-tabs>
 	</div>
 	<div>
 		<Modal :isOpen="showEventDetails" @modal-close="() => (showEventDetails = false)" mainHeader="EVENT DETAILS"
@@ -81,6 +63,9 @@
 							<p class="item-title">Times reschedued</p>
 							<p>{{ viewableEvent.reschedules }}</p>
 						</div>
+						<div class="item-block">
+
+						</div>
 						<div v-if="viewableEvent.reschedules > 0">
 							<p class="item-title">Past Dates</p>
 							<p v-for="(item, i) in viewableEvent.dates" :key="i">{{ new
@@ -137,6 +122,29 @@
 							<p class="item-title">Times reschedued</p>
 							<p>{{ viewableEvent.reschedules }}</p>
 						</div>
+						<div v-if="viewableEvent.AppointmentReschedures.length !== 0">
+							<p class="item-title" style="padding-top:0.25em">Appointment reschedules</p>
+							<div class="reschedules-block"
+								v-for="(reschedule, index) in viewableEvent.AppointmentReschedures" :key="index">
+								<p class="item-title">Reschedule {{ index + 1 }}</p>
+								<div class="item-block">
+									<p class="item-title">Prev date</p>
+									<p>{{ new Date(reschedule.oldDate).toLocaleDateString('fr-FR') }}</p>
+								</div>
+								<div class="item-block">
+									<p class="item-title">New date</p>
+									<p>{{ new Date(reschedule.newDate).toLocaleDateString('fr-FR') }}</p>
+								</div>
+								<div style='margin-block:0.75em'>
+									<p class="item-title">Reason</p>
+									<p>{{ reschedule.comment }}</p>
+								</div>
+								<div class="item-block">
+									<p class="item-title">Done By</p>
+									<p>{{ reschedule?.Veternary.User?.fullName }}</p>
+								</div>
+							</div>
+						</div>
 						<div v-if="viewableEvent.reschedules > 0">
 							<p class="item-title">Past Dates</p>
 							<p v-for="(item, i) in viewableEvent.dates" :key="i">{{ new
@@ -157,6 +165,9 @@
 			:width="'550px'">
 			<template #content>
 				<div>
+					<div>
+						<a-textarea class="input" v-model:value="reschedureComment" />
+					</div>
 					<div class="double-form-btn">
 						<a-button class="cancel-form-btn" @click="() => (isEventDateChanged = false)" danger
 							html-type="button">CLOSE</a-button>
@@ -165,6 +176,9 @@
 				</div>
 			</template>
 		</Modal>
+		<AddFarmStatusModel :isToggleAddStatusModal="isRecordVisit" :byVeternary="vetId"
+			:cancelButton="() => isRecordVisit = false" farmerId="d3c1e14e-94c1-4481-97e1-bcc6041bad49"
+			chickenTypeId="feb9f9a6-eced-4db4-be58-5cc390016d6e" />
 	</div>
 </template>
 
@@ -177,21 +191,85 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { useEntitiesStore } from "../store/entities.store";
 import instance from "../api";
 import { notify } from "../utils/notify";
+import { useAuthStore } from "../store/auth.store";
+import { userRoles } from "../utils/enums";
 
+const authStore = useAuthStore()
+const logedInUser = computed(() => authStore.user)
+const isVeternary = logedInUser.value?.role === userRoles.veternary
+const vetId = logedInUser.value.Veternary?.id || null
 const entitiesStore = useEntitiesStore();
-entitiesStore.getAppointments();
+if (!isVeternary) {
+	entitiesStore.getAppointments();
+	entitiesStore.getAllVeternaryVisits()
+} else {
+	entitiesStore.getAppointmentsByVet(logedInUser.value.Veternary.id)
+	entitiesStore.getVeternaryVisitsByVet(logedInUser.value.id)
+}
 
 const currentDate = new Date();
+const reschedureComment = ref('')
 const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}-${String(currentDate.getDate()).padStart(
 	2,
 	"0"
 )}`;
 const viewableEvent = ref<any>(null);
-const getAppoints = computed(() => entitiesStore.appointments);
+const veternaryVisits = computed(() => entitiesStore?.veternaryvisits.map((el) => ({
+	chickenType: el.TypeOfChicken?.name.toUpperCase(),
+	numberOfChicken: el.numberOfChicken,
+	chickenHealthCondition: el.chickenHealth,
+	amountOfFeedOnDailyBasisPerChicken: el.amountOfFeedOnDailyBasisPerChicken,
+	hasInsurance: el.hasInsurance ? 'YES' : 'NO',
+	recordedBy: el.collectedBy ? el.collectedBy.fullName : 'N/A',
+	recordedOn: new Date(el.recordedOn).toLocaleDateString('fr-FR')
+})));
+const columns = [
+	{
+		title: 'Type Of Chicken',
+		dataIndex: 'chickenType',
+		key: 'chickenType'
+	},
+	{
+		title: 'Number Of Chicken',
+		dataIndex: 'numberOfChicken',
+		key: 'numberOfChicken'
+	},
+	{
+		title: 'Chicken health condition',
+		dataIndex: 'chickenHealthCondition',
+		key: 'chickenHealthCondition'
+	},
+	{
+		title: 'Has Insurance',
+		dataIndex: 'hasInsurance',
+		key: 'hasInsurance'
+	},
+	{
+		title: 'Amount of feed/chicken/day',
+		dataIndex: 'amountOfFeedOnDailyBasisPerChicken',
+		key: 'amountOfFeedOnDailyBasisPerChicken'
+	},
+	{
+		title: 'Recorded By',
+		dataIndex: 'recordedBy',
+		key: 'recordedBy'
+	},
+	{
+		title: 'Recorded on',
+		dataIndex: 'recordedOn',
+		key: 'recordedOn'
+	}
+
+]
+const searchVisit = ref<string>("");
+const isRecordVisit = ref<boolean>(false)
 const appointments = ref<any[]>([]);
 const calendarRef = ref<any>(null);
+
 const processedEventIds = new Set();
 const isLoadingEvent = ref<boolean>(false);
+
+const activeKey = ref('1');
 
 const showEventDetails = ref<boolean>(false);
 const selectedEvent = ref<string>("");
@@ -203,30 +281,6 @@ const handleEventClicked = (eventInfo: any) => {
 	showEventDetails.value = true;
 	selectedEvent.value = eventInfo.event.id;
 };
-
-// watchEffect(() => {
-// 	if (getAppoints.value) {
-
-// 		appointments.value = getAppoints.value.filter((ev)=>!processedEventIds.has(ev.id)).map((ev: any) => {
-// 			processedEventIds.add(ev.id);
-// 			const eventDate = new Date(ev.dates[ev.dates.length - 1]);
-// 			const start = new Date(eventDate.setHours(9, 0, 0)); // Start at 9:00 AM
-// 			const end = new Date(eventDate.setHours(10, 0, 0)); // End at 10:00 AM
-
-// 			return {
-// 				id: ev.id.toString(),
-// 				title: "Veterinary Visit",
-// 				start: start.toISOString(),
-// 				end: end.toISOString(),
-// 				// people: [ev.Farmer.fullName, ev.Veternary.User.fullName],
-// 			};
-// 		});
-
-// 		// additionalEvents.forEach((event) => {
-// 		//     calendarApp.events.add(event);
-// 		// });
-// 	}
-// });
 
 let eventGuid = 0;
 let todayStr = new Date().toISOString().replace(/T.*$/, ""); // YYYY-MM-DD of today
@@ -259,24 +313,6 @@ const handleDateSelect = (selectInfo) => {
 const handleEvents = (events) => {
 	currentEvents.value = events;
 };
-// const handleEventDateUpdate = async (changeInfo: any) => {
-// 	const { event } = changeInfo;
-
-// 	try {
-// 		const updateEvent = {
-// 			id: event.id,
-// 			date: event.start?.toISOString(),
-// 		};
-// 		const response = await instance.patch(`/appointments/reschedure/${updateEvent.id}`, { date: updateEvent.date });
-// 		if (response.status === 200) {
-// 			entitiesStore.getAppointments()
-// 		} else {
-// 			event.revert();
-// 		}
-// 	} catch (error) {
-// 		changeInfo.revert();
-// 	}
-// };
 
 const handleEventDateUpdate = async (changeInfo: any) => {
 	const { event } = changeInfo;
@@ -286,22 +322,16 @@ const handleEventDateUpdate = async (changeInfo: any) => {
 			id: event.id,
 			date: event.start?.toISOString(),
 		};
-		const response = await instance.patch(`/appointments/reschedure/${updateEvent.id}`, { date: updateEvent.date });
+		const response = await instance.patch(`/appointments/reschedure/${updateEvent.id}`, { date: updateEvent.date, comment: reschedureComment.value });
 		if (response.status === 203) {
-			entitiesStore.getAppointments();
 			notify('success', 'Success', `Appointment successfuly moved to ${new Date(event.start).toLocaleDateString('fr-FR')}`)
-			// Refresh appointments after successful update
-			await instance.get('/appointments/').then((res) => {
-				const newEvents = res.data.data.map((event) => ({
-					id: event.id.toString(),
-					title: "Veterinary Visit",
-					start: new Date(event.dates[event.dates.length - 1]).toISOString(),
-					end: new Date(new Date(event.dates[event.dates.length - 1]).setHours(10, 0, 0)).toISOString(),
-				}));
-
-			})
+			if (!isVeternary) {
+				entitiesStore.getAppointments();
+			} else {
+				entitiesStore.getAppointmentsByVet(logedInUser.value.Veternary.id)
+			}
 		} else {
-			changeInfo.revert(); // Revert event if the API response is not successful
+			changeInfo.revert();
 			notify('error', 'Error', 'Error moving appointment !!!')
 
 		}
@@ -347,7 +377,7 @@ const calendarOptions = {
 	initialEvents: appointments.value, // alternatively, use the `events` setting to fetch from a feed
 	events: async (fetchInfo, successCallback, failureCallback) => {
 		try {
-			const response = await instance.get("/appointments");
+			const response = await instance.get(`/appointments/veternary/${logedInUser.value.Veternary.id}`);
 			const events = response.data.data.map((event) => ({
 				id: event.id.toString(),
 				title: "Veterinary Visit",
@@ -371,11 +401,6 @@ const calendarOptions = {
 	eventClick: handleEventClicked,
 	eventsSet: handleEvents,
 	eventChange: handleEventChange,
-	/* you can update a remote database when these fire:
-				eventAdd:
-				eventChange:
-				eventRemove:
-				*/
 };
 
 watch(selectedEvent, async (newId) => {
@@ -409,6 +434,11 @@ p {
 
 .item-title {
 	font-weight: bold;
+}
+
+.reschedules-block {
+	margin-block: 1em;
+	padding-inline: 1em;
 }
 
 .double-form-btn {

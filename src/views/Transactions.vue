@@ -21,9 +21,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useEntitiesStore } from '../store/entities.store';
 
 const activeKey = ref('1');
+
+const entitiesStore = useEntitiesStore();
+entitiesStore.getAllTransactions()
+
+const transactions = computed(() => entitiesStore.transactions.map((el) => ({
+    id: el.transactionId,
+    date: new Date(el.createdAt).toLocaleString('fr-FR'),
+    feedRequestId: el.foodRequestId,
+    farmerName: el?.Farmer?.fullName,
+    supplierName: el?.Supplier?.User?.fullName,
+    amount: el.amount,
+    status: el.status
+
+})))
 
 const columns = [
     {
@@ -68,35 +83,37 @@ const columns = [
         slots: { customRender: 'action' }
     }
 ]
-const transactions = [
-    {
-        id: 1,
-        date: '2023-12-19',
-        feedRequestId: 1,
-        farmerName: 'John Doe',
-        supplierName: 'Jane Doe',
-        amount: 1000,
-        status: 'Pending'
-    },
-    {
-        id: 2,
-        date: '2023-12-20',
-        feedRequestId: 2,
-        farmerName: 'John Doe',
-        supplierName: 'Jane Doe',
-        amount: 2000,
-        status: 'Completed'
-    },
-    {
-        id: 3,
-        date: '2023-12-21',
-        feedRequestId: 3,
-        farmerName: 'John Doe',
-        supplierName: 'Jane Doe',
-        amount: 3000,
-        status: 'Pending'
-    }
-]
+
+// const transactions = [
+//     {
+//         id: 1,
+//         date: '2023-12-19',
+//         feedRequestId: 1,
+//         farmerName: 'John Doe',
+//         supplierName: 'Jane Doe',
+//         amount: 1000,
+//         status: 'Pending'
+//     },
+//     {
+//         id: 2,
+//         date: '2023-12-20',
+//         feedRequestId: 2,
+//         farmerName: 'John Doe',
+//         supplierName: 'Jane Doe',
+//         amount: 2000,
+//         status: 'Completed'
+//     },
+//     {
+//         id: 3,
+//         date: '2023-12-21',
+//         feedRequestId: 3,
+//         farmerName: 'John Doe',
+//         supplierName: 'Jane Doe',
+//         amount: 3000,
+//         status: 'Pending'
+//     }
+// ]
+
 </script>
 
 <style scoped></style>

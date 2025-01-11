@@ -44,6 +44,7 @@ const farmers = computed(() =>
         ...item,
         isFarmer: true,
         location: item.Village?.name,
+        veternaryInCharge: item.Veternary.User.fullName,
         key: item.id,
     }))
 );
