@@ -1,7 +1,10 @@
 <template>
-    <a-space class="admin-navbar">
-        <p>{{ route.name }}</p>
-        <a-dropdown>
+    <div class="admin-navbar">
+        <div class="admin-navbar--left">
+            <v-icon v-if="isSmallScreen" @click="openMobileNav" class='menu-btn' name="co-hamburger-menu" />
+            <p style="padding-left:0.75em">{{ route.name }}</p>
+        </div>
+        <a-dropdown v-if="!isSmallScreen">
             <template #overlay>
                 <a-menu>
                     <a-menu-item key="1" @click="handleMenuClick">Profile</a-menu-item>
@@ -14,7 +17,20 @@
                 {{ loggedInUser?.fullName ? loggedInUser?.fullName : 'Admin' }}
             </a-button>
         </a-dropdown>
-    </a-space>
+        <div v-else>
+            <a-button @click="openProfileNav" class="avatar-button">
+                <v-icon name="hi-solid-user-circle" />
+                {{ loggedInUser?.fullName ? loggedInUser?.fullName : 'Admin' }}
+            </a-button>
+        </div>
+        <div v-if="showMobileNav" class="mobile-sidenav">
+            <sidebar-nav :closeNav="closeMobileNav" />
+        </div>
+        <div v-if="showProfileNav" class="mobile-profile-nav">
+            <profile-nav :closeNav="closeProfileNav" :logout="logout" :loggedInUser="loggedInUser"
+                :openChangePasswordModel="openChangePasswordModel" />
+        </div>
+    </div>
     <Modal :width="'550px'" :isOpen="openChangePassword" @modal-close="() => openChangePassword = false"
         main-header="Change password" subheader="Fill the form to change the password">
 
@@ -47,15 +63,18 @@ import { useAuthStore } from '../store/auth.store';
 import instance from '../api';
 import { notify } from '../utils/notify';
 import { Form } from 'ant-design-vue';
+import { useScreenSize } from '../utils/useScreenSize';
 
 const { loggedInUser, logoutUser } = useAuthStore();
-
-console.log('logged-in-user', loggedInUser)
+const { isSmallScreen } = useScreenSize()
 
 const route = useRoute()
 const router = useRouter()
 const openChangePassword = ref<boolean>(false)
 const changePasswordLoading = ref<boolean>(false)
+const openChangePasswordModel = () => {
+    openChangePassword.value = true
+}
 interface IchangePassword {
     oldPassword: string;
     newPassword: string;
@@ -72,6 +91,7 @@ const logout = () => {
     logoutUser();
     router.replace('/auth/login')
 }
+
 const changePassword = async () => {
     changePasswordLoading.value = true
     await instance.patch('/auth/changePassword', { ...changePasswordForm.value }).then(() => {
@@ -104,6 +124,21 @@ const { resetFields } = Form.useForm(changePasswordForm, {
         { validator: validateConfirmPassword }
     ]
 });
+const showMobileNav = ref(false)
+const showProfileNav = ref(false);
+const openProfileNav = () => {
+    showProfileNav.value = true
+}
+const closeProfileNav = () => {
+    showProfileNav.value = false
+}
+const closeMobileNav = () => {
+    showMobileNav.value = false
+}
+const openMobileNav = () => {
+    showMobileNav.value = true
+    console.log('here-here-nav', showMobileNav.value);
+}
 
 const handleMenuClick = () => {
     console.log('menu clicked')
@@ -114,6 +149,7 @@ const handleMenuClick = () => {
 
 <style scoped lang="scss">
 .admin-navbar {
+    position: relative;
     height: 3.75em;
     background-color: rgba(28, 130, 23, 0.68);
     color: white;
@@ -122,7 +158,8 @@ const handleMenuClick = () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 4px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
     font-size: 0.875em;
 }
 
@@ -162,5 +199,26 @@ const handleMenuClick = () => {
         background-color: rgb(30, 144, 255, 1);
         color: white;
     }
+}
+
+.menu-btn {
+    width: 1.8em;
+    height: 1.8em
+}
+
+.admin-navbar--left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mobile-sidenav,
+.mobile-profile-nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 10;
+    width: 100vw;
+    height: 100vh
 }
 </style>
