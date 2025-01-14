@@ -162,14 +162,26 @@ entitiesStore.getDashbordData();
 
 }
 
-.dash-statistics,
+.dash-statistics {
+    display: flex;
+    flex-wrap: wrap;
+    flex-grow: 1;
+}
+
 .dash-graphs {
     display: flex;
+
+    @media(max-width:800px) {
+        display: block;
+    }
+}
+
+.dash-statistics,
+.dash-graphs {
     width: 100%;
     gap: 1.45em;
-    // flex-flow: wrap;
     margin-bottom: 1.75em;
-
+    font-size: 0.75rem;
 }
 
 .dash-card {
@@ -207,5 +219,9 @@ entitiesStore.getDashbordData();
 .dash-histogram {
     width: 50%;
     background-color: white;
+
+    @media(max-width:800px) {
+        width: 100%;
+    }
 }
 </style>

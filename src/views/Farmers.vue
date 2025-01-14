@@ -4,20 +4,20 @@
             :loading="loading" :handleTableSearch="handleSearch" :handlePrimaryButtonClicks="handleCreateFarmer"
             :btn-name="'Add new farmer'" :columns="columns" :handleDeleteItem="deleteFarmer" />
         <Modal :isOpen="isToggleCreateFarmer" @modal-close="closeCreateFarmerModal" mainHeader="CREATE FARMER"
-            subHeader="Fill the details to create a new farmer" :width="'550px'">
+            subHeader="Fill the details to create a new farmer" :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
                 <create-farmer-form :onComplete="next" :cancelButton="closeCreateFarmerModal"></create-farmer-form>
             </template>
         </Modal>
         <Modal :isOpen="isToggleSignContract" @modal-close="closeCloseContractSignModal" mainHeader="SIGN CONTRACT"
-            subHeader="click sign to sign the contract " :width="'650px'">
+            subHeader="click sign to sign the contract " :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
                 <farmer-contract :loading="loading" :cancelButton="closeCloseContractSignModal"
                     :sign="handleFarmerContract"></farmer-contract>
             </template>
         </Modal>
         <Modal :isOpen="isToggleComfirmFarmer" @modal-close="closeComfirmFarmerModal" mainHeader="" subHeader=""
-            :width="'550px'">
+            :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
                 <ComfirmOTP :next="next" :cancelButton="closeComfirmFarmerModal"></ComfirmOTP>
             </template>
@@ -32,7 +32,9 @@ import Table from '../components/Table.vue';
 import { useEntitiesStore } from '../store/entities.store';
 import { useAuthStore } from '../store/auth.store';
 import { userRoles } from '../utils/enums';
+import { useScreenSize } from '../utils/useScreenSize';
 
+const { isSmallScreen } = useScreenSize()
 const loading = ref<boolean>(false);
 const entitiesStore = useEntitiesStore();
 const authStore = useAuthStore();

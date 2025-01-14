@@ -1,7 +1,8 @@
 <template>
     <div>
         <Modal :isOpen="props.isToggleFoodRequestModal" @modal-close="props.cancelButton" mainHeader="FOOD REQUEST"
-            subHeader="Please provide the following details to submit a food request" :width="'550px'">
+            subHeader="Please provide the following details to submit a food request"
+            :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
                 <div v-if="!props.loading && props.viewableFoodRequest">
                     <div class="fd-req-detail">
@@ -49,12 +50,13 @@ import { ref, onMounted, computed } from 'vue';
 import { useEntitiesStore } from '../store/entities.store';
 import instance from '../api';
 import { useAuthStore } from '../store/auth.store';
+import { useScreenSize } from '../utils/useScreenSize';
 
 const authStore = useAuthStore();
 const logedInUser = computed(() => authStore.user)
 const userRole = logedInUser.value?.role
 
-// const entitiesStore = useEntitiesStore()
+const { isSmallScreen } = useScreenSize()
 
 
 const loading = ref<boolean>(false)

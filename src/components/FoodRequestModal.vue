@@ -1,12 +1,13 @@
 <template>
     <div>
         <Modal :isOpen="props.isToggleFoodRequestModal" @modal-close="props.cancelButton" mainHeader="FOOD REQUEST"
-            subHeader="Please provide the following details to submit a food request" :width="'550px'">
+            subHeader="Please provide the following details to submit a food request"
+            :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
                 <a-form :model="foodRequest" ref="formRef" name="basic" :label-col="{ span: 24 }"
                     :wrapper-col="{ span: 24 }" autocomplete="off">
                     <a-row :gutter="16">
-                        <a-col :span="12">
+                        <a-col :span="isSmallScreen ? 24 : 12">
                             <a-form-item class="label-input-height" label="Farmer" name="farmerId"
                                 :rules="[{ message: 'Please select !!' }]">
                                 <a-select :disabled="props.farmerId" v-model:value="foodRequest.farmerId"
@@ -17,7 +18,7 @@
                                 </a-select>
                             </a-form-item>
                         </a-col>
-                        <a-col :span="12">
+                        <a-col :span="isSmallScreen ? 24 : 12">
                             <a-form-item class="label-input-height" label="Feed" name="typeOfFood"
                                 :rules="[{ message: 'Please select !!' }]">
                                 <a-select v-model:value="foodRequest.typeOfFeed" :size="'middle'"
@@ -28,14 +29,14 @@
                                 </a-select>
                             </a-form-item>
                         </a-col>
-                        <a-col :span="12">
+                        <a-col :span="isSmallScreen ? 24 : 12">
                             <a-form-item class="label-input-height" label="Quantity" name="quantityOfFeed"
                                 :rules="[{ message: 'Please input a valid number', required: true }]">
                                 <a-input-number :min="1" :step="0.00" class="input" placeholder="Enter the quantity"
                                     v-model:value="foodRequest.quantityOfFeed" />
                             </a-form-item>
                         </a-col>
-                        <a-col :span="12">
+                        <a-col :span="isSmallScreen ? 24 : 12">
                             <a-form-item class="label-input-height" label="Price" name="priceOfFeed"
                                 :rules="[{ message: 'Please fill in the price !', required: true }]">
                                 <a-input-number :min="1" class="input" placeholder="price"
@@ -43,7 +44,7 @@
                             </a-form-item>
                         </a-col>
 
-                        <a-col :span="12">
+                        <a-col :span="isSmallScreen ? 24 : 12">
                             <a-form-item class="label-input-height" label="Supplier" name="supplierId"
                                 :rules="[{ message: 'Please select !!' }]">
                                 <a-select v-model:value="foodRequest.supplierId" :size="'middle'"
@@ -55,7 +56,7 @@
                                 </a-select>
                             </a-form-item>
                         </a-col>
-                        <a-col :span="12">
+                        <a-col :span="isSmallScreen ? 24 : 12">
                             <p>Total to be paid: {{ Number(totalToBePaid).toLocaleString() + " RWF" }}</p>
                         </a-col>
 
@@ -75,6 +76,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useEntitiesStore } from '../store/entities.store';
+import { useScreenSize } from '../utils/useScreenSize';
 
 
 interface FoodRequest {
@@ -84,7 +86,7 @@ interface FoodRequest {
     priceOfFeed: number | null
     typeOfFeed: string | null
 }
-
+const { isSmallScreen } = useScreenSize()
 const entitiesStore = useEntitiesStore()
 entitiesStore.getFarmers()
 entitiesStore.getSuppliers()

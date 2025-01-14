@@ -52,6 +52,7 @@ declare module 'vue' {
     SidebarNav: typeof import('./src/components/SidebarNav.vue')['default']
     Table: typeof import('./src/components/Table.vue')['default']
     UpdateSupplier: typeof import('./src/components/UpdateSupplier.vue')['default']
+    UpdateUserProfile: typeof import('./src/components/UpdateUserProfile.vue')['default']
     UpdateVeternary: typeof import('./src/components/UpdateVeternary.vue')['default']
   }
 }

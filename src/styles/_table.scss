@@ -1,4 +1,11 @@
+.table-container {
+}
 .table {
+    max-width: 100%;
+    :deep .ant-table {
+        max-width: 100%;
+        overflow-x: auto;
+    }
     tr td {
         vertical-align: top;
         line-height: 1.5;
@@ -38,6 +45,7 @@
     .margin-text {
         margin-left: 10px;
         margin-top: 8px;
+        margin-bottom: 8px;
     }
 
     .ant-dropdown-link {
@@ -365,5 +373,8 @@
                 }
             }
         }
+    }
+    ::-webkit-scrollbar {
+        z-index: 1;
     }
 }

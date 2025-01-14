@@ -4,6 +4,9 @@
             <a-tab-pane key="1" tab="RWEME Transactions">
                 <div class="transactions">
                     <div class="transactions-body">
+                        <Table :data="transactions" :title="'Transactions'" :length="String(transactions.length)"
+                            :user-can-delete="false" :loading="loading" :handleTableSearch="handleSearch"
+                            :columns="columns" />
                         <a-table :columns="columns" :dataSource="transactions" rowKey="id" />
                     </div>
                 </div>
@@ -27,6 +30,7 @@ import { useEntitiesStore } from '../store/entities.store';
 const activeKey = ref('1');
 
 const entitiesStore = useEntitiesStore();
+const loading = computed(() => entitiesStore.loading)
 entitiesStore.getAllTransactions()
 
 const transactions = computed(() => entitiesStore.transactions.map((el) => ({
@@ -40,6 +44,9 @@ const transactions = computed(() => entitiesStore.transactions.map((el) => ({
 
 })))
 
+const handleSearch = (q: string) => {
+    entitiesStore.getAllTransactions(q);
+};
 const columns = [
     {
         title: 'Date',

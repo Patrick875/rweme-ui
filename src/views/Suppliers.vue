@@ -5,14 +5,15 @@
             :handleUpdateItemStatus="updateSupplierStatus" :handle-update-action="handleUpdateSupplier"
             :handlePrimaryButtonClicks="handleCreateToggleSupplier" :btn-name="'Create Supplier'" :columns="columns" />
         <Modal :isOpen="isToggleUpdateVeternary" @modal-close="closeCreateSupplier" mainHeader="CREATE SUPPLIER"
-            subHeader="Please provide the following details to create a supplier" :width="'550px'">
+            subHeader="Please provide the following details to create a supplier"
+            :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
                 <create-supplier :cancelButton="closeCreateSupplier"></create-supplier>
             </template>
         </Modal>
         <Modal :isOpen="isToggleUpdateModal && supplier" @modal-close="() => isToggleUpdateModal = false"
             :mainHeader="'UPDATE SUPPLIER'" :subHeader="'Provide the following details to update the supplier'"
-            :width="'550px'">
+            :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
                 <update-supplier :vet="supplier" :cancelButton="() => isToggleUpdateModal = false"></update-supplier>
             </template>
@@ -25,10 +26,11 @@ import { computed, ref } from 'vue';
 import Table from '../components/Table.vue'
 import Modal from "../components/Modal.vue"
 import { useEntitiesStore } from '../store/entities.store';
+import { useScreenSize } from '../utils/useScreenSize';
 
+const { isSmallScreen } = useScreenSize()
 const loading = ref<boolean>(false);
 const entitiesStore = useEntitiesStore()
-
 const isToggleUpdateVeternary = ref<boolean>(false)
 const isToggleUpdateModal = ref<boolean>(false)
 const handleCreateToggleSupplier = () => {

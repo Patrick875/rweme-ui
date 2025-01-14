@@ -1,12 +1,13 @@
 <template>
     <div>
         <Modal :isOpen="props.isToggleAddStatusModal" @modal-close="props.cancelButton" mainHeader="RECORD FARM STATUS"
-            subHeader="Please provide the following details to record current farm status" :width="'550px'">
+            subHeader="Please provide the following details to record current farm status"
+            :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
                 <a-form :model="farmStatus" ref="formRef" name="basic" :label-col="{ span: 24 }"
                     :wrapper-col="{ span: 24 }" autocomplete="off">
                     <a-row :gutter="16">
-                        <a-col :span="12">
+                        <a-col :span="isSmallScreen ? 24 : 12">
                             <a-form-item v-if="props.byVeternary" class="label-input-height" label="Farmer"
                                 name="farmerId" :rules="[{ message: 'Please select farmer' }]">
                                 <a-select class="input" type="text" placeholder="Select farmer"
@@ -18,14 +19,14 @@
                                 </a-select>
                             </a-form-item>
                         </a-col>
-                        <a-col :span="12">
+                        <a-col :span="isSmallScreen ? 24 : 12">
                             <a-form-item class="label-input-height" label="Number of Chicken" name="numberOfChicken"
                                 :rules="[{ message: 'Please input a valid number' }]">
                                 <a-input class="input" type="number" placeholder="Enter the number of chicken"
                                     v-model:value="farmStatus.numberOfChicken" />
                             </a-form-item>
                         </a-col>
-                        <a-col :span="12">
+                        <a-col :span="isSmallScreen ? 24 : 12">
                             <a-form-item class="label-input-height" label="Amount of feed on daily basis per chicken"
                                 name="amountOfFeedOnDailyBasisPerChicken"
                                 :rules="[{ message: 'Please fill in the amount of daily feed !' }]">
@@ -33,7 +34,7 @@
                                     v-model:value="farmStatus.amountOfFeedOnDailyBasisPerChicken" />
                             </a-form-item>
                         </a-col>
-                        <a-col :span="12">
+                        <a-col :span="isSmallScreen ? 24 : 12">
                             <a-form-item class="label-input-height" label="Has insurance for chicken"
                                 name="hasInsurance" :rules="[{ message: 'Please input select !!' }]">
                                 <a-select v-model:value="farmStatus.hasInsurance" :size="'middle'"
@@ -47,7 +48,7 @@
                                 </a-select>
                             </a-form-item>
                         </a-col>
-                        <a-col :span="12">
+                        <a-col :span="isSmallScreen ? 24 : 12">
                             <a-form-item class="label-input-height" label="Chicken health condition"
                                 name="chickenHealthCondition" :rules="[{ message: 'Please select !!' }]">
                                 <a-select v-model:value="farmStatus.chickenHealthCondition" :size="'middle'"
@@ -73,6 +74,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useEntitiesStore } from '../store/entities.store';
+import { useScreenSize } from '../utils/useScreenSize';
 
 
 interface farmStatus {
@@ -91,6 +93,7 @@ const vetFarmers = computed(() => entitiesStore.vetFarmers?.map(el => ({
     ...el,
 })));
 const loading = ref<boolean>(false)
+const { isSmallScreen } = useScreenSize()
 const farmStatus = {
     farmerId: null,
     numberOfChicken: null,

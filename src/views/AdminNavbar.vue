@@ -7,7 +7,7 @@
         <a-dropdown v-if="!isSmallScreen">
             <template #overlay>
                 <a-menu>
-                    <a-menu-item key="1" @click="handleMenuClick">Profile</a-menu-item>
+                    <a-menu-item key="1" @click="openUpdateProfileModel">Profile</a-menu-item>
                     <a-menu-item @click="() => openChangePassword = true" key="2">Change Password</a-menu-item>
                     <a-menu-item key="3" @click="logout">Logout</a-menu-item>
                 </a-menu>
@@ -31,8 +31,9 @@
                 :openChangePasswordModel="openChangePasswordModel" />
         </div>
     </div>
-    <Modal :width="'550px'" :isOpen="openChangePassword" @modal-close="() => openChangePassword = false"
-        main-header="Change password" subheader="Fill the form to change the password">
+    <Modal :width="isSmallScreen ? '80%' : '550px'" :isOpen="openChangePassword"
+        @modal-close="() => openChangePassword = false" main-header="Change password"
+        subheader="Fill the form to change the password">
 
         <template #content>
             <a-form :model="changePasswordForm" autocomplete="off" name="basic" :label-col="{ span: 24 }"
@@ -54,6 +55,12 @@
             </a-form>
         </template>
     </Modal>
+    <Modal :width="isSmallScreen ? '80%' : '550px'" :isOpen="openUpdateProfile" @modal-close="closeUpdateProfileModel"
+        :main-header="'UPDATE PROFILE'" subHeader="Fill the form to update your profile.">
+        <template #content>
+            <update-user-profile :cancelButton="closeUpdateProfileModel" />
+        </template>
+    </Modal>
 </template>
 
 <script setup lang="ts">
@@ -71,9 +78,16 @@ const { isSmallScreen } = useScreenSize()
 const route = useRoute()
 const router = useRouter()
 const openChangePassword = ref<boolean>(false)
+const openUpdateProfile = ref<boolean>(false)
 const changePasswordLoading = ref<boolean>(false)
 const openChangePasswordModel = () => {
     openChangePassword.value = true
+}
+const openUpdateProfileModel = () => {
+    openUpdateProfile.value = true
+}
+const closeUpdateProfileModel = () => {
+    openUpdateProfile.value = false
 }
 interface IchangePassword {
     oldPassword: string;
@@ -91,14 +105,12 @@ const logout = () => {
     logoutUser();
     router.replace('/auth/login')
 }
-
 const changePassword = async () => {
     changePasswordLoading.value = true
     await instance.patch('/auth/changePassword', { ...changePasswordForm.value }).then(() => {
         changePasswordLoading.value = false
         notify('success', 'Success', 'Password changed successfully!!!')
     }).catch((err) => {
-        console.log('err', err);
         changePasswordLoading.value = false
         notify('error', "Error", err.response.data.message)
     })

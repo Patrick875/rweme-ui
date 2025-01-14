@@ -2,6 +2,7 @@
     <aside class="sidebar">
         <div class='sidelogo-container'>
             <img src="./../assets/Rweme Logo.svg" class="logo" alt="rweme-platform-logo" />
+            <v-icon v-if="isSmallScreen" name="io-close-outline" @click="props.closeNav" />
         </div>
         <a-menu mode="inline" :selectedKeys="[selectedKey]" @click="handleMenuClick">
             <a-menu-item key="Dashboard">
@@ -61,6 +62,7 @@ import { computed, ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '../store/auth.store';
 import { userRoles } from '../utils/enums';
+import { useScreenSize } from '../utils/useScreenSize';
 
 const route = useRoute();
 const authStore = useAuthStore()
@@ -68,7 +70,7 @@ const logedInUser = computed(() => authStore.user)
 const selectedKey = ref("Dashboard");
 const isSupplier = logedInUser.value?.role === userRoles.supplier;
 const isVeternary = logedInUser.value?.role === userRoles.veternary
-
+const { isSmallScreen } = useScreenSize()
 const props = defineProps({
     closeNav: {
         type: Function,

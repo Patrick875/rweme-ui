@@ -13,7 +13,7 @@ const props = defineProps({
 const options = {
     chart: {
         width: '100px',
-        height: '100px',
+        height: '300px',
     },
     chartOptions: {
         labels: Object.keys(props.data),
@@ -28,6 +28,11 @@ const options = {
 </script>
 <style scoped lang='scss'>
 .container {
-    width: 500px
+    width: 400px;
+
+    @media(max-width:800px) {
+        width: 80%;
+        margin-inline: auto
+    }
 }
 </style>

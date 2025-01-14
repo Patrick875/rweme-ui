@@ -15,7 +15,7 @@
             </FoodRequestDetailsModal>
 
             <Modal :isOpen="isComfirmRequestReception" @modal-close="() => isComfirmRequestReception = false"
-                mainHeader="COMFIRM FOOD RECEPTION" subHeader="" :width="'550px'">
+                mainHeader="COMFIRM FOOD RECEPTION" subHeader="" :width="isSmallScreen ? '80%' : '550px'">
                 <template #content>
                     <div class="otp-confirm-container">
                         <div class="otp-confirm-header">
@@ -44,7 +44,9 @@ import { useAuthStore } from '../store/auth.store';
 import { userRoles } from '../utils/enums';
 import instance from '../api';
 import { notify } from '../utils/notify';
+import { useScreenSize } from '../utils/useScreenSize';
 
+const { isSmallScreen } = useScreenSize()
 const entitiesStore = useEntitiesStore();
 const authStore = useAuthStore();
 const logedInUser = computed(() => authStore.user)

@@ -5,7 +5,7 @@
                 :columns="columns" :handle-table-search="searchFeed" :handle-delete-item="deleteFeed"
                 :handlePrimaryButtonClicks="() => isCreateItem = true" :btn-name="'Create type of feed'" />
             <Modal :isOpen="isCreateItem" @modal-close="() => isCreateItem = false" mainHeader="CREATE FEED"
-                subHeader="Please provide the following details" :width="'550px'">
+                subHeader="Please provide the following details" :width="isSmallScreen ? '80%' : '550px'">
                 <template #content>
                     <a-form :model="createForm" ref="formRef" name="basic" :label-col="{ span: 24 }"
                         :wrapper-col="{ span: 24 }" autocomplete="off" @finish="createFood"
@@ -35,7 +35,8 @@
                 :handle-delete-item="deleteSpecialization" :handlePrimaryButtonClicks="() => isCreateItem = true"
                 :btn-name="'Create '" />
             <Modal :isOpen="isCreateItem" @modal-close="() => isCreateItem = false" mainHeader="CREATE SPECIALIZATION"
-                subHeader="Please provide the following details to create a veternary specialization" :width="'550px'">
+                subHeader="Please provide the following details to create a veternary specialization"
+                :width="isSmallScreen ? '80%' : '550px'">
                 <template #content>
                     <a-form :model="createForm" ref="formRef" name="basic" :label-col="{ span: 24 }"
                         :wrapper-col="{ span: 24 }" autocomplete="off" @finish="createSpecialization"
@@ -65,7 +66,7 @@
                 :handlePrimaryButtonClicks="() => isCreateItem = true" :btn-name="'Create type'" />
 
             <Modal :isOpen="isCreateItem" @modal-close="() => isCreateItem = false" mainHeader="CREATE SPECIALIZATION"
-                subHeader="Please provide the following details" :width="'550px'">
+                subHeader="Please provide the following details" :width="isSmallScreen ? '80%' : '550px'">
                 <template #content>
                     <a-form :model="createForm" ref="formRef" name="basic" :label-col="{ span: 24 }"
                         :wrapper-col="{ span: 24 }" autocomplete="off" @finish="createChicken"
@@ -97,6 +98,10 @@ import { useEntitiesStore } from '../store/entities.store';
 import Table from '../components/Table.vue';
 import instance from '../api';
 import { notify } from '../utils/notify';
+import { useScreenSize } from '../utils/useScreenSize';
+
+
+const { isSmallScreen } = useScreenSize();
 const activeKey = ref('1');
 const entitiesStore = useEntitiesStore();
 entitiesStore.getTypesOfFeed();

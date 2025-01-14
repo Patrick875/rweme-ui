@@ -22,7 +22,7 @@
 	</div>
 	<div>
 		<Modal :isOpen="showEventDetails" @modal-close="() => (showEventDetails = false)" mainHeader="EVENT DETAILS"
-			subHeader="" :width="'550px'">
+			subHeader="" :width="isSmallScreen ? '80%' : '550px'">
 			<template #content>
 				<div v-if="isLoadingEvent && !viewableEvent">
 					<p>Loading ...</p>
@@ -81,7 +81,7 @@
 			</template>
 		</Modal>
 		<Modal :isOpen="showEventDetails" @modal-close="() => (showEventDetails = false)" mainHeader="EVENT DETAILS"
-			subHeader="" :width="'550px'">
+			subHeader="" :width="isSmallScreen ? '80%' : '550px'">
 			<template #content>
 				<div v-if="isLoadingEvent && !viewableEvent">
 					<p>Loading ...</p>
@@ -162,7 +162,7 @@
 		<Modal :isOpen="isEventDateChanged" @modal-close="() => (isEventDateChanged = false)"
 			mainHeader="Reschedure event"
 			subHeader="Are you sure you want to reschedure this appointment? Events can not be reschedured more than 3 times."
-			:width="'550px'">
+			:width="isSmallScreen ? '80%' : '550px'">
 			<template #content>
 				<div>
 					<div>
@@ -193,7 +193,10 @@ import instance from "../api";
 import { notify } from "../utils/notify";
 import { useAuthStore } from "../store/auth.store";
 import { userRoles } from "../utils/enums";
+import { useScreenSize } from "../utils/useScreenSize";
 
+
+const { isSmallScreen } = useScreenSize()
 const authStore = useAuthStore()
 const logedInUser = computed(() => authStore.user)
 const isVeternary = logedInUser.value?.role === userRoles.veternary

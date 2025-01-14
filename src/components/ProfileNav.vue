@@ -1,7 +1,11 @@
 <template>
     <aside class="profile-nav">
+        <div class="close-icon-container">
+            <v-icon name="io-close" :inverse="isWhite" scale="1.5" animation="wrench" :hover="true"
+                @click="props.closeNav" />
+        </div>
         <div class='profile-nav-top'>
-            <div class="profile-header">
+            <div class=" profile-header">
                 <v-icon class="profile-icon" name="hi-solid-user-circle" />
                 <div>
                     <p>
@@ -33,6 +37,7 @@
 </template>
 
 <script setup lang="ts">
+const isWhite = true
 const props = defineProps({
     closeNav: {
         type: Function,
@@ -68,12 +73,20 @@ const props = defineProps({
 }
 
 .profile-nav {
+    position: relative;
     width: 100%;
     height: 100%;
     background-color: rgba(28, 130, 23);
     color: white;
     display: flex;
     flex-direction: column;
+
+    .close-icon-container {
+        padding: 1.25em;
+        position: absolute;
+        right: 0;
+    }
+
 }
 
 .profile-nav-top {

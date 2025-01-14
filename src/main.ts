@@ -16,6 +16,7 @@ import {
 	BiEyeSlash,
 	MdDashboardOutlined,
 	IoCloseOutline,
+	IoClose,
 	RiDeleteBin7Line,
 	CoCheckAlt,
 	GiFarmTractor,
@@ -34,7 +35,10 @@ import {
 	ViFileTypePdf2,
 	CoHamburgerMenu,
 	BiLock,
-	RiLogoutBoxLine
+	RiLogoutBoxLine,
+	LaFilterSolid,
+	HiDocumentDownload,
+	MdRotateleftOutlined,
 } from "oh-vue-icons/icons";
 
 addIcons(
@@ -53,6 +57,7 @@ addIcons(
 	CoCheckAlt,
 	MdDashboardOutlined,
 	IoCloseOutline,
+	IoClose,
 	GiFarmTractor,
 	FaUserMd,
 	FaUserTie,
@@ -64,9 +69,12 @@ addIcons(
 	ViFileTypePdf2,
 	CoHamburgerMenu,
 	BiLock,
-	RiLogoutBoxLine
+	RiLogoutBoxLine,
+	LaFilterSolid,
+	HiDocumentDownload,
+	MdRotateleftOutlined,
+	IoAddCircleOutline
 );
-
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);

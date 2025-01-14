@@ -7,6 +7,7 @@ import { useRouter } from "vue-router";
 import { Axios, AxiosError } from "axios";
 
 const defaultState = {
+	singleUser: null as any,
 	farmers: [] as any,
 	foodrequests: [] as any,
 	farmer: null as any,
@@ -190,6 +191,18 @@ export const useEntitiesStore = defineStore({
 				console.log("err", err);
 			}
 		},
+		async getSingleUser(id: string) {
+			this.resetStatuses();
+			try {
+				this.loading = true;
+				const response = await instance.get(`/users/${id}`);
+				this.singleUser = response.data.data;
+			} catch (err) {
+				console.log("err", err);
+			} finally {
+				this.loading = false;
+			}
+		},
 		async createVeternary(data: any) {
 			this.resetStatuses();
 
@@ -359,10 +372,10 @@ export const useEntitiesStore = defineStore({
 				console.log("err", error);
 			}
 		},
-		async getAllTransactions() {
+		async getAllTransactions(q: string = "") {
 			this.resetStatuses();
 			try {
-				const response = await instance.get("/transactions");
+				const response = await instance.get(`/transactions?q=${q}`);
 				this.transactions = response.data.data;
 			} catch (error) {
 				console.log("err", error);

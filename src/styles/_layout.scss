@@ -26,8 +26,10 @@
     }
     @media (max-width: 800px) {
         position: absolute;
+        background-color: white;
         width: 100vw;
         height: 100vh;
+        z-index: 1000;
     }
 }
 
@@ -35,6 +37,13 @@
     margin-block: 0;
     img {
         height: 100px;
+    }
+    @media (max-width: 800px) {
+        padding-right: 1.5em;
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 }
 .page-container {

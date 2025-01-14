@@ -1,128 +1,167 @@
 <template>
-  <div class="table">
-    <div class='table-header'>
-      <a-row>
-        <a-col v-if="!isReportsTable" class="title-table" :span="4">
-          <div class="margin-text">
-            {{ title }} <span class="number-style">{{ length }}</span>
-          </div>
-        </a-col>
-        <a-col v-if="!isReportsTable" :span="8">
-          <a-input v-model:value="search" :placeholder="props.placeholder">
-            <template #prefix>
-              <SearchOutlined />
-            </template>
-          </a-input>
-        </a-col>
-        <p v-if="isReportsTable" class="margin-text" style="text-align: center;font-weight:bold">{{ title }} </p>
-        <a-col v-if="!isReportsTable" :span="12">
-          <div class="filter-section">
-            <a-button class="btn-export" v-if="isShowFilter">Filter List</a-button>
-
-            <a-button class="btn-export" @click="() => props.resetFilter()">Reset</a-button>
-
-            <a-dropdown>
-              <template #overlay>
-                <a-menu @click="handleExport">
-                  <a-menu-item @click="() => props.exportPDF()" key="1"> Excel </a-menu-item>
-                </a-menu>
+  <div class="table-container">
+    <div class="table">
+      <div class='table-header' v-if="!isSmallScreen">
+        <a-row>
+          <a-col v-if="!isReportsTable" class="title-table" :span="4">
+            <div class="margin-text">
+              {{ title }} <span class="number-style">{{ length }}</span>
+            </div>
+          </a-col>
+          <a-col v-if="!isReportsTable" :span="8">
+            <a-input v-model:value="search" :placeholder="props.placeholder">
+              <template #prefix>
+                <SearchOutlined />
               </template>
-              <a-button class="btn-export export-margin">
-                Export List
-                <CaretDownOutlined />
-              </a-button>
-            </a-dropdown>
-            <span>
-              <span v-if="props.btnName">
-                <a-button :disabled="isDisabled" :class="!isDisabled ? 'btn-create' : 'btn-disabled'"
-                  @click="() => props.handlePrimaryButtonClicks()">{{ btnName }}
+            </a-input>
+          </a-col>
+          <p v-if="isReportsTable" class="margin-text" style="text-align: center;font-weight:bold">{{ title }} </p>
+          <a-col v-if="!isReportsTable" :span="12">
+            <div class="filter-section">
+              <a-button class="btn-export" v-if="isShowFilter">Filter List</a-button>
+              <a-button class="btn-export" @click="() => props.resetFilter()">Reset</a-button>
+              <a-dropdown>
+                <template #overlay>
+                  <a-menu @click="handleExport">
+                    <a-menu-item @click="() => props.exportPDF()" key="1"> Excel </a-menu-item>
+                  </a-menu>
+                </template>
+                <a-button class="btn-export export-margin">
+                  Export List
+                  <CaretDownOutlined />
                 </a-button>
+              </a-dropdown>
+              <span>
+                <span v-if="props.btnName">
+                  <a-button :disabled="isDisabled" :class="!isDisabled ? 'btn-create' : 'btn-disabled'"
+                    @click="() => props.handlePrimaryButtonClicks()">{{ btnName }}
+                  </a-button>
+                </span>
               </span>
+            </div>
+          </a-col>
+        </a-row>
+      </div>
+      <div v-else>
+        <div class="margin-text">
+          {{ title }} <span class="number-style">{{ length }}</span>
+        </div>
+        <a-row :gutter="[20, 20]">
+          <a-col v-if="!isReportsTable" :span="16">
+            <a-input v-model:value="search" :placeholder="props.placeholder">
+              <template #prefix>
+                <SearchOutlined />
+              </template>
+            </a-input>
+          </a-col>
+          <a-col v-if="!isReportsTable" :span="8">
+            <div class="filter-section">
+              <a-dropdown>
+                <template #overlay>
+                  <a-menu>
+                    <a-menu-item key="1" v-if="isShowFilter">
+                      Filter
+                    </a-menu-item>
+                    <a-menu-item key="2" @click="() => props.resetFilter()">
+                      Reset
+                    </a-menu-item>
+                    <a-menu-item key="3" @click="() => props.exportPDF()">
+                      Export
+                    </a-menu-item>
+                    <a-menu-item key="4" v-if="props.btnName" @click="() => props.handlePrimaryButtonClicks()">
+                      Create
+                    </a-menu-item>
+                  </a-menu>
+                </template>
+                <a-button class="btn-export export-margin">
+                  More actions
+                </a-button>
+              </a-dropdown>
+            </div>
+          </a-col>
+        </a-row>
+      </div>
+      <a-table :columns="props.columns" :data-source="props.data">
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'name'">
+            {{ record.name }}
+          </template>
+          <template v-else-if="column.key === 'typeOfChicken' && column.title === 'Category'">
+            {{ record.typeOfChicken?.toUpperCase() || 'N/A' }}
+          </template>
+          <template v-else-if="column.key === 'specializations'">
+            <span>
+              <a-tag v-for="tag in record.specializations" :key="tag" color="geekblue">
+                {{ tag.name.toUpperCase() }}
+              </a-tag>
             </span>
+          </template>
+          <template v-else-if="column.key === 'typeoffeeds'">
+            <span>
+              <a-tag v-for="tag in record.typeoffeeds" :key="tag" color="geekblue">
+                {{ tag.name.toUpperCase() }}
+              </a-tag>
+            </span>
+          </template>
+          <template v-else-if="column.key === 'status'">
+            <span>
+              <a-tag
+                :color="[accountStatus.active, 'Completed'].includes(record.status) ? 'success' : [accountStatus.blocked, accountStatus.deleted, accountStatus.inactive].includes(record.status) ? 'error' : 'default'">
+                {{ record.status.toUpperCase() }}
+              </a-tag>
+            </span>
+          </template>
+          <template v-else-if="column.key === 'action'">
+            <div class="actions-column">
+              <v-icon v-if="record.isFarmer || record.isFoodRequest" @click="onView(record)" class='view-icon-style'
+                name="bi-eye" />
+              <div @click="props.handleUpdateAction(record.id)" class="action-icon" data-caption='Edit'>
+                <v-icon v-if="record.status == accountStatus.active" class='edit-icon-style ' name="fa-edit" />
+              </div>
+              <div class='action-icon' data-caption='Activate'>
+                <v-icon @click="() => triggerUpdateStatus(record, 'Active')"
+                  v-if="['Inactive', 'Blocked'].includes(record.status)"
+                  class='active-style  active-icon-style action-icon' name="co-check-alt" />
+              </div>
+              <div class='action-icon' data-caption='Deactivate'>
+                <v-icon @click="() => triggerUpdateStatus(record, 'Inactive')"
+                  v-if="record.status == accountStatus.active" class='deactivate-icon-style action-icon'
+                  name="bi-eye-slash" />
+              </div>
+              <div v-if='props.userCanDelete' class='action-icon' data-caption='Delete'>
+                <v-icon @click="() => triggerDelete(record.id)" v-if="record.status !== accountStatus.deleted"
+                  class='deactivate-icon-style action-icon' name="ri-delete-bin-7-line" />
+              </div>
+            </div>
+          </template>
+        </template>
+      </a-table>
+      <Modal :isOpen="isToggleStatusUpdateModal" @modal-close="() => isToggleStatusUpdateModal = false"
+        mainHeader="UPDATE STATUS"
+        :subHeader="`Are you sure you want to ${newStatus == 'Active' ? 'Activate' : 'Deactivate'} this ${currentEntity}`"
+        :width="isSmallScreen ? '80%' : '550px'">
+        <template #content>
+          <div class='delete-btns'>
+            <a-button class="cancel-form-btn" danger html-type="button"
+              @click="() => isToggleStatusUpdateModal = false">CANCEL</a-button>
+
+            <a-button :loading="props.loading" class="btn-auth"
+              @click="updateItemStatus(updateInfo.itemId, updateInfo.userId, updateInfo.status)">{{ newStatus ==
+                'Active'
+                ? 'Activate' : 'Deactivate' }}</a-button>
           </div>
-        </a-col>
-      </a-row>
+        </template>
+      </Modal>
+      <Modal :isOpen="isToggleDeleteModal" @modal-close="closeModal" mainHeader="DELETE"
+        :subHeader="`Are you sure you want to delete this ${currentEntity}`" :width="isSmallScreen ? '80%' : '550px'">
+        <template #content>
+          <div class='delete-btns'>
+            <a-button class="cancel-form-btn" danger html-type="button" @click="closeModal">CANCEL</a-button>
+            <a-button :loading="props.loading" class="btn-auth" @click="deleteItem">Delete</a-button>
+          </div>
+        </template>
+      </Modal>
     </div>
-
-    <a-table :columns="props.columns" :data-source="props.data">
-      <template #bodyCell="{ column, record }">
-        <template v-if="column.key === 'name'">
-          {{ record.name }}
-        </template>
-        <template v-else-if="column.key === 'typeOfChicken' && column.title === 'Category'">
-          {{ record.typeOfChicken?.toUpperCase() || 'N/A' }}
-        </template>
-        <template v-else-if="column.key === 'specializations'">
-          <span>
-            <a-tag v-for="tag in record.specializations" :key="tag" color="geekblue">
-              {{ tag.name.toUpperCase() }}
-            </a-tag>
-          </span>
-        </template>
-        <template v-else-if="column.key === 'typeoffeeds'">
-          <span>
-            <a-tag v-for="tag in record.typeoffeeds" :key="tag" color="geekblue">
-              {{ tag.name.toUpperCase() }}
-            </a-tag>
-          </span>
-        </template>
-        <template v-else-if="column.key === 'status'">
-          <span>
-            <a-tag
-              :color="[accountStatus.active, 'Completed'].includes(record.status) ? 'success' : [accountStatus.blocked, accountStatus.deleted, accountStatus.inactive].includes(record.status) ? 'error' : 'default'">
-              {{ record.status.toUpperCase() }}
-            </a-tag>
-          </span>
-        </template>
-        <template v-else-if="column.key === 'action'">
-          <div class="actions-column">
-            <v-icon v-if="record.isFarmer || record.isFoodRequest" @click="onView(record)" class='view-icon-style'
-              name="bi-eye" />
-            <div @click="props.handleUpdateAction(record.id)" class="action-icon" data-caption='Edit'>
-              <v-icon v-if="record.status == accountStatus.active" class='edit-icon-style ' name="fa-edit" />
-            </div>
-            <div class='action-icon' data-caption='Activate'>
-              <v-icon @click="() => triggerUpdateStatus(record, 'Active')"
-                v-if="['Inactive', 'Blocked'].includes(record.status)"
-                class='active-style  active-icon-style action-icon' name="co-check-alt" />
-            </div>
-            <div class='action-icon' data-caption='Deactivate'>
-              <v-icon @click="() => triggerUpdateStatus(record, 'Inactive')"
-                v-if="record.status == accountStatus.active" class='deactivate-icon-style action-icon'
-                name="bi-eye-slash" />
-            </div>
-            <div v-if='props.userCanDelete' class='action-icon' data-caption='Delete'>
-              <v-icon @click="() => triggerDelete(record.id)" v-if="record.status !== accountStatus.deleted"
-                class='deactivate-icon-style action-icon' name="ri-delete-bin-7-line" />
-            </div>
-          </div>
-        </template>
-      </template>
-    </a-table>
-    <Modal :isOpen="isToggleStatusUpdateModal" @modal-close="() => isToggleStatusUpdateModal = false"
-      mainHeader="UPDATE STATUS"
-      :subHeader="`Are you sure you want to ${newStatus == 'Active' ? 'Activate' : 'Deactivate'} this ${currentEntity}`"
-      :width="'550px'">
-      <template #content>
-        <div class='delete-btns'>
-          <a-button class="cancel-form-btn" danger html-type="button"
-            @click="() => isToggleStatusUpdateModal = false">CANCEL</a-button>
-
-          <a-button :loading="props.loading" class="btn-auth"
-            @click="updateItemStatus(updateInfo.itemId, updateInfo.userId, updateInfo.status)">{{ newStatus == 'Active'
-              ? 'Activate' : 'Deactivate' }}</a-button>
-        </div>
-      </template>
-    </Modal>
-    <Modal :isOpen="isToggleDeleteModal" @modal-close="closeModal" mainHeader="DELETE"
-      :subHeader="`Are you sure you want to delete this ${currentEntity}`" :width="'550px'">
-      <template #content>
-        <div class='delete-btns'>
-          <a-button class="cancel-form-btn" danger html-type="button" @click="closeModal">CANCEL</a-button>
-          <a-button :loading="props.loading" class="btn-auth" @click="deleteItem">Delete</a-button>
-        </div>
-      </template>
-    </Modal>
   </div>
 
 </template>
@@ -132,6 +171,7 @@ import { accountStatus } from '../utils/enums';
 import Modal from './Modal.vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useEntitiesStore } from '../store/entities.store';
+import { useScreenSize } from '../utils/useScreenSize';
 interface Column {
   title: string
   dataIndex: string
@@ -143,6 +183,7 @@ interface updateData {
   userId: string | null
 }
 
+// const { isSmallScreen } = useScreenSize()
 const router = useRouter();
 const route = useRoute()
 const currentEntity = route.fullPath.substring(1, route.fullPath.length - 1)
@@ -166,6 +207,7 @@ const isToggleDeleteModal = ref<boolean>(false);
 const isToggleStatusUpdateModal = ref<boolean>(false);
 const isToggleUpdateModal = ref<boolean>(false);
 
+const { isSmallScreen } = useScreenSize()
 const closeModal = () => {
   isToggleDeleteModal.value = false
 

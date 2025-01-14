@@ -4,6 +4,7 @@
     max-height: 100vh;
     display: flex;
     font-family: avenir-book;
+    position: relative;
 
     @media (max-width: 768px) {
         margin: 0;
@@ -36,6 +37,12 @@
         height: 100%;
         object-fit: cover;
         object-position: center;
+    }
+    @media (max-width: 800px) {
+        position: absolute;
+        height: 20vh;
+        width: 100%;
+        z-index: -1;
     }
 }
 
@@ -98,4 +105,8 @@
 }
 .logo-container {
     cursor: pointer;
+    @media (max-width: 800px) {
+        display: flex;
+        justify-content: center;
+    }
 }
