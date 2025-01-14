@@ -4,14 +4,14 @@
         <a-form :model="farmerForm" ref="formRef" name="basic" :label-col="{ span: 24 }" :wrapper-col="{ span: 24 }"
             autocomplete="off">
             <a-row :gutter="16">
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Full Name" name="fullName"
                         :rules="[{ required: true, message: 'Please input farmer full name!' }]">
                         <a-input class="input" placeholder="Please enter farmer full name"
                             v-model:value="farmerForm.fullName" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Phone Number" name="telephone" :rules="[
                         {
                             required: true,
@@ -22,21 +22,21 @@
                         <a-input class="input" placeholder="07-- --- ---" v-model:value="farmerForm.telephone" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Email Address" name="email"
                         :rules="[{ message: 'Please input an email !' }]">
                         <a-input class="input" type="email" placeholder="Enter a valid email"
                             v-model:value="farmerForm.email" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="National Id" name="nationalId"
                         :rules="[{ required: true, pattern: /^(1|2)\d{15}$/, message: 'Please input a valid national id !' }]">
                         <a-input class="input" placeholder="Enter a valid national Id"
                             v-model:value="farmerForm.nationalId" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Province" name="provinceId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
                         <a-select v-model:value="farmerForm.provinceId" :size="'middle'" placeholder="Please select !!"
@@ -47,7 +47,7 @@
                         </a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="District" name="districtId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
                         <a-select :disabled="!farmerForm.provinceId" v-model:value="farmerForm.districtId"
@@ -60,7 +60,7 @@
                         </a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Sector" name="sectorId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
                         <a-select :disabled="!farmerForm.districtId" v-model:value="farmerForm.sectorId"
@@ -73,7 +73,7 @@
                         </a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Cell" name="cellId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
                         <a-select :disabled="!farmerForm.sectorId" v-model:value="farmerForm.cellId" :size="'middle'"
@@ -86,7 +86,7 @@
                         </a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Village" name="addressId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
                         <a-select :disabled="!farmerForm.cellId" v-model:value="farmerForm.addressId" :size="'middle'"
@@ -96,25 +96,24 @@
                                 :key="village.id" :value="village.key">
                                 {{ village.name }}
                             </a-select-option>
-
                         </a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Type of Chicken" name="chickenTypeId"
                         :rules="[{ required: true, min: 1, message: 'Please input select !!' }]">
                         <a-select v-model:value="farmerForm.chickenTypeId" :options="typeofchicken" :size="'middle'"
                             placeholder="Please select !!" @popupScroll="popupScroll"></a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Number of Chicken" name="numberOfChicken"
                         :rules="[{ message: 'Please input a valid number', required: true, }]">
                         <a-input-number :min="1" class="input" placeholder="Enter a valid number"
                             v-model:value="farmerForm.numberOfChicken" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Chicken health condition"
                         name="chickenHealthCondition"
                         :rules="[{ required: true, min: 1, message: 'Please input select !!' }]">
@@ -125,7 +124,7 @@
                         </a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item name="hasInsurance" label="Has insurance for his/her chicken" has-feedback
                         :rules="[{ required: true, message: 'Please select !' }]">
                         <a-select v-model:value="farmerForm.hasInsurance" :size="'middle'"
@@ -135,7 +134,7 @@
                         </a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Assigned Veternary" name="assignedTo"
                         :rules="[{ message: 'Please select !!' }]">
                         <a-select v-model:value="farmerForm.assignedTo" :size="'middle'" placeholder="Please select">
@@ -145,17 +144,17 @@
                         </a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="24">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <p>Initial food request details</p>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item name="typeOfFeed" label="Select type of Feed" has-feedback
                         :rules="[{ required: true, message: 'Please select type of feeds!' }]">
                         <a-select v-model:value="farmerForm.typeOfFeed" :options="typeoffeeds" :size="'middle'"
                             placeholder="Please select type of Feeds" @popupScroll="popupScroll"></a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Amount of feed on a daily basis /chicken"
                         name="amountOfFeedOnDailyBasisPerChicken"
                         :rules="[{ required: true, message: 'Please input a valid number' }]">
@@ -163,7 +162,7 @@
                             v-model:value="farmerForm.amountOfFeedOnDailyBasisPerChicken" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Price of feed" name="priceOfFeedToBeDelivered"
                         :rules="[{ required: true, type: 'number', message: 'Please input a valid number' },]"
                         validate-trigger="onBlur">
@@ -171,7 +170,7 @@
                             @blur="validateAmount" v-model:value="farmerForm.priceOfFeedToBeDelivered" :step="0.01" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Amount Of Feed To Be Delivered"
                         name="amountOfFeedToBeDelivered"
                         :rules="[{ required: true, message: 'Please input a valid number' }]" validate-trigger="onBlur">
@@ -179,8 +178,17 @@
                             @blur="validateAmount" v-model:value="farmerForm.amountOfFeedToBeDelivered" />
                     </a-form-item>
                 </a-col>
-
-
+                <a-col :span="isSmallScreen ? 24 : 12">
+                    <a-form-item class="label-input-height" label="Supplier" name="supplierId"
+                        :rules="[{ message: 'Please select !!' }]">
+                        <a-select v-model:value="farmerForm.supplierId" :size="'middle'" placeholder="Please select">
+                            <a-select-option disabled value="">Select supplier</a-select-option>
+                            <a-select-option v-for="(supplier) in suppliers" :value="supplier.key"
+                                :key="supplier.key">{{
+                                    supplier.label + ' / ' + supplier.telephone }} </a-select-option>
+                        </a-select>
+                    </a-form-item>
+                </a-col>
             </a-row>
         </a-form>
         <a-divider />
@@ -188,14 +196,14 @@
         <a-form :model="nextOfKinForm" ref="nextOfKinformRef" name="nextOfKin" :label-col="{ span: 24 }"
             :wrapper-col="{ span: 24 }" autocomplete="off">
             <a-row :gutter="16">
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Full Name" name="fullName"
                         :rules="[{ required: true, message: 'Please input full name!' }]">
                         <a-input class="input" placeholder="Please enter  full name"
                             v-model:value="nextOfKinForm.fullName" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Phone Number" name="telephone" :rules="[
                         {
                             required: true,
@@ -206,14 +214,14 @@
                         <a-input class="input" placeholder="07-- --- ---" v-model:value="nextOfKinForm.telephone" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="National Id" name="nationalId"
                         :rules="[{ required: true, pattern: /^(1|2)\d{15}$/, message: 'Please input a valid national id !' }]">
                         <a-input class="input" placeholder="Enter a valid national Id"
                             v-model:value="nextOfKinForm.nationalId" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item name="relation" label="Relation" has-feedback
                         :rules="[{ required: true, message: 'Please select !' }]">
                         <a-select v-model:value="nextOfKinForm.relation" :size="'middle'"
@@ -240,6 +248,7 @@
 import { ref, computed, watch } from "vue"
 import { useEntitiesStore } from '../store/entities.store'
 import { useRouter } from "vue-router";
+import { useScreenSize } from "../utils/useScreenSize";
 
 interface farmerForm {
     fullName: string
@@ -258,7 +267,8 @@ interface farmerForm {
     districtId: string | null,
     sectorId: string | null,
     cellId: string | null,
-    addressId: string | null
+    addressId: string | null,
+    supplierId: string | null,
     assignedTo: string | null
 }
 
@@ -271,6 +281,7 @@ interface NextOfKinForm {
 const popupScroll = () => {
     console.log('popupScroll');
 };
+const { isSmallScreen } = useScreenSize()
 const nextOfKinformRef = ref<InstanceType<any> | null>(null)
 const entitiesStore = useEntitiesStore()
 const isActionSuccess = computed(() => entitiesStore.success)
@@ -321,8 +332,13 @@ const veternaries = computed(() => entitiesStore.veternaries.map((item) => ({
     location: item.User.Village.name,
 
 })))
+const suppliers = computed(() => entitiesStore.suppliers.map((el) => ({
+    label: el.User.fullName,
+    key: el.id,
+    telephone: el.User.telephone,
+    ...el,
+})))
 
-console.log('veternaries', veternaries.value)
 
 const loading = ref<boolean>(false);
 const formRef = ref<InstanceType<any> | null>(null)
@@ -345,6 +361,7 @@ const farmerForm = ref<farmerForm>({
     sectorId: null,
     cellId: null,
     addressId: null,
+    supplierId: null,
     assignedTo: null
 })
 
@@ -398,6 +415,7 @@ const createFarmer = async () => {
             districtId: null,
             sectorId: null,
             cellId: null,
+            supplierId: null,
             addressId: null,
             assignedTo: null
 
@@ -427,7 +445,8 @@ watch(
 entitiesStore.getTypesOfChicken()
 entitiesStore.getTypesOfFeed()
 entitiesStore.getLocations()
-
+entitiesStore.getVeternaries()
+entitiesStore.getSuppliers()
 </script>
 
 <style scoped lang="scss">
@@ -485,6 +504,7 @@ entitiesStore.getLocations()
 
         &:hover {
             background-color: rgba(28, 130, 23, 1);
+            color: white
         }
     }
 

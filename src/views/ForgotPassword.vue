@@ -1,43 +1,49 @@
 <template>
-    <div class='auth-container'>
-        <div class="auth-backg">
-            <img src="./../assets/chicken-farm-backg.jpg" alt="auth-img" />
-        </div>
-        <div class="auth-form-container">
-            <div class="auth-form">
-                <div class='auth-form-header'>
-                    <logo></logo>
-                    <p class="auth-form-header--text">FORGOT PASSWORD</p>
-                </div>
-                <p class="auth-text">Please Enter your Email or Telephone </p>
+    <p class="auth-text">Please Enter your Email or Telephone </p>
+    <div>
+        <a-form :model="formState" @finish="submit" layout="vertical" :label-col="{ span: 24 }"
+            :wrapper-col="{ span: 24 }" autocomplete="off">
+            <a-form-item label="Email/Tel" name="auth"
+                :rules="[{ required: true, message: 'Please input your email/telephone!' }]">
+                <a-input v-model:value="formState.auth" />
+            </a-form-item>
+            <a href="/auth/login" class="forgot-password-text">Login</a>
 
-                <div>
-                    <a-form :model="formState" :label-col="{ span: 24 }" :wrapper-col="{ span: 24 }" autocomplete="off">
-                        <a-form-item label="Email/Tel" name="auth"
-                            :rules="[{ required: true, message: 'Please input your email/telephone!' }]">
-                            <a-input type="text" :v-model:value="formState.login" />
-                        </a-form-item>
-                        <a-button class='auth-btn'>SUBMIT</a-button>
-                    </a-form>
-                </div>
-
-            </div>
-        </div>
-
+            <a-button class='auth-btn' :loading="loading" @click="submit">SUBMIT</a-button>
+        </a-form>
     </div>
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router';
+import instance from '../api';
+import { notify } from '../utils/notify';
 interface formState {
-    login: string;
+    auth: string;
 }
-
-const formState = reactive<formState>({
-    login: "",
-
+const loading = ref<boolean>(false);
+const router = useRouter()
+const formState = ref<formState>({
+    auth: "",
 })
+const submit = async () => {
+    loading.value = true;
+    try {
+        await instance.post('/auth/initiateForgotPassword', { login: formState.value.auth }).then((res) => {
+            notify('success', 'Success !!!', res.data.message)
+            setTimeout(() => {
+                router.replace('/auth/login')
+            }, 4000);
+        })
+    } catch (error: any) {
+        notify('error', 'Error !!!', error.response.data.message)
 
+    } finally {
+        loading.value = false
+        formState.value.auth = ''
+    }
+}
 
 </script>
 

@@ -1,6 +1,6 @@
 <template>
     <div class='container'>
-        <apexchart type="bar" :height="'350px'" :width="500" :options="chartOptions" :series="series">
+        <apexchart type="bar" :height="'100%'" :width="'100%'" :options="chartOptions" :series="series">
         </apexchart>
     </div>
 </template>
@@ -16,7 +16,6 @@ const props = defineProps({
     }
 })
 
-console.log('data-data-data', props.data)
 const chartOptions = {
     stroke: { width: 0 },
     dataLabels: {
@@ -50,6 +49,12 @@ const series = [{
 </script>
 <style scoped lang='scss'>
 .container {
-    width: 100px
+    width: 400px;
+
+    @media (max-width:800px) {
+        width: 300px;
+        margin-inline: auto;
+        min-height: 300px;
+    }
 }
 </style>

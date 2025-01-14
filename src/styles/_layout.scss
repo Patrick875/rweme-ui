@@ -1,8 +1,11 @@
 .layout {
     display: flex;
 }
-
+.sidenavbar {
+    position: relative;
+}
 .sidebar {
+    position: relative;
     width: 250px;
     height: 100vh;
     background-color: white;
@@ -21,15 +24,26 @@
             color: white;
         }
     }
-
-    /* Add other styling as needed */
+    @media (max-width: 800px) {
+        position: absolute;
+        background-color: white;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1000;
+    }
 }
 
 .sidelogo-container {
     margin-block: 0;
-
     img {
         height: 100px;
+    }
+    @media (max-width: 800px) {
+        padding-right: 1.5em;
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 }
 .page-container {
@@ -42,8 +56,5 @@
     overflow-y: auto;
     flex: 1;
     font-family: avenir-book;
-    // background-color: rgb(250, 254, 252);
     background-color: #f6f8f9;
-
-    /* Add other styling as needed */
 }

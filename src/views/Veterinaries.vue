@@ -7,7 +7,7 @@
             :btn-name="'Create veternary'" :columns="columns" />
         <Modal :isOpen="isToggleCreateVeternary" @modal-close="() => isToggleCreateVeternary = false"
             mainHeader="CREATE VETERNARY" subHeader="Please provide the following details to create a veternary"
-            :width="'550px'">
+            :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
                 <create-veternary :cancelButton="() => isToggleCreateVeternary = false"></create-veternary>
             </template>
@@ -15,7 +15,7 @@
 
         <Modal :isOpen="isToggleUpdateModal && vet" @modal-close="() => isToggleUpdateModal = false"
             :mainHeader="'UPDATE VETERNARY'" :subHeader="'Provide the following details to update the veternary'"
-            :width="'550px'">
+            :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
                 <update-veternary :vet="vet" :cancelButton="() => isToggleUpdateModal = false"></update-veternary>
             </template>
@@ -28,8 +28,9 @@ import { computed, ref } from 'vue';
 import Table from '../components/Table.vue'
 import Modal from "../components/Modal.vue"
 import { useEntitiesStore } from '../store/entities.store';
+import { useScreenSize } from '../utils/useScreenSize';
 
-
+const { isSmallScreen } = useScreenSize()
 const entitiesStore = useEntitiesStore()
 const loading = ref<boolean>(false)
 const isToggleCreateVeternary = ref<boolean>(false)

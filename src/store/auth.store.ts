@@ -1,8 +1,9 @@
 import { defineStore } from "pinia";
 import { logout } from "../api/auth";
 
+const storedUser= localStorage.getItem('auth_user')
 const defaultState = {
-	user: null as any,
+	user: JSON.parse(storedUser) || null as any,
 	userProfile: null as any,
 };
 export const useAuthStore = defineStore({
@@ -16,17 +17,19 @@ export const useAuthStore = defineStore({
 	actions: {
 		setUser(user: any) {
 			this.user = user;
+			
 		},
 		async logoutUser() {
 			try {
 				await logout();
+				localStorage.setItem('auth_user',null)
 			} catch (error) {
 				console.log("err", error);
 			}
 			this.user = null;
 		},
 	},
-	persist: {
-		enabled: true,
-	},
+	// persist: {
+	// 	enabled: true,
+	// },
 });

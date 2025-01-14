@@ -1,12 +1,12 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
-
 import "./style.css";
 import App from "./App.vue";
 import router from "./routes";
 import VueApexCharts from "vue3-apexcharts";
 import { OhVueIcon, addIcons } from "oh-vue-icons";
+
 import {
 	BiArrowLeft,
 	GiStabbedNote,
@@ -16,6 +16,7 @@ import {
 	BiEyeSlash,
 	MdDashboardOutlined,
 	IoCloseOutline,
+	IoClose,
 	RiDeleteBin7Line,
 	CoCheckAlt,
 	GiFarmTractor,
@@ -32,6 +33,12 @@ import {
 	RiNewspaperFill,
 	MdStoreRound,
 	ViFileTypePdf2,
+	CoHamburgerMenu,
+	BiLock,
+	RiLogoutBoxLine,
+	LaFilterSolid,
+	HiDocumentDownload,
+	MdRotateleftOutlined,
 } from "oh-vue-icons/icons";
 
 addIcons(
@@ -50,6 +57,7 @@ addIcons(
 	CoCheckAlt,
 	MdDashboardOutlined,
 	IoCloseOutline,
+	IoClose,
 	GiFarmTractor,
 	FaUserMd,
 	FaUserTie,
@@ -58,9 +66,15 @@ addIcons(
 	RiDeleteBin7Line,
 	RiSettings5Line,
 	HiSolidUserCircle,
-	ViFileTypePdf2
+	ViFileTypePdf2,
+	CoHamburgerMenu,
+	BiLock,
+	RiLogoutBoxLine,
+	LaFilterSolid,
+	HiDocumentDownload,
+	MdRotateleftOutlined,
+	IoAddCircleOutline
 );
-
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);

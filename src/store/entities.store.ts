@@ -4,14 +4,20 @@ import { defineStore } from "pinia";
 import instance from "../api";
 import { notify } from "../utils/notify";
 import { useRouter } from "vue-router";
+import { Axios, AxiosError } from "axios";
 
 const defaultState = {
+	singleUser: null as any,
 	farmers: [] as any,
 	foodrequests: [] as any,
 	farmer: null as any,
 	veternaries: [] as any,
 	veternary: null as any,
 	specializations: [] as any,
+	appointments: [] as any,
+	farmerAppointments: [] as any,
+	vetFarmers: [] as any,
+	veternaryvisits: [] as any,
 	suppliers: [] as any,
 	supplier: null as any,
 	selectedFarmerId: "",
@@ -25,6 +31,7 @@ const defaultState = {
 	dashboardData: null as any,
 	viewableItemId: null as any,
 	detailsItem: null as any,
+	transactions: [] as any,
 	success: false,
 	successMessage: "",
 	failure: false,
@@ -46,7 +53,7 @@ export const useEntitiesStore = defineStore({
 				this.dashboardData = response.data.data;
 			} catch (err: any) {
 				if (err.response.status === 401 || err.response.status === 403) {
-					router.replace("/login");
+					router.replace("/auth/login");
 				}
 			}
 		},
@@ -58,8 +65,17 @@ export const useEntitiesStore = defineStore({
 				this.farmers = response.data.data;
 			} catch (err: any) {
 				if (err.response.status === 401 || err.response.status === 403) {
-					router.replace("/login");
+					router.replace("/auth/login");
 				}
+			}
+		},
+		async getFarmersAssignedToVet(vetId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/farmers/veternary/${vetId}`);
+				this.vetFarmers = response.data.data;
+			} catch (error) {
+				console.log("err", error);
 			}
 		},
 		async getFarmer(farmerId: string) {
@@ -68,9 +84,9 @@ export const useEntitiesStore = defineStore({
 				const response = await instance.get(`/farmers/${farmerId}`);
 				console.log("the response", response);
 				this.farmer = response.data.data;
-			} catch (err) {
+			} catch (err: any) {
 				console.log("err", err);
-				notify("error", "error fetching farmer", err.response.data.message);
+				notify("error", "error fetching farmer", err?.response?.data.message as string);
 			}
 		},
 		async getVeternaries(q: string = "") {
@@ -104,6 +120,33 @@ export const useEntitiesStore = defineStore({
 				this.suppliers = response.data.data;
 			} catch (err) {
 				console.log("err", err);
+			}
+		},
+		async getAppointments(q: string = "") {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/appointments?q=${q}`);
+				this.appointments = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getAppointmentsByVet(vetId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/appointments/veternary/${vetId}`);
+				this.appointments = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getAppointmentsByFarmer(farmerId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/appointments/farmer/${farmerId}`);
+				this.farmerAppointments = response.data.data;
+			} catch (error) {
+				console.log("err", error);
 			}
 		},
 		async getSupplier(id: string) {
@@ -146,6 +189,18 @@ export const useEntitiesStore = defineStore({
 				this.specializations = response.data.data;
 			} catch (err) {
 				console.log("err", err);
+			}
+		},
+		async getSingleUser(id: string) {
+			this.resetStatuses();
+			try {
+				this.loading = true;
+				const response = await instance.get(`/users/${id}`);
+				this.singleUser = response.data.data;
+			} catch (err) {
+				console.log("err", err);
+			} finally {
+				this.loading = false;
 			}
 		},
 		async createVeternary(data: any) {
@@ -200,7 +255,7 @@ export const useEntitiesStore = defineStore({
 					this.getFarmer(data.farmerId);
 				}
 				notify("success", "Status Recorded", "", "top");
-			} catch (err) {
+			} catch (err: any) {
 				console.log("err", err);
 				notify("error", "Error", err.response.data.message, "top");
 			}
@@ -239,22 +294,23 @@ export const useEntitiesStore = defineStore({
 						state.villages = villages.data.data;
 					});
 				}
-			} catch (err) {
+			} catch (err: any) {
 				console.log("err", err);
 				notify("error", "Error loging in !!!", err.response.data.message);
 			}
 		},
-		async submitFoodRequest(data: any, userId: string = "") {
+		async submitFoodRequest(data: any, farmerId: string = "") {
 			this.loading = true;
 			try {
 				const response = await instance.post("/foodrequests", data);
 				if (response) {
 					notify("success", "Success", "Request submited !!!");
 				}
-				if (userId !== "") {
-					this.getRequestsByFarmer(userId);
+				if (farmerId !== "") {
+					this.getRequestsByFarmer(farmerId);
+				} else {
+					this.getFoodRequests();
 				}
-				this.getFoodRequests();
 				this.loading = false;
 			} catch (error) {
 				this.loading = false;
@@ -298,6 +354,51 @@ export const useEntitiesStore = defineStore({
 				console.log("err", error);
 			}
 		},
+		async getAllVeternaryVisits() {
+			this.resetStatuses();
+			try {
+				const response = await instance.get("/farmstatus");
+				this.veternaryvisits = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getVeternaryVisitsByVet(vetId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/farmstatus/veternary/${vetId}`);
+				this.veternaryvisits = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getAllTransactions(q: string = "") {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/transactions?q=${q}`);
+				this.transactions = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getAllTransactionsByFarmer(farmerId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/transactions/farmer/${farmerId}`);
+				this.transactions = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getAllTransactionsBySupplier(supplierId: string) {
+			this.resetStatuses();
+			try {
+				const response = await instance.get(`/transactions/supplier/${supplierId}`);
+				this.transactions = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
 		async deleteItem(deleteUrl: string) {
 			this.resetStatuses();
 
@@ -314,7 +415,7 @@ export const useEntitiesStore = defineStore({
 				this.loading = true;
 				const response = await instance.patch(updateUrl, data);
 				notify("success", "Status updated", response.data.message);
-			} catch (error) {
+			} catch (error: any) {
 				console.log("err", error);
 				notify("error", "Failed", error.response.data.message);
 			} finally {

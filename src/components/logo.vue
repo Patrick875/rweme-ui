@@ -23,5 +23,6 @@
         object-fit: cover;
         margin: 0;
     }
+
 }
 </style>

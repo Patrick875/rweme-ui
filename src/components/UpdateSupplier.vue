@@ -3,14 +3,14 @@
         <a-form v-if="vet && !loading" :model="veternaryForm" ref="formRef" name="basic" :label-col="{ span: 24 }"
             :wrapper-col="{ span: 24 }" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed">
             <a-row :gutter="16">
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Full Name" name="fullName"
                         :rules="[{ required: true, message: 'Please input suppluer full name!' }]">
                         <a-input class="input" placeholder="Please enter supplier full name"
                             v-model:value="veternaryForm.fullName" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Phone Number" name="telephone" :rules="[
                         {
                             required: true,
@@ -22,21 +22,21 @@
                             v-model:value="veternaryForm.telephone" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Email Address" name="email"
                         :rules="[{ required: true, message: 'Please input an email !' }]">
                         <a-input :disabled="true" class="input" placeholder="Enter a valid email"
                             v-model:value="veternaryForm.email" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="National Id" name="nationalId"
                         :rules="[{ required: true, pattern: /^(1|2)\d{15}$/, message: 'Please input a valid national id !' }]">
                         <a-input class="input" placeholder="Enter a valid national Id"
                             v-model:value="veternaryForm.nationalId" />
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item name="typeoffeeds" label="Select type of feeds" has-feedback
                         :rules="[{ required: true, message: 'Please select type of feeds!' }]">
                         <a-select v-model:value="veternaryForm.typeoffeeds" :options="typeoffeeds" mode="multiple"
@@ -44,7 +44,7 @@
                             @popupScroll="popupScroll"></a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Province" name="provinceId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
                         <a-select v-model:value="veternaryForm.provinceId" :size="'middle'"
@@ -55,7 +55,7 @@
                         </a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="District" name="districtId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
                         <a-select :disabled="!veternaryForm.provinceId" v-model:value="veternaryForm.districtId"
@@ -68,7 +68,7 @@
                         </a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Sector" name="sectorId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
                         <a-select :disabled="!veternaryForm.districtId" v-model:value="veternaryForm.sectorId"
@@ -81,7 +81,7 @@
                         </a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Cell" name="cellId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
                         <a-select :disabled="!veternaryForm.sectorId" v-model:value="veternaryForm.cellId"
@@ -94,7 +94,7 @@
                         </a-select>
                     </a-form-item>
                 </a-col>
-                <a-col :span="12">
+                <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Village" name="addressId"
                         :rules="[{ required: true, message: 'Please input select !!' }]">
                         <a-select :disabled="!veternaryForm.cellId" v-model:value="veternaryForm.addressId"
@@ -126,6 +126,7 @@
 <script lang="ts" setup>
 import { ref, computed, watch } from "vue"
 import { useEntitiesStore } from '../store/entities.store'
+import { useScreenSize } from "../utils/useScreenSize"
 
 interface SupplierForm {
     fullName: string
@@ -140,7 +141,7 @@ interface SupplierForm {
     cellId: string | null
     addressId: string | null
 }
-
+const { isSmallScreen } = useScreenSize()
 const popupScroll = () => {
     console.log('popupScroll');
 };

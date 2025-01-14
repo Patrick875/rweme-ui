@@ -7,9 +7,8 @@
                 farmer's mobile number
             </p>
             <div class="otp-input-group">
-                <input v-for="(_, index) in 6" :key="index" :ref="el => setInputRef(el, index)"
-                    v-model="otpModel[`value${index + 1}`]" type="text" maxlength="1" pattern="\d*" inputmode="numeric"
-                    @input="handleInput(index)" @keydown="handleKeyDown(index)" class="otp-input" />
+
+                <OTPPad @entered="(v) => otpValue = v" />
             </div>
             <a-button class="submit-btn" @click="submitOtp" :loading="loading" :disabled="!isOtpComplete">
                 SUBMIT
@@ -22,17 +21,10 @@
 import { ref, reactive, computed } from 'vue'
 import instance from "../api";
 import { notify } from '../utils/notify';
+import OTPPad from './OTPPad.vue';
 
-// OTP Model Interface
-interface OtpModel {
-    value1: string | null
-    value2: string | null
-    value3: string | null
-    value4: string | null
-    value5: string | null
-    value6: string | null
-}
 
+const otpValue = ref('');
 const props = defineProps({
     cancelButton: {
         type: Function,
@@ -43,68 +35,28 @@ const props = defineProps({
         default: () => { }
     }
 })
-const otpModel = reactive<OtpModel>({
-    value1: null,
-    value2: null,
-    value3: null,
-    value4: null,
-    value5: null,
-    value6: null
-})
+
 
 
 const loading = ref<boolean>(false)
 
-// Refs for input elements
-const inputRefs = ref<(HTMLInputElement | null)[]>([])
 
-// Set input refs
-const setInputRef = (el: HTMLInputElement | null, index: number) => {
-    inputRefs.value[index] = el
-}
+
 
 // Computed property to check if OTP is complete
 const isOtpComplete = computed(() => {
-    return Object.values(otpModel).every(value => value !== null && value !== '')
+    return otpValue.value.length === 6
 })
 
-// Handle input change
-const handleInput = (index: number) => {
-    const currentKey = `value${index + 1}` as keyof OtpModel
-    const currentValue = otpModel[currentKey]
 
-    // Validate numeric input
-    if (currentValue && !/^\d$/.test(currentValue)) {
-        otpModel[currentKey] = null
-        return
-    }
-
-    // Move to next input if current input is filled
-    if (currentValue && index < 5) {
-        inputRefs.value[index + 1]?.focus()
-    }
-}
-
-// Handle keydown (especially backspace)
-const handleKeyDown = (index: number) => {
-    const event = window.event as KeyboardEvent
-    const currentKey = `value${index + 1}` as keyof OtpModel
-
-    // Move to previous input on backspace if current input is empty
-    if (event.key === 'Backspace' && !otpModel[currentKey] && index > 0) {
-        inputRefs.value[index - 1]?.focus()
-    }
-}
-
-// Submit OTP
 const submitOtp = async () => {
     loading.value = true
-    const otpCode = Object.values(otpModel)
-        .map(value => value || '')
-        .join('')
-    if (otpCode.length === 6 && /^\d{6}$/.test(otpCode)) {
+
+    console.log('otp-value', otpValue.value);
+
+    if (otpValue.value.length === 6 && /^\d{6}$/.test(otpValue.value)) {
         try {
-            const response = await instance.post('/farmers/otpconfirm', { otp: otpCode })
+            const response = await instance.post('/farmers/otpconfirm', { otp: otpValue.value })
             notify('success', 'Success', response.data.message)
             setTimeout(() => {
                 props.cancelButton()

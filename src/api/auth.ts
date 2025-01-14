@@ -19,6 +19,8 @@ export const login = async (login: LoginI) => {
 		.post("/auth/login", login)
 		.then((res) => {
 			setUser(res.data.data);
+			const userStringified= JSON.stringify(res.data.data)
+			localStorage.setItem('auth_user',userStringified)
 			notify("success", "Success !!!", res.data.message);
 		})
 		.catch((err) => {
