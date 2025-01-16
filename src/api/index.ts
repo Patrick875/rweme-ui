@@ -2,10 +2,10 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 
 const localServer: string = "http://localhost:5000/api/v1";
-// const liveServer:string
+const liveServer:string="https://rweme-platform-backend-production.up.railway.app"
 
 const instance = axios.create({
-	baseURL: localServer,
+	baseURL: liveServer,
 	withCredentials: true,
 });
 instance.interceptors.response.use((response) => {
