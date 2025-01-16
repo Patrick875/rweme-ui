@@ -8,6 +8,13 @@ const instance = axios.create({
 	baseURL: liveServer,
 	withCredentials: true,
 });
+instance.interceptors.request.use((request)=>{
+	const authToken = localStorage.getItem("auth_token");  // Assuming your token is stored in localStorage
+  if (authToken) {
+    request.headers["Authorization"] = `Bearer ${authToken}`;  // Attach token as Authorization header
+  }
+  return request;
+})
 instance.interceptors.response.use((response) => {
 	console.log("response", response);
 	const router = useRouter();
@@ -16,6 +23,7 @@ instance.interceptors.response.use((response) => {
 			router.replace("/auth/login");
 		});
 	}
+
 	return response;
 });
 
