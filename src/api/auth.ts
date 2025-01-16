@@ -18,12 +18,11 @@ export const login = async (login: LoginI) => {
 	return await instance
 		.post("/auth/login", login)
 		.then((res) => {
+			const token = res.data.token;
+			localStorage.setItem('auth_token', token);
 			setUser(res.data.data);
 			const userStringified= JSON.stringify(res.data.data)
-			const token = res.data.token;
 			localStorage.setItem('auth_user',userStringified)
-			localStorage.setItem('auth_token', token);
-
 			notify("success", "Success !!!", res.data.message);
 		})
 		.catch((err) => {
