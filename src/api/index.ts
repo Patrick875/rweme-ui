@@ -2,7 +2,7 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 
 const localServer: string = "http://localhost:5000/api/v1";
-const liveServer:string="https://rweme-platform-backend-production.up.railway.app"
+const liveServer:string="https://rweme-platform-backend-production.up.railway.app/api/v1"
 
 const instance = axios.create({
 	baseURL: liveServer,
