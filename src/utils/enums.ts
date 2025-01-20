@@ -1,6 +1,7 @@
 export enum userRoles {
 	veternary = "Veternary",
 	supplier = "Supplier",
+	admin="Admin"
 }
 export enum accountStatus {
 	active = "Active",

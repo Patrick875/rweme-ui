@@ -7,7 +7,6 @@
                         <Table :data="transactions" :title="'Transactions'" :length="String(transactions.length)"
                             :user-can-delete="false" :loading="loading" :handleTableSearch="handleSearch"
                             :columns="columns" />
-                        <a-table :columns="columns" :dataSource="transactions" rowKey="id" />
                     </div>
                 </div>
             </a-tab-pane>

@@ -44,15 +44,16 @@ const formState = reactive<FormState>({
 const onLogin = async (values: FormState) => {
     loading.value = true;
     try {
-        await login(values);
-        // router.replace('/')
+        await login(values).then(()=>{
         if (logedInUser.value?.role == userRoles.supplier) {
             router.replace("/supplier");
         } else if (logedInUser.value?.role == userRoles.veternary) {
             router.replace("/veternary");
-        } else {
+        } else if (logedInUser.value?.role == userRoles.admin) {
             router.replace("/");
         }
+        });
+       
     } catch (error) {
 
     } finally {
