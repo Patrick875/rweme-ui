@@ -59,7 +59,7 @@ const closeCloseContractSignModal = () => {
 const columns = [
     { title: 'Name', dataIndex: 'fullName', key: 'fullName' },
     { title: 'Location', dataIndex: 'location', key: 'location' },
-    { title: 'Category', dataIndex: 'typeOfChicken', key: 'typeOfChicken' },
+    { title: 'Type of chicken', dataIndex: 'typeOfChicken', key: 'typeOfChicken' },
     { title: 'Number of Chicken', dataIndex: 'numberOfChicken', key: 'numberOfChicken' },
     { title: 'Veternary In Charge', dataIndex: 'veternaryInCharge', key: 'veternaryInCharge' },
     { title: 'Status', dataIndex: 'status', key: 'status' },
