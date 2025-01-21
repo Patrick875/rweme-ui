@@ -218,7 +218,7 @@ const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMont
 )}`;
 const viewableEvent = ref<any>(null);
 const veternaryVisits = computed(() => entitiesStore?.veternaryvisits.map((el) => ({
-	chickenType: el.TypeOfChicken?.name.toUpperCase(),
+	chickenType: el.TypeOfChicken?.name?.toUpperCase(),
 	numberOfChicken: el.numberOfChicken,
 	chickenHealthCondition: el.chickenHealth,
 	amountOfFeedOnDailyBasisPerChicken: el.amountOfFeedOnDailyBasisPerChicken,
