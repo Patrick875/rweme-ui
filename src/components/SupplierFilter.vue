@@ -3,11 +3,11 @@
         <a-spin size="large" />
     </div>
     <div v-else>
-        <a-form :model="vetFilterForm" name="basic" :label-col="{ span: 24 }">
+        <a-form :model="supFilterForm" name="basic" :label-col="{ span: 24 }">
             <a-row :gutter="[16, 16]">
                 <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Status" name="status">
-                        <a-select v-model:value="vetFilterForm.status" :size="'middle'" placeholder="Please select !!">
+                        <a-select v-model:value="supFilterForm.status" :size="'middle'" placeholder="Please select !!">
                             <a-select-option value="">---</a-select-option>
                             <a-select-option value="Pending">Pending</a-select-option>
                             <a-select-option value="Active">Active</a-select-option>
@@ -18,16 +18,17 @@
                     </a-form-item>
                 </a-col>
                 <a-col :span="isSmallScreen ? 24 : 12">
-                    <a-form-item name="specializations" label="Select specializations" has-feedback
-                        :rules="[{ required: true, message: 'Please select veternary specializations!' }]">
-                        <a-select v-model:value="vetFilterForm.specializations" :options="specializations"
-                            mode="multiple" :size="'middle'" placeholder="Please select specializations"></a-select>
+                    <a-form-item name="supTypeOfFeeds" label="Select type of feeds" has-feedback
+                        :rules="[{ required: true, message: 'Please select type of feeds!' }]">
+                        <a-select v-model:value="supFilterForm.supTypeOfFeeds" :options="typesOfFeed" mode="multiple"
+                            :size="'middle'" placeholder="Please select types of feed">
+
+                        </a-select>
                     </a-form-item>
                 </a-col>
-
                 <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Province" name="province">
-                        <a-select v-model:value="vetFilterForm.province" :size="'middle'"
+                        <a-select v-model:value="supFilterForm.province" :size="'middle'"
                             placeholder="Please select !!">
                             <a-select-option value="">---</a-select-option>
                             <a-select-option v-for="province in provinces" :key="province.id" :value="province.key">
@@ -38,12 +39,12 @@
                 </a-col>
                 <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="District" name="district">
-                        <a-select :disabled="!vetFilterForm.province" v-model:value="vetFilterForm.district"
+                        <a-select :disabled="!supFilterForm.province" v-model:value="supFilterForm.district"
                             :size="'middle'" placeholder="Please select !!">
                             <a-select-option value="">---</a-select-option>
 
                             <a-select-option
-                                v-for="district in districts.filter((distr) => distr.provinceId === vetFilterForm.province)"
+                                v-for="district in districts.filter((distr) => distr.provinceId === supFilterForm.province)"
                                 :key="district.id" :value="district.key">
                                 {{ district.name }}
                             </a-select-option>
@@ -52,12 +53,12 @@
                 </a-col>
                 <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Sector" name="vetSector">
-                        <a-select :disabled="!vetFilterForm.district" v-model:value="vetFilterForm.vetSector"
+                        <a-select :disabled="!supFilterForm.district" v-model:value="supFilterForm.vetSector"
                             :size="'middle'" placeholder="Please select !!">
                             <a-select-option value="">---</a-select-option>
 
                             <a-select-option
-                                v-for="sector in sectors.filter((sect) => sect.districtId === vetFilterForm.district)"
+                                v-for="sector in sectors.filter((sect) => sect.districtId === supFilterForm.district)"
                                 :key="sector.id" :value="sector.key">
                                 {{ sector.name }}
                             </a-select-option>
@@ -66,12 +67,12 @@
                 </a-col>
                 <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Cell" name="cell">
-                        <a-select :disabled="!vetFilterForm.vetSector" v-model:value="vetFilterForm.cell"
+                        <a-select :disabled="!supFilterForm.vetSector" v-model:value="supFilterForm.cell"
                             :size="'middle'" placeholder="Please select !!">
                             <a-select-option value="">---</a-select-option>
 
                             <a-select-option
-                                v-for="cell in cells.filter((cell) => cell.sectorId === vetFilterForm.vetSector)"
+                                v-for="cell in cells.filter((cell) => cell.sectorId === supFilterForm.vetSector)"
                                 :key="cell.id" :value="cell.key">
                                 {{ cell.name }}
                             </a-select-option>
@@ -80,11 +81,11 @@
                 </a-col>
                 <a-col :span="isSmallScreen ? 24 : 12">
                     <a-form-item class="label-input-height" label="Village" name="address">
-                        <a-select :disabled="!vetFilterForm.cell" v-model:value="vetFilterForm.village" :size="'middle'"
+                        <a-select :disabled="!supFilterForm.cell" v-model:value="supFilterForm.village" :size="'middle'"
                             placeholder="Please select !!">
                             <a-select-option value="">---</a-select-option>
                             <a-select-option
-                                v-for="village in villages.filter((vill) => vill.cellId === vetFilterForm.cell)"
+                                v-for="village in villages.filter((vill) => vill.cellId === supFilterForm.cell)"
                                 :key="village.id" :value="village.key">
                                 {{ village.name }}
                             </a-select-option>
@@ -128,12 +129,12 @@ interface filterFormI {
     vetSector: number | null,
     cell: number | null,
     village: number | null,
-    specializations: string[]
+    supTypeOfFeeds: string[]
 
 }
-const vetFilterForm = ref<filterFormI>({
+const supFilterForm = ref<filterFormI>({
     status: null,
-    specializations: [],
+    supTypeOfFeeds: [],
     province: null,
     district: null,
     vetSector: null,
@@ -168,21 +169,21 @@ const villages = computed(() => entitiesStore.villages?.map((vl) => ({
     key: vl.id
 })))
 
-const specializations = computed(() => entitiesStore.specializations.map((el) => ({
+const typesOfFeed = computed(() => entitiesStore.typeoffeeds?.map((el) => ({
     label: el.name,
     value: el.id
-})))
+})));
 
 const filter = async () => {
     loading.value = true;
 
-    const cleanFilterObj = Object.keys(vetFilterForm.value).reduce((acc, key) => {
-        if (vetFilterForm.value[key] != undefined && vetFilterForm.value[key] != null && vetFilterForm.value[key] != '') {
+    const cleanFilterObj = Object.keys(supFilterForm.value).reduce((acc, key) => {
+        if (supFilterForm.value[key] != undefined && supFilterForm.value[key] != null && supFilterForm.value[key] != '') {
 
-            if (key === 'specializations' && vetFilterForm.value[key].length == 0) {
+            if (key === 'supTypeOfFeeds' && supFilterForm.value[key].length == 0) {
                 acc = acc;
             } else {
-                acc[key] = vetFilterForm.value[key]
+                acc[key] = supFilterForm.value[key]
             }
         }
         return acc;
@@ -191,12 +192,12 @@ const filter = async () => {
     try {
         const filterString = objectToQueryString(cleanFilterObj)
 
-        await entitiesStore.getVeternaries('', filterString)
+        await entitiesStore.getSuppliers('', filterString)
         notify('success', 'Success', 'Data retrieved ')
         setTimeout(() => {
-            vetFilterForm.value = {
+            supFilterForm.value = {
                 status: null,
-                specializations: [],
+                supTypeOfFeeds: [],
                 province: null,
                 district: null,
                 vetSector: null,
@@ -210,9 +211,9 @@ const filter = async () => {
         console.log('----err', error);
 
         notify('error', 'Failed', 'Filter failed ')
-        vetFilterForm.value = {
+        supFilterForm.value = {
             status: null,
-            specializations: [],
+            supTypeOfFeeds: [],
             province: null,
             district: null,
             vetSector: null,
@@ -230,7 +231,7 @@ const fetchAllData = async () => {
     try {
         await Promise.all([
             entitiesStore.getLocations(),
-            entitiesStore.getSpecializations(),
+            entitiesStore.getTypesOfFeed(),
         ]);
     } catch (error) {
         console.error("Error fetching data:", error);

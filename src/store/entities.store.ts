@@ -113,11 +113,12 @@ export const useEntitiesStore = defineStore({
 				this.loading = false;
 			}
 		},
-		async getSuppliers(q: string = "") {
+		async getSuppliers(q: string = "", filterString = "") {
 			this.resetStatuses();
+			const url = filterString != "" ? `/suppliers?q=${q}&${filterString}` : `/suppliers?q=${q}`;
 
 			try {
-				const response = await instance.get(`/suppliers?q=${q}`);
+				const response = await instance.get(`${url}`);
 				this.suppliers = response.data.data;
 			} catch (err) {
 				console.log("err", err);
