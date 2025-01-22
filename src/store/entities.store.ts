@@ -57,11 +57,12 @@ export const useEntitiesStore = defineStore({
 				}
 			}
 		},
-		async getFarmers(q: string = "") {
+		async getFarmers(q: string = "", filterString = "") {
 			this.resetStatuses();
 			const router = useRouter();
 			try {
-				const response = await instance.get(`/farmers?q=${q}`);
+				const url = filterString != "" ? `/farmers?q=${q}&${filterString}` : `/farmers?q=${q}`;
+				const response = await instance.get(`${url}`);
 				this.farmers = response.data.data;
 			} catch (err: any) {
 				if (err.response.status === 401 || err.response.status === 403) {
@@ -89,11 +90,11 @@ export const useEntitiesStore = defineStore({
 				notify("error", "error fetching farmer", err?.response?.data.message as string);
 			}
 		},
-		async getVeternaries(q: string = "") {
+		async getVeternaries(q: string = "", filterString = "") {
 			this.resetStatuses();
-
+			const url = filterString != "" ? `/veterinaries?q=${q}&${filterString}` : `/veterinaries?q=${q}`;
 			try {
-				const response = await instance.get(`/veterinaries?q=${q}`);
+				const response = await instance.get(`${url}`);
 				this.veternaries = response.data.data;
 			} catch (err) {
 				console.log("err", err);
@@ -112,11 +113,12 @@ export const useEntitiesStore = defineStore({
 				this.loading = false;
 			}
 		},
-		async getSuppliers(q: string = "") {
+		async getSuppliers(q: string = "", filterString = "") {
 			this.resetStatuses();
+			const url = filterString != "" ? `/suppliers?q=${q}&${filterString}` : `/suppliers?q=${q}`;
 
 			try {
-				const response = await instance.get(`/suppliers?q=${q}`);
+				const response = await instance.get(`${url}`);
 				this.suppliers = response.data.data;
 			} catch (err) {
 				console.log("err", err);

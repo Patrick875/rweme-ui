@@ -379,8 +379,12 @@ const calendarOptions = {
 	initialView: "dayGridMonth",
 	initialEvents: appointments.value, // alternatively, use the `events` setting to fetch from a feed
 	events: async (fetchInfo, successCallback, failureCallback) => {
+		let appointUrl = '/appointments/'
+		if (logedInUser.value.role == userRoles.veternary) {
+			appointUrl = `/appointments/veternary/${logedInUser.value.Veternary.id}`
+		}
 		try {
-			const response = await instance.get(`/appointments/veternary/${logedInUser.value.Veternary.id}`);
+			const response = await instance.get(`${appointUrl}`);
 			const events = response.data.data.map((event) => ({
 				id: event.id.toString(),
 				title: "Veterinary Visit",

@@ -3,7 +3,8 @@
         <Table :data="suppliers" :title="'Suppliers'" :length="String(suppliers.length)"
             :handle-table-search="handleSearch" :handleDeleteItem="deleteSupplier" :loading="loading"
             :handleUpdateItemStatus="updateSupplierStatus" :handle-update-action="handleUpdateSupplier"
-            :handlePrimaryButtonClicks="handleCreateToggleSupplier" :btn-name="'Create Supplier'" :columns="columns" />
+            :handlePrimaryButtonClicks="handleCreateToggleSupplier" :btn-name="'Create Supplier'" :columns="columns"
+            :open-filter="openFilter" :reset-filter="resetFilter" />
         <Modal :isOpen="isToggleUpdateVeternary" @modal-close="closeCreateSupplier" mainHeader="CREATE SUPPLIER"
             subHeader="Please provide the following details to create a supplier"
             :width="isSmallScreen ? '80%' : '550px'">
@@ -16,6 +17,12 @@
             :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
                 <update-supplier :vet="supplier" :cancelButton="() => isToggleUpdateModal = false"></update-supplier>
+            </template>
+        </Modal>
+        <Modal :isOpen="isToggleFilterSuppliers" @modal-close="closeFilterSupModal" mainHeader="Filter"
+            subHeader="fill the form to filter" :width="isSmallScreen ? '80%' : '550px'">
+            <template #content>
+                <supplier-filter :cancelButton="closeFilterSupModal"></supplier-filter>
             </template>
         </Modal>
     </div>
@@ -33,11 +40,22 @@ const loading = ref<boolean>(false);
 const entitiesStore = useEntitiesStore()
 const isToggleUpdateVeternary = ref<boolean>(false)
 const isToggleUpdateModal = ref<boolean>(false)
+const isToggleFilterSuppliers = ref<boolean>(false)
 const handleCreateToggleSupplier = () => {
     isToggleUpdateVeternary.value = !isToggleUpdateVeternary.value
 }
 const closeCreateSupplier = () => {
     isToggleUpdateVeternary.value = false
+}
+const closeFilterSupModal = () => {
+    isToggleFilterSuppliers.value = false
+}
+const openFilter = () => {
+    isToggleFilterSuppliers.value = true
+
+}
+const resetFilter = async () => {
+    await entitiesStore.getSuppliers()
 }
 const suppliers = computed(() => entitiesStore.suppliers.map((item) => ({
     ...item,

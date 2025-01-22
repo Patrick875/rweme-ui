@@ -41,6 +41,7 @@ declare module 'vue' {
     EventsCalendar: typeof import('./src/components/EventsCalendar.vue')['default']
     FarmerContract: typeof import('./src/components/FarmerContract.vue')['default']
     FarmerCreateCompletion: typeof import('./src/components/farmer-create-completion.vue')['default']
+    FarmerFilter: typeof import('./src/components/FarmerFilter.vue')['default']
     FoodRequestDetailsModal: typeof import('./src/components/FoodRequestDetailsModal.vue')['default']
     FoodRequestModal: typeof import('./src/components/FoodRequestModal.vue')['default']
     Logo: typeof import('./src/components/logo.vue')['default']
@@ -50,9 +51,11 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SidebarNav: typeof import('./src/components/SidebarNav.vue')['default']
+    SupplierFilter: typeof import('./src/components/SupplierFilter.vue')['default']
     Table: typeof import('./src/components/Table.vue')['default']
     UpdateSupplier: typeof import('./src/components/UpdateSupplier.vue')['default']
     UpdateUserProfile: typeof import('./src/components/UpdateUserProfile.vue')['default']
     UpdateVeternary: typeof import('./src/components/UpdateVeternary.vue')['default']
+    VeternaryFilter: typeof import('./src/components/VeternaryFilter.vue')['default']
   }
 }
