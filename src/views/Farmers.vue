@@ -18,7 +18,7 @@
             </template>
         </Modal>
         <Modal :isOpen="isToggleFilterFarmers" @modal-close="closeFilterFarmersModal" mainHeader="Filter"
-            subHeader="fill the form to filter farmers" :width="isSmallScreen ? '80%' : '550px'">
+            subHeader="fill the form to filter " :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
                 <farmer-filter :cancelButton="closeFilterFarmersModal"></farmer-filter>
             </template>

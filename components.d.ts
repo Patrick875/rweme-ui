@@ -55,5 +55,6 @@ declare module 'vue' {
     UpdateSupplier: typeof import('./src/components/UpdateSupplier.vue')['default']
     UpdateUserProfile: typeof import('./src/components/UpdateUserProfile.vue')['default']
     UpdateVeternary: typeof import('./src/components/UpdateVeternary.vue')['default']
+    VeternaryFilter: typeof import('./src/components/VeternaryFilter.vue')['default']
   }
 }

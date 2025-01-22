@@ -4,7 +4,8 @@
             :handlePrimaryButtonClicks="handleCreateToggleVeternary" :loading="loading"
             :handle-table-search="handleSearch" :handleUpdateAction="handleUpdateVet"
             :handleDeleteItem="deleteVeternary" :handle-update-item-status="updateVetStatus"
-            :btn-name="'Create veternary'" :columns="columns" />
+            :open-filter="openFilterVet" :reset-filter="resetFilter" :btn-name="'Create veternary'"
+            :columns="columns" />
         <Modal :isOpen="isToggleCreateVeternary" @modal-close="() => isToggleCreateVeternary = false"
             mainHeader="CREATE VETERNARY" subHeader="Please provide the following details to create a veternary"
             :width="isSmallScreen ? '80%' : '550px'">
@@ -18,6 +19,12 @@
             :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
                 <update-veternary :vet="vet" :cancelButton="() => isToggleUpdateModal = false"></update-veternary>
+            </template>
+        </Modal>
+        <Modal :isOpen="isToggleFilterVets" @modal-close="closeFilterVetModal" mainHeader="Filter"
+            subHeader="fill the form to filter" :width="isSmallScreen ? '80%' : '550px'">
+            <template #content>
+                <veternary-filter :cancelButton="closeFilterVetModal"></veternary-filter>
             </template>
         </Modal>
     </div>
@@ -35,12 +42,22 @@ const entitiesStore = useEntitiesStore()
 const loading = ref<boolean>(false)
 const isToggleCreateVeternary = ref<boolean>(false)
 const isToggleUpdateModal = ref<boolean>(false)
+const isToggleFilterVets = ref<boolean>(false)
 const vet = computed(() => entitiesStore.veternary)
 const handleUpdateVet = async (vetId: string) => {
     await entitiesStore.getVeternary(vetId);
     isToggleUpdateModal.value = true
 }
+const openFilterVet = () => {
+    isToggleFilterVets.value = true
+}
+const closeFilterVetModal = () => {
+    isToggleFilterVets.value = false
 
+}
+const resetFilter = async () => {
+    await entitiesStore.getVeternaries()
+}
 const handleCreateToggleVeternary = () => {
     isToggleCreateVeternary.value = !isToggleCreateVeternary.value
 }

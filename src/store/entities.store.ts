@@ -90,11 +90,11 @@ export const useEntitiesStore = defineStore({
 				notify("error", "error fetching farmer", err?.response?.data.message as string);
 			}
 		},
-		async getVeternaries(q: string = "") {
+		async getVeternaries(q: string = "", filterString = "") {
 			this.resetStatuses();
-
+			const url = filterString != "" ? `/veterinaries?q=${q}&${filterString}` : `/veterinaries?q=${q}`;
 			try {
-				const response = await instance.get(`/veterinaries?q=${q}`);
+				const response = await instance.get(`${url}`);
 				this.veternaries = response.data.data;
 			} catch (err) {
 				console.log("err", err);
