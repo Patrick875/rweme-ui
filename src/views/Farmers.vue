@@ -2,7 +2,8 @@
     <div>
         <Table :data="farmers" :title="'Farmers'" :length="String(farmers.length)" :user-can-delete="!isVeternary"
             :loading="loading" :handleTableSearch="handleSearch" :handlePrimaryButtonClicks="handleCreateFarmer"
-            :btn-name="'Add new farmer'" :columns="columns" :handleDeleteItem="deleteFarmer" />
+            :btn-name="'Add new farmer'" :columns="columns" :handleDeleteItem="deleteFarmer" :open-filter="openFilter"
+            :reset-filter="resetFilter" />
         <Modal :isOpen="isToggleCreateFarmer" @modal-close="closeCreateFarmerModal" mainHeader="CREATE FARMER"
             subHeader="Fill the details to create a new farmer" :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
@@ -16,10 +17,10 @@
                     :sign="handleFarmerContract"></farmer-contract>
             </template>
         </Modal>
-        <Modal :isOpen="isToggleComfirmFarmer" @modal-close="closeComfirmFarmerModal" mainHeader="" subHeader=""
-            :width="isSmallScreen ? '80%' : '550px'">
+        <Modal :isOpen="isToggleFilterFarmers" @modal-close="closeFilterFarmersModal" mainHeader="Filter"
+            subHeader="fill the form to filter farmers" :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
-                <ComfirmOTP :next="next" :cancelButton="closeComfirmFarmerModal"></ComfirmOTP>
+                <farmer-filter :cancelButton="closeFilterFarmersModal"></farmer-filter>
             </template>
         </Modal>
     </div>
@@ -41,6 +42,7 @@ const authStore = useAuthStore();
 const logedInUser = computed(() => authStore.user);
 const isVeternary = computed(() => logedInUser.value?.role === userRoles.veternary);
 const isToggleCreateFarmer = ref<boolean>(false);
+const isToggleFilterFarmers = ref<boolean>(false);
 const farmers = computed(() =>
     entitiesStore.farmers.map((item) => ({
         ...item,
@@ -54,7 +56,15 @@ const isToggleSignContract = ref<boolean>(false);
 const closeCloseContractSignModal = () => {
     isToggleSignContract.value = false;
 };
-
+const closeFilterFarmersModal = () => {
+    isToggleFilterFarmers.value = false
+}
+const openFilter = () => {
+    isToggleFilterFarmers.value = true
+}
+const resetFilter = async () => {
+    await entitiesStore.getFarmers()
+}
 
 const columns = [
     { title: 'Name', dataIndex: 'fullName', key: 'fullName' },
@@ -96,7 +106,6 @@ const closeComfirmFarmerModal = () => {
     isToggleComfirmFarmer.value = false
 }
 const handleFarmerContract = async () => {
-
     isToggleComfirmFarmer.value = true
     const farmer = localStorage.getItem('newFarmer');
     const newFarmer = JSON.parse(farmer as string)

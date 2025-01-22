@@ -18,7 +18,7 @@
           <p v-if="isReportsTable" class="margin-text" style="text-align: center;font-weight:bold">{{ title }} </p>
           <a-col v-if="!isReportsTable" :span="12">
             <div class="filter-section">
-              <a-button class="btn-export" v-if="isShowFilter">Filter List</a-button>
+              <a-button class="btn-export" v-if="isShowFilter" @click="() => props.openFilter()">Filter List</a-button>
               <a-button class="btn-export" @click="() => props.resetFilter()">Reset</a-button>
               <a-dropdown>
                 <template #overlay>
@@ -202,6 +202,7 @@ const updateInfo = ref<updateData>({
   userId: null,
   status: null
 })
+
 const newStatus = ref<string>('Deactivate');
 const isToggleDeleteModal = ref<boolean>(false);
 const isToggleStatusUpdateModal = ref<boolean>(false);
@@ -238,6 +239,12 @@ watch([isToggleDeleteModal], ([newVal]) => {
 })
 
 const search = ref<string>('')
+
+const handleOpenFilter = () => {
+  console.log('button-clicked');
+  props.openFilter()
+
+}
 
 watch(search, (newSearch) => {
   props.handleTableSearch(newSearch)
@@ -319,7 +326,10 @@ const props = defineProps({
     type: Function,
     default: () => { },
   },
-
+  openFilter: {
+    type: Function,
+    default: () => { },
+  },
   resetFilter: {
     type: Function,
     default: () => { },

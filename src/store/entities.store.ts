@@ -57,11 +57,12 @@ export const useEntitiesStore = defineStore({
 				}
 			}
 		},
-		async getFarmers(q: string = "") {
+		async getFarmers(q: string = "", filterString = "") {
 			this.resetStatuses();
 			const router = useRouter();
 			try {
-				const response = await instance.get(`/farmers?q=${q}`);
+				const url = filterString != "" ? `/farmers?q=${q}&${filterString}` : `/farmers?q=${q}`;
+				const response = await instance.get(`${url}`);
 				this.farmers = response.data.data;
 			} catch (err: any) {
 				if (err.response.status === 401 || err.response.status === 403) {

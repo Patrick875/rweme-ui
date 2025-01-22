@@ -41,6 +41,7 @@ declare module 'vue' {
     EventsCalendar: typeof import('./src/components/EventsCalendar.vue')['default']
     FarmerContract: typeof import('./src/components/FarmerContract.vue')['default']
     FarmerCreateCompletion: typeof import('./src/components/farmer-create-completion.vue')['default']
+    FarmerFilter: typeof import('./src/components/FarmerFilter.vue')['default']
     FoodRequestDetailsModal: typeof import('./src/components/FoodRequestDetailsModal.vue')['default']
     FoodRequestModal: typeof import('./src/components/FoodRequestModal.vue')['default']
     Logo: typeof import('./src/components/logo.vue')['default']
