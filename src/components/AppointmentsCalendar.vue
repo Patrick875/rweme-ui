@@ -3,8 +3,9 @@
 		<a-tabs v-model:activeKey="activeKey">
 			<a-tab-pane key="1" tab="Veternary visits">
 				<Table :data="veternaryVisits" :title="'Visits'" :length="veternaryVisits.length.toString()"
-					:columns="columns" :handle-table-search="searchVisit"
-					:handlePrimaryButtonClicks="() => isRecordVisit = true" :btn-name="'Record Visit '" />
+					:columns="columns" :handle-table-search="searchVisit" :open-filter="openFilter"
+					:resetFilter="resetFilter" :handlePrimaryButtonClicks="() => isRecordVisit = true"
+					:btn-name="'Record Visit '" />
 			</a-tab-pane>
 			<a-tab-pane key="2" tab="Calendar">
 				<div class="demo-app">
@@ -176,6 +177,12 @@
 				</div>
 			</template>
 		</Modal>
+		<Modal :isOpen="isToggleFilter" @modal-close="closeFilterModal" mainHeader="Filter"
+			subHeader="Fill the form to filter" :width="isSmallScreen ? '80%' : '550px'">
+			<template #content>
+				<filter-veternary-visits @cancelButton="closeFilterModal"></filter-veternary-visits>
+			</template>
+		</Modal>
 		<AddFarmStatusModel :isToggleAddStatusModal="isRecordVisit" :byVeternary="vetId"
 			:cancelButton="() => isRecordVisit = false" farmerId="d3c1e14e-94c1-4481-97e1-bcc6041bad49"
 			chickenTypeId="feb9f9a6-eced-4db4-be58-5cc390016d6e" />
@@ -216,8 +223,10 @@ const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMont
 	2,
 	"0"
 )}`;
+
 const viewableEvent = ref<any>(null);
 const veternaryVisits = computed(() => entitiesStore?.veternaryvisits.map((el) => ({
+	farmer: el.Farmer?.fullName,
 	chickenType: el.TypeOfChicken?.name?.toUpperCase(),
 	numberOfChicken: el.numberOfChicken,
 	chickenHealthCondition: el.chickenHealth,
@@ -227,6 +236,11 @@ const veternaryVisits = computed(() => entitiesStore?.veternaryvisits.map((el) =
 	recordedOn: new Date(el.recordedOn).toLocaleDateString('fr-FR')
 })));
 const columns = [
+	{
+		title: 'Farmer',
+		dataIndex: 'farmer',
+		key: 'farmer'
+	},
 	{
 		title: 'Type Of Chicken',
 		dataIndex: 'chickenType',
@@ -264,7 +278,10 @@ const columns = [
 	}
 
 ]
-const searchVisit = ref<string>("");
+const searchVisit = (q: string) => {
+	entitiesStore.getAllVeternaryVisits(q);
+};
+
 const isRecordVisit = ref<boolean>(false)
 const appointments = ref<any[]>([]);
 const calendarRef = ref<any>(null);
@@ -279,6 +296,18 @@ const selectedEvent = ref<string>("");
 const isEventDateChanged = ref<boolean>(false);
 const comfirmUpdateEvent = ref<boolean>(false);
 const isUpdatingEvent = ref<boolean>(false);
+const isToggleFilter = ref<boolean>(false);
+
+const openFilter = () => {
+	isToggleFilter.value = true
+}
+const closeFilterModal = () => {
+	isToggleFilter.value = false
+}
+
+const resetFilter = async () => {
+	await entitiesStore.getAllVeternaryVisits()
+}
 const handleEventClicked = (eventInfo: any) => {
 	// console.log('event-info',eventInfo.event)
 	showEventDetails.value = true;
@@ -286,7 +315,7 @@ const handleEventClicked = (eventInfo: any) => {
 };
 
 let eventGuid = 0;
-let todayStr = new Date().toISOString().replace(/T.*$/, ""); // YYYY-MM-DD of today
+let todayStr = new Date().toISOString().replace(/T.*$/, "");
 
 function createEventId() {
 	return String(eventGuid++);
@@ -294,13 +323,13 @@ function createEventId() {
 const currentEvents = ref<any[]>([]);
 const viewableEvents = ref<any[]>([]);
 const handleWeekendsToggle = () => {
-	calendarOptions.weekends = !calendarOptions.weekends; // update a property
+	calendarOptions.weekends = !calendarOptions.weekends;
 };
 const handleDateSelect = (selectInfo) => {
 	let title = prompt("Please enter a new title for your event");
 	let calendarApi = selectInfo.view.calendar;
 
-	calendarApi.unselect(); // clear date selection
+	calendarApi.unselect();
 
 	if (title) {
 		calendarApi.addEvent({

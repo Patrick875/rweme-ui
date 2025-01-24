@@ -28,6 +28,7 @@ const defaultState = {
 	sectors: [] as any,
 	cells: [] as any,
 	villages: [] as any,
+	users: [] as any,
 	dashboardData: null as any,
 	viewableItemId: null as any,
 	detailsItem: null as any,
@@ -124,10 +125,11 @@ export const useEntitiesStore = defineStore({
 				console.log("err", err);
 			}
 		},
-		async getAppointments(q: string = "") {
+		async getAppointments(q: string = "", filterString = "") {
 			this.resetStatuses();
+			const url = filterString != "" ? `/apppointments?q=${q}&${filterString}` : `/appointments?q=${q}`;
 			try {
-				const response = await instance.get(`/appointments?q=${q}`);
+				const response = await instance.get(`${url}`);
 				this.appointments = response.data.data;
 			} catch (error) {
 				console.log("err", error);
@@ -320,10 +322,11 @@ export const useEntitiesStore = defineStore({
 				console.log("err", error);
 			}
 		},
-		async getFoodRequests(q: string = "") {
+		async getFoodRequests(q: string = "", filterString: string = "") {
+			const url = filterString != "" ? `/foodrequests?q=${q}&${filterString}` : `/foodrequests?q=${q}`;
 			this.resetStatuses();
 			try {
-				const response = await instance.get(`/foodrequests?q=${q}`);
+				const response = await instance.get(`${url}`);
 				this.foodrequests = response.data.data;
 			} catch (error) {
 				console.log("err", error);
@@ -356,10 +359,12 @@ export const useEntitiesStore = defineStore({
 				console.log("err", error);
 			}
 		},
-		async getAllVeternaryVisits() {
+		async getAllVeternaryVisits(q: string = "", filterString: string = "") {
+			const url = filterString != "" ? `/farmstatus?q=${q}&${filterString}` : `/farmstatus?q=${q}`;
+
 			this.resetStatuses();
 			try {
-				const response = await instance.get("/farmstatus");
+				const response = await instance.get(`${url}`);
 				this.veternaryvisits = response.data.data;
 			} catch (error) {
 				console.log("err", error);
@@ -379,6 +384,15 @@ export const useEntitiesStore = defineStore({
 			try {
 				const response = await instance.get(`/transactions?q=${q}`);
 				this.transactions = response.data.data;
+			} catch (error) {
+				console.log("err", error);
+			}
+		},
+		async getUsers(q: string = "") {
+			this.resetStatuses();
+			try {
+				const response = await instance.get("/users");
+				this.users = response.data.data;
 			} catch (error) {
 				console.log("err", error);
 			}

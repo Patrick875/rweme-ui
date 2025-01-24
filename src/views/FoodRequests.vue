@@ -2,9 +2,10 @@
     <div>
         <div>
             <Table :data="foodRequests" :title="'Feed Requests'" :length="String(foodRequests.length)"
-                :handle-table-search="handleSearch" :handleViewDetails="openFoodRequest"
-                :handlePrimaryButtonClicks="() => isCreateFoodRequest = true" :user-can-delete="false"
-                :btn-name="isSupplier ? '' : 'Submit food Request'" :columns="!isSupplier ? columns : supplierColums" />
+                :handle-table-search="handleSearch" :handleViewDetails="openFoodRequest" :open-filter="openFilter"
+                :reset-filter="resetFilter" :handlePrimaryButtonClicks="() => isCreateFoodRequest = true"
+                :user-can-delete="false" :btn-name="isSupplier ? '' : 'Submit food Request'"
+                :columns="!isSupplier ? columns : supplierColums" />
             <FoodRequestModal :cancelButton="() => isCreateFoodRequest = false"
                 :isToggleFoodRequestModal="isCreateFoodRequest"></FoodRequestModal>
             <FoodRequestDetailsModal v-if='viewableFoodRequest' :cancelButton="() => isViewFoodRequest = false"
@@ -34,6 +35,13 @@
                     </div>
                 </template>
             </Modal>
+            <Modal :isOpen="isToggleFilter" @modal-close="closeFilterModal" mainHeader="Filter"
+                subHeader="Fill the form to filter" :width="isSmallScreen ? '80%' : '550px'">
+                <template #content>
+                    <filter-feed-requests :cancelButton="closeFilterModal"></filter-feed-requests>
+                </template>
+            </Modal>
+
         </div>
     </div>
 </template>
@@ -65,10 +73,10 @@ if (isSupplier.value) {
 const foodRequests = computed(() => entitiesStore.foodrequests.map((el) => ({
     ...el,
     farmerName: el.Farmer.fullName,
-    typeoffeed: el.TypeOfFeed.name,
+    typeoffeed: el?.TypeOfFeed?.name,
     quantity: el.quantityOfFeed,
     price: el.price,
-    supplierName: el.Supplier.User.fullName,
+    supplierName: el?.Supplier?.User?.fullName,
     deliveryStatus: el.deliveryStatus,
     submittedOn: new Date(el.createdAt).toLocaleDateString('fr-FR'),
     isFoodRequest: true,
@@ -153,6 +161,18 @@ const props = defineProps({
 const isOtpComplete = computed(() => {
     return otpValue.value.length === 6
 })
+const isToggleFilter = ref<boolean>(false);
+
+const openFilter = () => {
+    isToggleFilter.value = true
+}
+const closeFilterModal = () => {
+    isToggleFilter.value = false
+}
+
+const resetFilter = async () => {
+    await entitiesStore.getFoodRequests()
+}
 
 
 const submitOtp = async () => {
