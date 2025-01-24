@@ -6,10 +6,10 @@
             <template #content>
                 <a-form :model="farmStatus" ref="formRef" name="basic" :label-col="{ span: 24 }"
                     :wrapper-col="{ span: 24 }" autocomplete="off">
-                    <a-row :gutter="16">
+                    <a-row :gutter="[16, 16]">
                         <a-col :span="isSmallScreen ? 24 : 12">
-                            <a-form-item v-if="props.byVeternary" class="label-input-height" label="Farmer"
-                                name="farmerId" :rules="[{ message: 'Please select farmer' }]">
+                            <a-form-item class="label-input-height" label="Farmer" name="farmerId"
+                                :rules="[{ message: 'Please select farmer' }]">
                                 <a-select class="input" type="text" placeholder="Select farmer"
                                     v-model:value="farmStatus.farmerId">
                                     <a-select-option v-for="(farmer, index) in vetFarmers" :key="index"
@@ -87,11 +87,16 @@ interface farmStatus {
 
 const entitiesStore = useEntitiesStore()
 
-const vetFarmers = computed(() => entitiesStore.vetFarmers?.map(el => ({
+const vetFarmers = computed(() => props.byVeternary ? entitiesStore.vetFarmers?.map(el => ({
+    label: el.fullName,
+    key: el.id,
+    ...el,
+})) : entitiesStore.farmers?.map(el => ({
     label: el.fullName,
     key: el.id,
     ...el,
 })));
+
 const loading = ref<boolean>(false)
 const { isSmallScreen } = useScreenSize()
 const farmStatus = {
@@ -123,6 +128,9 @@ const props = defineProps({
 })
 if (props.byVeternary) {
     entitiesStore.getFarmersAssignedToVet(props.byVeternary)
+} else {
+    entitiesStore.getFarmers()
+
 }
 const addStatus = async () => {
     loading.value = true
