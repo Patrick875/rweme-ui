@@ -49,7 +49,7 @@
                 <p class='dash-card-header'>
                     <img src="./../assets/icon-3.svg" class="" alt="Farmers" />
                 </p>
-                <p class='dash-card-footer'>All Farmers Assigned to</p>
+                <p class='dash-card-footer'>All Farmers Assigned </p>
                 <p class='dash-card-body'>{{ farmersAssignedCount }}</p>
             </div>
             <div class='dash-card' v-show="!isVeternary">
