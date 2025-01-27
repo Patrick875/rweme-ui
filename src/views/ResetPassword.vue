@@ -19,13 +19,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import instance from '../api'
 import { notify } from '../utils/notify'
 const resetPasswordLoading = ref<boolean>(false)
 const route = useRoute()
 const router = useRouter()
+const isSetPassword = ref<boolean>(false)
 interface IresetPasswordForm {
     newPassword: string,
     comfirmPassword: string
@@ -42,7 +43,8 @@ const validateConfirmPassword = async (_rule: any, value: string) => {
 }
 const resetPassword = async () => {
     resetPasswordLoading.value = true
-    await instance.post(`/auth/forgotPassword/${route.params.email}/${route.params.token}`, { newPassword: resetPasswordForm.value.newPassword })
+    const submitUrl = isSetPassword.value ? `/auth/set-password/${route.params.email}` : `/auth/forgotPassword/${route.params.email}/${route.params.token}`
+    await instance.post(`${submitUrl}`, { newPassword: resetPasswordForm.value.newPassword })
         .then(() => {
             notify('success', 'Success', 'Password reset succesfuly.Please procede to the login page.')
             resetPasswordLoading.value = false
@@ -55,6 +57,12 @@ const resetPassword = async () => {
             resetPasswordLoading.value = false
         })
 }
+onMounted(() => {
+    if (!Object.keys(route.params).includes('token')) {
+        isSetPassword.value = true
+    }
+    console.log('***---*** route', route)
+})
 </script>
 
 <style scoped lang='scss'>

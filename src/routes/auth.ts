@@ -25,6 +25,11 @@ const authRoutes = [
 				component: ResetPassword,
 			},
 			{
+				path: "set-password/:email",
+				name: "set Password",
+				component: ResetPassword,
+			},
+			{
 				path: "comfirm-account",
 				name: "Confirm Account",
 				component: AccountConfirmation,

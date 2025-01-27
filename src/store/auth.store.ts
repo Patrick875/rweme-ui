@@ -3,7 +3,7 @@ import { logout } from "../api/auth";
 
 const storedUser = localStorage.getItem("auth_user");
 const defaultState = {
-	user: JSON.parse(storedUser as string) || null,
+	user: storedUser ? JSON.parse(storedUser as string) : null,
 	userProfile: null as any,
 };
 export const useAuthStore = defineStore({
