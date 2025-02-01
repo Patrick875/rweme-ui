@@ -42,7 +42,6 @@ declare module 'vue' {
     FarmerContract: typeof import('./src/components/FarmerContract.vue')['default']
     FarmerCreateCompletion: typeof import('./src/components/farmer-create-completion.vue')['default']
     FarmerFilter: typeof import('./src/components/FarmerFilter.vue')['default']
-    FilterAppointments: typeof import('./src/components/FilterAppointments.vue')['default']
     FilterFeedRequests: typeof import('./src/components/FilterFeedRequests.vue')['default']
     FilterVeternaryVisits: typeof import('./src/components/FilterVeternaryVisits.vue')['default']
     FoodRequestDetailsModal: typeof import('./src/components/FoodRequestDetailsModal.vue')['default']
