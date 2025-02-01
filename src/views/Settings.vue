@@ -3,7 +3,8 @@
         <a-tab-pane key="1" tab="Types Of Feed">
             <Table :data="typesOfFood" :title="'Types of feed'" :length="typesOfFood.length.toString()"
                 :columns="columns" :handle-table-search="searchFeed" :handle-delete-item="deleteFeed"
-                :handlePrimaryButtonClicks="() => isCreateItem = true" :btn-name="'Create type of feed'" />
+                :handlePrimaryButtonClicks="() => isCreateItem = true" :btn-name="'Create type of feed'"
+                :handle-export="exportToExcell" />
             <Modal :isOpen="isCreateItem" @modal-close="() => isCreateItem = false" mainHeader="CREATE FEED"
                 subHeader="Please provide the following details" :width="isSmallScreen ? '80%' : '550px'">
                 <template #content>
@@ -33,7 +34,7 @@
             <Table :data="specializations" :title="'Vet-Specializations'" :length="specializations.length.toString()"
                 :columns="columns" :handle-table-search="searchSpecialization"
                 :handle-delete-item="deleteSpecialization" :handlePrimaryButtonClicks="() => isCreateItem = true"
-                :btn-name="'Create '" />
+                :btn-name="'Create '" :handle-export="exportToExcell" />
             <Modal :isOpen="isCreateItem" @modal-close="() => isCreateItem = false" mainHeader="CREATE SPECIALIZATION"
                 subHeader="Please provide the following details to create a veternary specialization"
                 :width="isSmallScreen ? '80%' : '550px'">
@@ -63,7 +64,8 @@
         <a-tab-pane key="3" tab="Types Of Chicken">
             <Table :data="typesOfChicken" :title="'Types of chicken'" :length="typesOfChicken.length.toString()"
                 :columns="columns" :handle-table-search="searchChicken" :handle-delete-item="deleteChickenType"
-                :handlePrimaryButtonClicks="() => isCreateItem = true" :btn-name="'Create type'" />
+                :handlePrimaryButtonClicks="() => isCreateItem = true" :btn-name="'Create type'"
+                :handle-export="exportToExcell" />
 
             <Modal :isOpen="isCreateItem" @modal-close="() => isCreateItem = false" mainHeader="CREATE SPECIALIZATION"
                 subHeader="Please provide the following details" :width="isSmallScreen ? '80%' : '550px'">
@@ -99,6 +101,7 @@ import Table from '../components/Table.vue';
 import instance from '../api';
 import { notify } from '../utils/notify';
 import { useScreenSize } from '../utils/useScreenSize';
+import * as xlsx from 'xlsx'
 
 
 const { isSmallScreen } = useScreenSize();
@@ -225,6 +228,27 @@ const deleteSpecialization = async (specId: string) => {
 
 const onFinishFailed = (errorInfo: unknown) => {
     console.log("Failed:", errorInfo)
+}
+
+const exportToExcell = (data: Array<any>, entity: string) => {
+    const headers = columns.filter((el) => el.title !== 'Actions').map((el) => el.title);
+    const excelData = [headers];
+    data.forEach((item) => {
+        console.log('----createdAt', new Date(item.createdAt));
+
+        const rowData = [
+            item.name || '',
+            item.createdAt || '',
+        ]
+        excelData.push(rowData)
+    })
+    const workSheet = xlsx.utils.aoa_to_sheet(excelData);
+    const columnWidths = [{ wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }]
+
+    workSheet['!cols'] = columnWidths;
+    const workbook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(workbook, workSheet, entity)
+    xlsx.writeFile(workbook, `${entity.toLocaleLowerCase()}.xlsx`)
 }
 
 </script>

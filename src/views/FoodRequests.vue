@@ -5,7 +5,7 @@
                 :handle-table-search="handleSearch" :handleViewDetails="openFoodRequest" :open-filter="openFilter"
                 :reset-filter="resetFilter" :handlePrimaryButtonClicks="() => isCreateFoodRequest = true"
                 :user-can-delete="false" :btn-name="isSupplier ? '' : 'Submit food Request'"
-                :columns="!isSupplier ? columns : supplierColums" />
+                :columns="!isSupplier ? columns : supplierColums" :handle-export="exportToExcell" />
             <FoodRequestModal :cancelButton="() => isCreateFoodRequest = false"
                 :isToggleFoodRequestModal="isCreateFoodRequest"></FoodRequestModal>
             <FoodRequestDetailsModal v-if='viewableFoodRequest' :cancelButton="() => isViewFoodRequest = false"
@@ -46,13 +46,14 @@
     </div>
 </template>
 <script setup lang='ts'>
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useEntitiesStore } from '../store/entities.store';
 import { useAuthStore } from '../store/auth.store';
 import { userRoles } from '../utils/enums';
 import instance from '../api';
 import { notify } from '../utils/notify';
 import { useScreenSize } from '../utils/useScreenSize';
+import * as xlsx from 'xlsx'
 
 const { isSmallScreen } = useScreenSize()
 const entitiesStore = useEntitiesStore();
@@ -201,6 +202,30 @@ const submitOtp = async () => {
         console.error('Invalid OTP')
     }
     loading.value = false
+}
+
+const exportToExcell = (data: Array<any>, entity: string) => {
+    const headers = isSupplier ? supplierColums.filter((el) => el.title !== 'Actions').map((el) => el.title) : columns.filter((el) => el.title !== 'Actions').map((el) => el.title);
+    const excelData = [headers];
+    data.forEach((item) => {
+        const rowData = [
+            item.farmerName || '',
+            item.typeoffeed || '',
+            item.quantityOfFeed || '',
+            item.price.toLocaleString() || '',
+            item.submittedOn || '',
+            item.submittedBy || '',
+            item.deliveryStatus || ''
+        ]
+        excelData.push(rowData)
+    })
+    const workSheet = xlsx.utils.aoa_to_sheet(excelData);
+    const columnWidths = [{ wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }]
+
+    workSheet['!cols'] = columnWidths;
+    const workbook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(workbook, workSheet, entity)
+    xlsx.writeFile(workbook, `${entity.toLocaleLowerCase()}.xlsx`)
 }
 
 </script>

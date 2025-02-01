@@ -5,7 +5,7 @@
 				<Table :data="veternaryVisits" :title="'Visits'" :length="veternaryVisits.length.toString()"
 					:columns="columns" :handle-table-search="searchVisit" :open-filter="openFilter"
 					:resetFilter="resetFilter" :handlePrimaryButtonClicks="() => isRecordVisit = true"
-					:btn-name="'Record Visit '" />
+					:btn-name="'Record Visit '" :handleExport="exportToExcell" />
 			</a-tab-pane>
 			<a-tab-pane key="2" tab="Calendar">
 				<div class="demo-app">
@@ -201,13 +201,13 @@ import { notify } from "../utils/notify";
 import { useAuthStore } from "../store/auth.store";
 import { userRoles } from "../utils/enums";
 import { useScreenSize } from "../utils/useScreenSize";
-
+import * as xlsx from 'xlsx'
 
 const { isSmallScreen } = useScreenSize()
 const authStore = useAuthStore()
 const logedInUser = computed(() => authStore.user)
 const isVeternary = logedInUser.value?.role === userRoles.veternary
-const vetId = logedInUser.value.Veternary?.id || null
+const vetId = isVeternary ? logedInUser.value.Veternary?.id : null
 const entitiesStore = useEntitiesStore();
 if (!isVeternary) {
 	entitiesStore.getAppointments();
@@ -455,6 +455,30 @@ watch(selectedEvent, async (newId) => {
 	}
 });
 
+const exportToExcell = (data: Array<any>, entity: string) => {
+	const headers = columns.filter((el) => el.title !== 'Actions').map((el) => el.title);
+	const excelData = [headers];
+	data.forEach((item) => {
+		const rowData = [
+			item.farmer || '',
+			item.chickenType || '',
+			item.numberOfChicken.toLocaleString() || '',
+			item.chickenHealthCondition || '',
+			item.hasInsurance || '',
+			item.amountOfFeedOnDailyBasisPerChicken || '',
+			item.recordedBy || '',
+			item.recordedOn || ''
+		]
+		excelData.push(rowData)
+	})
+	const workSheet = xlsx.utils.aoa_to_sheet(excelData);
+	const columnWidths = [{ wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }]
+
+	workSheet['!cols'] = columnWidths;
+	const workbook = xlsx.utils.book_new();
+	xlsx.utils.book_append_sheet(workbook, workSheet, entity)
+	xlsx.writeFile(workbook, `${entity.toLocaleLowerCase()}.xlsx`)
+}
 </script>
 
 <style lang="scss">

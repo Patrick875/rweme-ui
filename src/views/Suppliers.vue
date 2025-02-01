@@ -4,7 +4,7 @@
             :handle-table-search="handleSearch" :handleDeleteItem="deleteSupplier" :loading="loading"
             :handleUpdateItemStatus="updateSupplierStatus" :handle-update-action="handleUpdateSupplier"
             :handlePrimaryButtonClicks="handleCreateToggleSupplier" :btn-name="'Create Supplier'" :columns="columns"
-            :open-filter="openFilter" :reset-filter="resetFilter" />
+            :open-filter="openFilter" :reset-filter="resetFilter" :handle-export="exportToExcell" />
         <Modal :isOpen="isToggleUpdateVeternary" @modal-close="closeCreateSupplier" mainHeader="CREATE SUPPLIER"
             subHeader="Please provide the following details to create a supplier"
             :width="isSmallScreen ? '80%' : '550px'">
@@ -34,6 +34,7 @@ import Table from '../components/Table.vue'
 import Modal from "../components/Modal.vue"
 import { useEntitiesStore } from '../store/entities.store';
 import { useScreenSize } from '../utils/useScreenSize';
+import * as xlsx from 'xlsx'
 
 const { isSmallScreen } = useScreenSize()
 const loading = ref<boolean>(false);
@@ -135,12 +136,35 @@ const columns = [
         key: 'status'
     },
     {
-        title: 'Action',
+        title: 'Actions',
         dataIndex: 'action',
         key: 'action'
     },
 
 ]
+const exportToExcell = (data: Array<any>, entity: string) => {
+    const headers = columns.filter((el) => el.title !== 'Actions').map((el) => el.title);
+    const excelData = [headers];
+    data.forEach((item) => {
+        const rowData = [
+            item.fullName || '',
+            item.location || '',
+            item.telephone || '',
+            item.email || '',
+            item.typeoffeeds.length > 0 ? item.typeoffeeds.map((el) => el.name.toUpperCase()).join(", ") : '',
+            item.momoPay || '',
+            item.status || ''
+        ]
+        excelData.push(rowData)
+    })
+    const workSheet = xlsx.utils.aoa_to_sheet(excelData);
+    const columnWidths = [{ wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }]
+
+    workSheet['!cols'] = columnWidths;
+    const workbook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(workbook, workSheet, entity)
+    xlsx.writeFile(workbook, `${entity.toLocaleLowerCase()}.xlsx`)
+}
 
 entitiesStore.getSuppliers();
 </script>

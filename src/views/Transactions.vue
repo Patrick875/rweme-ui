@@ -6,7 +6,7 @@
                     <div class="transactions-body">
                         <Table :data="transactions" :title="'Transactions'" :length="String(transactions.length)"
                             :user-can-delete="false" :loading="loading" :handleTableSearch="handleSearch"
-                            :columns="columns" />
+                            :columns="columns" :handle-export="exportToExcell" />
                     </div>
                 </div>
             </a-tab-pane>
@@ -14,7 +14,8 @@
                 <div class="transactions">
 
                     <div class="transactions-body">
-                        <a-table :columns="columns" :dataSource="transactions" rowKey="id" />
+                        <a-table :columns="columns" :dataSource="transactions" rowKey="id"
+                            :handle-export="exportToExcell" />
                     </div>
                 </div>
             </a-tab-pane>
@@ -25,6 +26,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useEntitiesStore } from '../store/entities.store';
+import * as xlsx from 'xlsx'
 
 const activeKey = ref('1');
 
@@ -84,41 +86,34 @@ const columns = [
         key: 'status'
     },
     {
-        title: 'Action',
+        title: 'Actions',
         key: 'action',
         slots: { customRender: 'action' }
     }
 ]
+const exportToExcell = (data: Array<any>, entity: string) => {
+    const headers = columns.filter((el) => el.title !== 'Actions').map((el) => el.title);
+    const excelData = [headers];
+    data.forEach((item) => {
+        const rowData = [
+            item.date || '',
+            item.id || '',
+            item.feedRequestId || '',
+            item.farmerName || '',
+            item.supplierName || '',
+            item.amount?.toLocaleString() || '',
+            item.status || ''
+        ]
+        excelData.push(rowData)
+    })
+    const workSheet = xlsx.utils.aoa_to_sheet(excelData);
+    const columnWidths = [{ wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }]
 
-// const transactions = [
-//     {
-//         id: 1,
-//         date: '2023-12-19',
-//         feedRequestId: 1,
-//         farmerName: 'John Doe',
-//         supplierName: 'Jane Doe',
-//         amount: 1000,
-//         status: 'Pending'
-//     },
-//     {
-//         id: 2,
-//         date: '2023-12-20',
-//         feedRequestId: 2,
-//         farmerName: 'John Doe',
-//         supplierName: 'Jane Doe',
-//         amount: 2000,
-//         status: 'Completed'
-//     },
-//     {
-//         id: 3,
-//         date: '2023-12-21',
-//         feedRequestId: 3,
-//         farmerName: 'John Doe',
-//         supplierName: 'Jane Doe',
-//         amount: 3000,
-//         status: 'Pending'
-//     }
-// ]
+    workSheet['!cols'] = columnWidths;
+    const workbook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(workbook, workSheet, entity)
+    xlsx.writeFile(workbook, `${entity.toLocaleLowerCase()}.xlsx`)
+}
 
 </script>
 
