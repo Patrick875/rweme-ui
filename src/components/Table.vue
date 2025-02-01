@@ -23,7 +23,7 @@
               <a-dropdown>
                 <template #overlay>
                   <a-menu @click="handleExport">
-                    <a-menu-item @click="() => props.exportPDF()" key="1"> Excel </a-menu-item>
+                    <a-menu-item @click="() => props.handleExport(props.data, props.title)" key="1"> Excel </a-menu-item>
                   </a-menu>
                 </template>
                 <a-button class="btn-export export-margin">

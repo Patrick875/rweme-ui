@@ -3,7 +3,7 @@
         <Table :data="farmers" :title="'Farmers'" :length="String(farmers.length)" :user-can-delete="!isVeternary"
             :loading="loading" :handleTableSearch="handleSearch" :handlePrimaryButtonClicks="handleCreateFarmer"
             :btn-name="'Add new farmer'" :columns="columns" :handleDeleteItem="deleteFarmer" :open-filter="openFilter"
-            :reset-filter="resetFilter" />
+            :reset-filter="resetFilter" :handle-export="exportToExcell" />
         <Modal :isOpen="isToggleCreateFarmer" @modal-close="closeCreateFarmerModal" mainHeader="CREATE FARMER"
             subHeader="Fill the details to create a new farmer" :width="isSmallScreen ? '80%' : '550px'">
             <template #content>
@@ -34,6 +34,7 @@ import { useEntitiesStore } from '../store/entities.store';
 import { useAuthStore } from '../store/auth.store';
 import { userRoles } from '../utils/enums';
 import { useScreenSize } from '../utils/useScreenSize';
+import * as xlsx from 'xlsx'
 
 const { isSmallScreen } = useScreenSize()
 const loading = ref<boolean>(false);
@@ -123,8 +124,32 @@ const handleFarmerContract = async () => {
         isToggleSignContract.value = false;
     }
 
-
 }
+const exportToExcell = (data: Array<any>, entity: string) => {
+    const headers = columns.filter((el) => el.title !== 'Actions').map((el) => el.title);
+    const excelData = [headers];
+    data.forEach((item) => {
+        const rowData = [
+            item.fullName || '',
+            item.location || '',
+            item.typeOfChicken || '',
+            item.numberOfChicken || '',
+            item.veternaryInCharge || '',
+            item.status || ''
+        ]
+        excelData.push(rowData)
+    })
+    const workSheet = xlsx.utils.aoa_to_sheet(excelData);
+    const columnWidths = [{ wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }, { wch: 30 }]
+
+    workSheet['!cols'] = columnWidths;
+    const workbook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(workbook, workSheet, entity)
+    xlsx.writeFile(workbook, `${entity.toLocaleUpperCase}.xlsx`)
+}
+
+
+
 entitiesStore.getFarmers();
 </script>
 
