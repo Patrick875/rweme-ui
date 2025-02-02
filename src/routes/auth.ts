@@ -5,37 +5,37 @@ import Login from "../views/Login.vue";
 import ResetPassword from "../views/ResetPassword.vue";
 
 const authRoutes = [
-	{
-		path: "/auth",
-		component: AuthLayout,
-		children: [
-			{
-				path: "login",
-				name: "Login",
-				component: Login,
-			},
-			{
-				path: "forgot-password",
-				name: "Forgot Password",
-				component: ForgotPassword,
-			},
-			{
-				path: "reset-password/:email/:token",
-				name: "Reset Password",
-				component: ResetPassword,
-			},
-			{
-				path: "set-password/:email",
-				name: "set Password",
-				component: ResetPassword,
-			},
-			{
-				path: "comfirm-account",
-				name: "Confirm Account",
-				component: AccountConfirmation,
-			},
-		],
-	},
+  {
+    path: "/auth",
+    component: AuthLayout,
+    children: [
+      {
+        path: "login",
+        name: "Login",
+        component: Login,
+      },
+      {
+        path: "forgot-password",
+        name: "Forgot Password",
+        component: ForgotPassword,
+      },
+      {
+        path: "reset-password/:email/:token",
+        name: "Reset Password",
+        component: ResetPassword,
+      },
+      {
+        path: "set-password/:email",
+        name: "set Password",
+        component: ResetPassword,
+      },
+      {
+        path: "comfirm-account",
+        name: "Confirm Account",
+        component: AccountConfirmation,
+      },
+    ],
+  },
 ];
 
 export default authRoutes;

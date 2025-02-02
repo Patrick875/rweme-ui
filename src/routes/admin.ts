@@ -11,62 +11,62 @@ import FoodRequests from "../views/FoodRequests.vue";
 import AppointmentsCalendar from "../components/AppointmentsCalendar.vue";
 
 const routes = [
-	{
-		path: "/",
-		component: LogedInLayout,
-		children: [
-			{
-				path: "",
-				name: "Dashboard",
-				component: Dashboard,
-			},
-			{
-				path: "feedrequests",
-				name: "Feed Requests",
-				component: FoodRequests,
-			},
-			{
-				path: "appointments",
-				name: "Appointments",
-				component: AppointmentsCalendar,
-			},
-			{
-				path: "farmers",
-				name: "Farmers",
-				component: Farmers,
-			},
-			{
-				path: "farmers/:farmerId",
-				name: "Farmer",
-				component: FarmerDetails,
-			},
-			{
-				path: "/farmers/newfarmer",
-				name: "AddNewFarmer",
-				component: CreateFarmer,
-			},
-			{
-				path: "veterinaries",
-				name: "Veterinaries",
-				component: Veterinaries,
-			},
-			{
-				path: "suppliers",
-				name: "Suppliers",
-				component: Suppliers,
-			},
-			{
-				path: "transactions",
-				name: "Transactions",
-				component: Transactions,
-			},
-			{
-				path: "settings",
-				name: "Settings",
-				component: Settings,
-			},
-		],
-	},
+  {
+    path: "/",
+    component: LogedInLayout,
+    children: [
+      {
+        path: "",
+        name: "Dashboard",
+        component: Dashboard,
+      },
+      {
+        path: "feedrequests",
+        name: "Feed Requests",
+        component: FoodRequests,
+      },
+      {
+        path: "appointments",
+        name: "Appointments",
+        component: AppointmentsCalendar,
+      },
+      {
+        path: "farmers",
+        name: "Farmers",
+        component: Farmers,
+      },
+      {
+        path: "farmers/:farmerId",
+        name: "Farmer",
+        component: FarmerDetails,
+      },
+      {
+        path: "/farmers/newfarmer",
+        name: "AddNewFarmer",
+        component: CreateFarmer,
+      },
+      {
+        path: "veterinaries",
+        name: "Veterinaries",
+        component: Veterinaries,
+      },
+      {
+        path: "suppliers",
+        name: "Suppliers",
+        component: Suppliers,
+      },
+      {
+        path: "transactions",
+        name: "Transactions",
+        component: Transactions,
+      },
+      {
+        path: "settings",
+        name: "Settings",
+        component: Settings,
+      },
+    ],
+  },
 ];
 
 export default routes;

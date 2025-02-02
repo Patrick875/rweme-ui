@@ -5,10 +5,15 @@ import supplierRoutes from "./supplier";
 import veternaryRoutes from "./veternary";
 import { useAuthStore } from "../store/auth.store";
 
-const routes = [...authRoutes, ...adminRoutes, ...supplierRoutes, ...veternaryRoutes];
+const routes = [
+  ...authRoutes,
+  ...adminRoutes,
+  ...supplierRoutes,
+  ...veternaryRoutes,
+];
 const router = createRouter({
-	history: createWebHistory(),
-	routes,
+  history: createWebHistory(),
+  routes,
 });
 
 // router.beforeEach((to, from, next) => {
