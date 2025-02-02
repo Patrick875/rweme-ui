@@ -60,7 +60,7 @@ const submitOtp = async () => {
             notify('success', 'Success', response.data.message)
             setTimeout(() => {
                 props.cancelButton()
-                props.next()
+                // props.next()
             }, 3500)
 
         } catch (error) {

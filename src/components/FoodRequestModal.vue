@@ -57,6 +57,13 @@
                             </a-form-item>
                         </a-col>
                         <a-col :span="isSmallScreen ? 24 : 12">
+                            <a-form-item class="label-input-height" label="Date of payment" name="dateOfPayment"
+                                :rules="[{ required: true }]">
+                                <a-date-picker class="input" :disabledDate="disabledPastDates"
+                                    v-model:value="foodRequest.dateOfPayment" />
+                            </a-form-item>
+                        </a-col>
+                        <a-col :span="isSmallScreen ? 24 : 12">
                             <p>Total to be paid: {{ Number(totalToBePaid).toLocaleString() + " RWF" }}</p>
                         </a-col>
 
@@ -75,6 +82,8 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import type { Dayjs } from 'dayjs';
+import dayjs from 'dayjs'
 import { useEntitiesStore } from '../store/entities.store';
 import { useScreenSize } from '../utils/useScreenSize';
 
@@ -85,6 +94,7 @@ interface FoodRequest {
     quantityOfFeed: number | null
     priceOfFeed: number | null
     typeOfFeed: string | null
+    dateOfPayment: Dayjs | null
 }
 const { isSmallScreen } = useScreenSize()
 const entitiesStore = useEntitiesStore()
@@ -134,9 +144,12 @@ const foodRequest = ref<FoodRequest>({
     supplierId: null,
     quantityOfFeed: null,
     priceOfFeed: null,
-    typeOfFeed: null
+    typeOfFeed: null,
+    dateOfPayment: null
 })
-
+const disabledPastDates = (current) => {
+    return current && current < dayjs().endOf('day');
+};
 const submitRequest = async () => {
     const farmerDetailsId = props.farmerId ? props.farmerId : '';
     const submitData = { farmerId: foodRequest.value.farmerId, supplierId: foodRequest.value.supplierId, typeOfFeed: foodRequest.value.typeOfFeed, price: foodRequest.value.priceOfFeed, quantityOfFeed: foodRequest.value.quantityOfFeed, totalAmount: totalToBePaid.value };
@@ -146,7 +159,8 @@ const submitRequest = async () => {
         supplierId: null,
         quantityOfFeed: null,
         priceOfFeed: null,
-        typeOfFeed: null
+        typeOfFeed: null,
+        dateOfPayment: null
     }
 }
 
@@ -180,7 +194,8 @@ const submitRequest = async () => {
     gap: 1em;
 }
 
-:deep .ant-input-number .ant-input-number-in-form-item {
+:deep .ant-input-number .ant-input-number-in-form-item,
+.ant-picker {
     width: 100%;
     display: block !important
 }

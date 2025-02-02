@@ -23,6 +23,12 @@
                 <farmer-filter :cancelButton="closeFilterFarmersModal"></farmer-filter>
             </template>
         </Modal>
+        <Modal :isOpen="isToggleComfirmFarmer" @modal-close="closeComfirmFarmerModal" mainHeader="" subHeader=""
+            :width="'550px'">
+            <template #content>
+                <ComfirmOTP :cancelButton="closeComfirmFarmerModal"></ComfirmOTP>
+            </template>
+        </Modal>
     </div>
 </template>
 

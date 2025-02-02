@@ -36,7 +36,7 @@
                     </a-col>
                     <a-col :span="isSmallScreen ? 24 : 12">
                         <a-form-item class="label-input-height" label="National Id" name="nationalId"
-                            :rules="[{ required: true, pattern: /^(1|2)\d{15}$/, message: 'Please input a valid national id !' }]">
+                            :rules="[{ required: true, pattern: nationalIdPatern, message: 'Please input a valid national id !' }]">
                             <a-input class="input" placeholder="Enter a valid national Id"
                                 v-model:value="farmerForm.nationalId" />
                         </a-form-item>
@@ -150,7 +150,7 @@
                             </a-select>
                         </a-form-item>
                     </a-col>
-                    <a-col :span="isSmallScreen ? 24 : 12">
+                    <a-col :span="24">
                         <p>Initial food request details</p>
                     </a-col>
                     <a-col :span="isSmallScreen ? 24 : 12">
@@ -197,6 +197,13 @@
                                     :key="supplier.key">{{
                                         supplier.label + ' / ' + supplier.telephone }} </a-select-option>
                             </a-select>
+                        </a-form-item>
+                    </a-col>
+                    <a-col :span="isSmallScreen ? 24 : 12">
+                        <a-form-item class="label-input-height" label="Date of payment" name="dateOfPayment"
+                            :rules="[{ required: true }]">
+                            <a-date-picker class="input" :disabledDate="disabledPastDates"
+                                v-model:value="farmerForm.dateOfPayment" />
                         </a-form-item>
                     </a-col>
                 </a-row>
@@ -259,7 +266,8 @@
 <script lang="ts" setup>
 import { ref, computed, watch, onMounted } from "vue"
 import { useEntitiesStore } from '../store/entities.store'
-import { useRouter } from "vue-router";
+import dayjs from 'dayjs';
+import type { Dayjs } from 'dayjs';
 import { useScreenSize } from "../utils/useScreenSize";
 
 interface farmerForm {
@@ -272,6 +280,7 @@ interface farmerForm {
     amountOfFeedOnDailyBasisPerChicken: number | null
     amountOfFeedToBeDelivered: number | null
     priceOfFeedToBeDelivered: number | null
+    dateOfPayment: Dayjs | null
     typeOfFeed: string
     hasInsurance: string
     chickenHealthCondition: string | null,
@@ -293,6 +302,7 @@ interface NextOfKinForm {
 const popupScroll = () => {
     console.log('popupScroll');
 };
+const nationalIdPatern = /^[12](19[0-9]{2}|20[0-9]{2}|2100)[78]00[0-9]{5}[1-3][1-9]{2}$/
 const { isSmallScreen } = useScreenSize()
 const nextOfKinformRef = ref<InstanceType<any> | null>(null)
 const entitiesStore = useEntitiesStore()
@@ -366,6 +376,7 @@ const farmerForm = ref<farmerForm>({
     amountOfFeedOnDailyBasisPerChicken: null,
     amountOfFeedToBeDelivered: null,
     priceOfFeedToBeDelivered: null,
+    dateOfPayment: null,
     typeOfFeed: '',
     hasInsurance: '',
     chickenHealthCondition: null,
@@ -385,6 +396,9 @@ const nextOfKinForm = ref<NextOfKinForm>({
     relation: '',
 })
 
+const disabledPastDates = (current) => {
+    return current && current < dayjs().endOf('day');
+};
 const props = defineProps({
     cancelButton: {
         type: Function,
@@ -422,6 +436,7 @@ const createFarmer = async () => {
             amountOfFeedToBeDelivered: null,
             priceOfFeedToBeDelivered: null,
             typeOfFeed: '',
+            dateOfPayment: null,
             hasInsurance: '',
             chickenHealthCondition: null,
             provinceId: null,
@@ -508,10 +523,13 @@ onMounted(() => {
 }
 
 :deep {
-    .ant-input-number {
+
+    .ant-input-number,
+    .ant-picker {
         width: 100%;
         display: block
     }
+
 }
 
 .double-form-btn {
