@@ -39,6 +39,7 @@ import {
   LaFilterSolid,
   HiDocumentDownload,
   MdRotateleftOutlined,
+  CoCloudUpload,
 } from "oh-vue-icons/icons";
 
 addIcons(
@@ -60,6 +61,7 @@ addIcons(
   IoClose,
   GiFarmTractor,
   FaUserMd,
+  CoCloudUpload,
   FaUserTie,
   LaEditSolid,
   SiCashapp,
