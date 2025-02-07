@@ -8,6 +8,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AButton: typeof import('ant-design-vue/es')['Button']
+    ACard: typeof import('ant-design-vue/es')['Card']
     ACol: typeof import('ant-design-vue/es')['Col']
     ADatePicker: typeof import('ant-design-vue/es')['DatePicker']
     AddFarmStatusModel: typeof import('./src/components/AddFarmStatusModel.vue')['default']
@@ -30,8 +31,10 @@ declare module 'vue' {
     ATabs: typeof import('ant-design-vue/es')['Tabs']
     ATag: typeof import('ant-design-vue/es')['Tag']
     ATextarea: typeof import('ant-design-vue/es')['Textarea']
+    AUpload: typeof import('ant-design-vue/es')['Upload']
     AuthLayout: typeof import('./src/components/AuthLayout.vue')['default']
     BackButton: typeof import('./src/components/BackButton.vue')['default']
+    Card: typeof import('./src/components/Card.vue')['default']
     ComfirmOTP: typeof import('./src/components/ComfirmOTP.vue')['default']
     CreateFarmer: typeof import('./src/components/CreateFarmer.vue')['default']
     CreateFarmerForm: typeof import('./src/components/CreateFarmerForm.vue')['default']

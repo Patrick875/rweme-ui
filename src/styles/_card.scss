@@ -1,0 +1,50 @@
+.card {
+    .content1 {
+        margin: 0;
+        display: inline;
+        float: left;
+        color: rgba(16, 24, 40, 1);
+        font-size: 14px;
+        font-family: "avenir-heavy";
+    }
+
+    .content2 {
+        margin: 0;
+        display: inline;
+        float: right;
+    }
+
+    .card-margin {
+        margin: 0 5px;
+    }
+
+    .status-container p {
+        background-color: #e8f5e9;
+        color: #4caf50;
+        font-size: 13px;
+        padding: 5px;
+        border-radius: 40%;
+        font-family: "light";
+        -webkit-border-radius: 40%;
+        -moz-border-radius: 40%;
+        -ms-border-radius: 40%;
+        -o-border-radius: 40%;
+    }
+
+    .status-container2 p {
+        background-color: #ffcdd2;
+        color: #d32f2f;
+        font-size: 13px;
+        padding: 5px;
+        border-radius: 40%;
+        font-family: "light";
+        -webkit-border-radius: 40%;
+        -moz-border-radius: 40%;
+        -ms-border-radius: 40%;
+        -o-border-radius: 40%;
+    }
+
+    .titleStyle {
+        color: gray !important;
+    }
+}
