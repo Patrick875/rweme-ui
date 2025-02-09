@@ -152,7 +152,7 @@ const formRef = ref<InstanceType<any> | null>(null);
 const visible = ref<boolean>(true);
 const entitiesStore = useEntitiesStore();
 const nationalIdPatern =
-  /^[12](19\d{2}|20\d{2}|2100)[78]00[0-3]\d{4}\d{3}$/;
+  /^[12](19\d{2}|20\d{2}|2100)[78]\d{2}[0-3]\d{4}\d{3}$/;
 const specializations = computed(() =>
   entitiesStore.specializations.map((el) => ({
     label: el.name,

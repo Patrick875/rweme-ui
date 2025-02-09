@@ -315,7 +315,7 @@ const popupScroll = () => {
   console.log("popupScroll");
 };
 const nationalIdPatern =
-  /^[12](19\d{2}|20\d{2}|2100)[78]00[0-3]\d{4}\d{3}$/;
+  /^[12](19\d{2}|20\d{2}|2100)[78]\d{2}[0-3]\d{4}\d{3}$/;
 const { isSmallScreen } = useScreenSize();
 const nextOfKinformRef = ref<InstanceType<any> | null>(null);
 const entitiesStore = useEntitiesStore();
