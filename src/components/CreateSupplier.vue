@@ -32,7 +32,7 @@
         <a-col :span="isSmallScreen ? 24 : 12">
           <a-form-item class="label-input-height" label="National Id" name="nationalId" :rules="[
             {
-              required: true,
+              required: false,
               pattern: nationalIdPatern,
               message: 'Please input a valid national id !',
             },
@@ -52,7 +52,7 @@
         <a-col :span="isSmallScreen ? 24 : 12">
           <a-form-item class="label-input-height" label="MOMO Pay Code" name="momoPay" :rules="[
             {
-              required: true,
+              required: false,
               pattern: /^[1-9]\d{5}(\d{3})?$/,
               message: 'Please input a valid MOMO Pay Code !',
             },
@@ -62,7 +62,7 @@
         </a-col>
         <a-col :span="isSmallScreen ? 24 : 12">
           <a-form-item class="label-input-height" label="Province" name="provinceId"
-            :rules="[{ required: true, message: 'Please input select !!' }]">
+            :rules="[{ required: false, message: 'Please input select !!' }]">
             <a-select v-model:value="supplierForm.provinceId" :size="'middle'" placeholder="Please select !!"
               @popupScroll="popupScroll">
               <a-select-option v-for="province in provinces" :key="province.id" :value="province.key">
@@ -73,7 +73,7 @@
         </a-col>
         <a-col :span="isSmallScreen ? 24 : 12">
           <a-form-item class="label-input-height" label="District" name="districtId"
-            :rules="[{ required: true, message: 'Please input select !!' }]">
+            :rules="[{ required: false, message: 'Please input select !!' }]">
             <a-select :disabled="!supplierForm.provinceId" v-model:value="supplierForm.districtId" :size="'middle'"
               placeholder="Please select !!" @popupScroll="popupScroll">
               <a-select-option v-for="district in districts.filter(
@@ -86,7 +86,7 @@
         </a-col>
         <a-col :span="isSmallScreen ? 24 : 12">
           <a-form-item class="label-input-height" label="Sector" name="sectorId"
-            :rules="[{ required: true, message: 'Please input select !!' }]">
+            :rules="[{ required: false, message: 'Please input select !!' }]">
             <a-select :disabled="!supplierForm.districtId" v-model:value="supplierForm.sectorId" :size="'middle'"
               placeholder="Please select !!" @popupScroll="popupScroll">
               <a-select-option v-for="sector in sectors.filter(
@@ -99,7 +99,7 @@
         </a-col>
         <a-col :span="isSmallScreen ? 24 : 12">
           <a-form-item class="label-input-height" label="Cell" name="cellId"
-            :rules="[{ required: true, message: 'Please input select !!' }]">
+            :rules="[{ required: false, message: 'Please input select !!' }]">
             <a-select :disabled="!supplierForm.sectorId" v-model:value="supplierForm.cellId" :size="'middle'"
               placeholder="Please select !!" @popupScroll="popupScroll">
               <a-select-option v-for="cell in cells.filter(
@@ -112,7 +112,7 @@
         </a-col>
         <a-col :span="isSmallScreen ? 24 : 12">
           <a-form-item class="label-input-height" label="Village" name="addressId"
-            :rules="[{ required: true, message: 'Please input select !!' }]">
+            :rules="[{ required: false, message: 'Please input select !!' }]">
             <a-select :disabled="!supplierForm.cellId" v-model:value="supplierForm.addressId" :size="'middle'"
               placeholder="Please select !!" @popupScroll="popupScroll">
               <a-select-option v-for="village in villages.filter(
