@@ -56,8 +56,8 @@ const farmers = computed(() =>
   entitiesStore.farmers.map((item) => ({
     ...item,
     isFarmer: true,
-    location: item.Village?.name,
-    veternaryInCharge: item.Veternary.User.fullName,
+    location: item?.Village?.name,
+    veternaryInCharge: item?.Veternary?.User?.fullName,
     key: item.id,
   }))
 );
