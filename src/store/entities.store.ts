@@ -99,6 +99,22 @@ export const useEntitiesStore = defineStore({
         );
       }
     },
+    async updateFarmer(data: any, farmerId: string) {
+      this.resetStatuses();
+      try {
+        const response = await instance.patch(`/farmers/${farmerId}`, data);
+        console.log("the response", response);
+        this.farmer = response.data.data;
+        this.getFarmers();
+      } catch (err: any) {
+        console.log("err", err);
+        notify(
+          "error",
+          "error fetching farmer",
+          err?.response?.data.message as string
+        );
+      }
+    },
     async getVeternaries(q: string = "", filterString = "") {
       this.resetStatuses();
       const url =
