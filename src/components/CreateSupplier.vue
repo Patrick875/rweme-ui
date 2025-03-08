@@ -25,7 +25,7 @@
         </a-col>
         <a-col :span="isSmallScreen ? 24 : 12">
           <a-form-item class="label-input-height" label="Email Address" name="email"
-            :rules="[{ required: true, message: 'Please input an email !' }]">
+            :rules="[{ required: false, message: 'Please input an email !' }]">
             <a-input class="input" placeholder="Enter a valid email" v-model:value="supplierForm.email" />
           </a-form-item>
         </a-col>

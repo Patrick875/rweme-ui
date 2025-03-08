@@ -89,11 +89,11 @@
       ...item,
       fullName: item.User.fullName,
       telephone: item.User.telephone,
-      email: item.User.email,
+      email: item.User?.email,
       status: item.User.status,
       typeoffeeds: item.TypeOfFeed,
-      momoPay: item.momoPay,
-      location: item.User.Village.name,
+      momoPay: item?.momoPay,
+      location: item.User?.Village?.name,
       key: item.id,
     }))
   );
