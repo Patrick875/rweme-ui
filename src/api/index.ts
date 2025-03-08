@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useRouter } from "vue-router";
 
-const serverUrl = import.meta.env.VITE_SERVER_URL;
+const serverUrl = import.meta.env.VITE_LOCAL_SERVER_URL;
 
 const instance = axios.create({
   baseURL: serverUrl,

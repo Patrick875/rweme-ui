@@ -281,6 +281,7 @@ import { useEntitiesStore } from "../store/entities.store";
 import dayjs from "dayjs";
 import type { Dayjs } from "dayjs";
 import { useScreenSize } from "../utils/useScreenSize";
+import { notify } from "../utils/notify";
 
 interface farmerForm {
   fullName: string;
@@ -425,6 +426,20 @@ const nextOfKinForm = ref<NextOfKinForm>({
   relation: "",
 });
 
+const checkFormsValidity = async () => {
+  try {
+    loading.value = true;
+    await formRef.value?.validate();
+    await nextOfKinformRef.value?.validate();
+    return true;
+  } catch (error) {
+    notify('error', 'Required fields misssing', "Please fill all required fields correctly.");
+    return false;
+  } finally {
+    loading.value = false;
+  }
+};
+
 const disabledPastDates = (current) => {
   return current && current < dayjs().endOf("day");
 };
@@ -446,6 +461,10 @@ const validateAmount = () => {
   ]);
 };
 const createFarmer = async () => {
+  const formsValid = await checkFormsValidity()
+  if (!formsValid) {
+    return
+  }
   loading.value = true;
   const submitObject = {
     ...farmerForm.value,

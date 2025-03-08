@@ -1,6 +1,11 @@
 import { notification } from "ant-design-vue";
 
-const allowedImageUploadTypes = ["image/png", "image/jpeg", "image/jpg"];
+const allowedImageUploadTypes = [
+  "image/png",
+  "image/jpeg",
+  "image/jpg",
+  "application/pdf",
+];
 
 export function validateFileOnChange(
   info: any,

@@ -91,7 +91,14 @@
               }}
             </p>
           </div>
-          <a :href="contract.contractLink" target="_blank">Download</a>
+          <div class="contract-actions">
+            <a :href="contract.contractLink" target="_blank">View</a>
+            <a :href="contract.contractLink" target="_blank">Download</a>
+            <button @click="openUpdateContract()">Update</button>
+          </div>
+          <UpdateContractModel :is-open="isUpdateContract" :farmer-id="farmerId" :contract-link="contract.contractLink"
+            :cancel-button="closeUpdateContract" />
+
         </div>
       </div>
       <div v-else>
@@ -101,6 +108,7 @@
   </a-tabs>
   <AddFarmStatusModel :isToggleAddStatusModal="isToggleAddStatusModal" :cancelButton="closeModal" :farmerId="farmerId"
     :chickenTypeId="chickenType" />
+
   <FoodRequestModal :cancelButton="() => (isToggleFoodRequestModal = false)"
     :isToggleFoodRequestModal="isToggleFoodRequestModal" :farmerId="farmerId" />
   <FoodRequestDetailsModal v-if="viewableFoodRequest" :cancelButton="() => (isViewFoodRequest = false)"
@@ -114,6 +122,7 @@ import { useRoute } from "vue-router";
 import { useEntitiesStore } from "../store/entities.store";
 import FoodRequestModal from "../components/FoodRequestModal.vue";
 import Table from "../components/Table.vue";
+import UpdateContractModel from "../components/UpdateContractModel.vue";
 const entitiesStore = useEntitiesStore();
 entitiesStore.getTypesOfChicken();
 const farmer = computed(() => entitiesStore.farmer);
@@ -131,14 +140,23 @@ const farmRecords = computed(() =>
     }))
     : []
 );
+const isUpdateContract = ref<boolean>(false);
 const isViewFoodRequest = ref<boolean>(false);
 const viewableFoodRequest: any = ref<null>;
 const loading = ref<boolean>(false);
 const viewableItemId = computed(() => entitiesStore.viewableItemId);
 
+const openUpdateContract = () => {
+  isUpdateContract.value = true
+}
+const closeUpdateContract = () => {
+  isUpdateContract.value = false
+}
+
 const handleSearch = (q: string) => {
   entitiesStore.getRequestsByFarmer(farmerId, q);
 };
+
 
 const openFoodRequest = (record: any) => {
   viewableFoodRequest.value = record;
@@ -369,6 +387,19 @@ p {
   .contract-list-item {
     display: flex;
     gap: 1em;
+  }
+
+  .contract-actions {
+    display: flex;
+    gap: 2;
+    align-items: center;
+
+    a {
+      display: block;
+      text-decoration: none;
+      color: black;
+      margin-right: 1em;
+    }
   }
 }
 </style>

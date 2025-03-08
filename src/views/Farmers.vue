@@ -2,8 +2,9 @@
   <div>
     <Table :data="farmers" :title="'Farmers'" :length="String(farmers.length)" :user-can-delete="!isVeternary"
       :loading="loading" :handleTableSearch="handleSearch" :handlePrimaryButtonClicks="handleCreateFarmer"
-      :btn-name="'Add new farmer'" :columns="columns" :handleDeleteItem="deleteFarmer" :open-filter="openFilter"
-      :reset-filter="resetFilter" :handle-export="exportToExcell" />
+      :handle-update-action="handleUpdateFarmer" :btn-name="'Add new farmer'" :columns="columns"
+      :handleDeleteItem="deleteFarmer" :open-filter="openFilter" :reset-filter="resetFilter"
+      :handle-export="exportToExcell" />
     <Modal :isOpen="isToggleCreateFarmer" @modal-close="closeCreateFarmerModal" mainHeader="CREATE FARMER"
       subHeader="Fill the details to create a new farmer" :width="isSmallScreen ? '80%' : '550px'">
       <template #content>
@@ -29,18 +30,25 @@
         <ComfirmOTP :cancelButton="closeComfirmFarmerModal"></ComfirmOTP>
       </template>
     </Modal>
+    <Modal :isOpen="isUpdateFarmer && updateFarmer && updateFarmer !== ''" @modal-close="closeUpdateFarmerModal"
+      mainHeader="" subHeader="" :width="'550px'">
+      <template #content>
+        <UpdateFarmerModal :cancel-button="closeUpdateFarmerModal" :farmerId="updateFarmer ? updateFarmer : ''" />
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script setup lang="ts">
 import instance from "../api";
-import { ref, computed } from "vue";
+import { ref, computed, nextTick } from "vue";
 import Table from "../components/Table.vue";
 import { useEntitiesStore } from "../store/entities.store";
 import { useAuthStore } from "../store/auth.store";
 import { userRoles } from "../utils/enums";
 import { useScreenSize } from "../utils/useScreenSize";
 import * as xlsx from "xlsx";
+import UpdateFarmerModal from "../components/UpdateFarmerModal.vue";
 
 const { isSmallScreen } = useScreenSize();
 const loading = ref<boolean>(false);
@@ -50,7 +58,9 @@ const logedInUser = computed(() => authStore.user);
 const isVeternary = computed(
   () => logedInUser.value?.role === userRoles.veternary
 );
+const updateFarmer = ref<string | null>(null)
 const isToggleCreateFarmer = ref<boolean>(false);
+const isUpdateFarmer = ref<boolean>(false);
 const isToggleFilterFarmers = ref<boolean>(false);
 const farmers = computed(() =>
   entitiesStore.farmers.map((item) => ({
@@ -74,6 +84,17 @@ const openFilter = () => {
 const resetFilter = async () => {
   await entitiesStore.getFarmers();
 };
+const handleUpdateFarmer = async (farmerId: string) => {
+  updateFarmer.value = null;
+  await nextTick();
+  updateFarmer.value = farmerId
+  isUpdateFarmer.value = true
+}
+const closeUpdateFarmerModal = () => {
+  updateFarmer.value = null;
+  isUpdateFarmer.value = false
+
+}
 
 const columns = [
   { title: "Name", dataIndex: "fullName", key: "fullName" },
